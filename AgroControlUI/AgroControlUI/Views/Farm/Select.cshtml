@@ -1,0 +1,26 @@
+﻿@model List<AgroControlUI.DTOs.UserManagement.AgroControlUserFarmDto>
+
+<div class="container mt-4">
+    <h1>Your Farms</h1>
+    <div class="row">
+        @foreach (var farm in Model)
+        {
+            <div class="col-md-4 mb-4">
+                <div class="card">
+                    <div class="card-header">
+                        <h4>@farm.FarmName</h4>
+                    </div>
+                    <div class="card-body">
+                        <p><strong>Role in this Farm:</strong> @farm.RoleName</p>
+
+                        <!-- Formularz do ustawienia farmy -->
+                        <form method="post" action="@Url.Action("SetCurrentFarm", "Farm")">
+                            <input type="hidden" name="farmId" value="@farm.FarmId" />
+                            <button type="submit" class="btn btn-primary">Select this Farm</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>
