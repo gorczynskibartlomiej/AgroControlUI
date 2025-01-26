@@ -1,0 +1,24 @@
+﻿@using AgroControlUI.DTOs.FieldWorks
+@model OtherWorkDto
+
+<h1>Dodaj pracę - Inne</h1>
+
+<form asp-action="CreateOther" method="post">
+    <div class="mb-3">
+        <label for="FieldId" class="form-label">Pole</label>
+        <select class="form-control" id="FieldId" asp-for="FieldId">
+            <option value="">Wybierz pole</option>
+            @foreach (var field in ViewBag.Fields as SelectListItem[])
+            {
+                <option value="@field.Value">@field.Text</option>
+            }
+        </select>
+    </div>
+
+    <div class="mb-3">
+        <label for="Description" class="form-label">Opis</label>
+        <textarea class="form-control" id="Description" asp-for="Description"></textarea>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Zapisz</button>
+</form>

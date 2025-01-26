@@ -1,0 +1,53 @@
+﻿@model AgroControlUI.DTOs.FarmData.EmployeeDto
+
+@{
+    ViewData["Title"] = "Dodaj Pracownika";
+}
+
+<h1>@ViewData["Title"]</h1>
+@if (TempData["errorMessage"] != null)
+{
+    <div class="alert alert-danger">
+        @TempData["errorMessage"]
+    </div>
+}
+
+@if (TempData["successMessage"] != null)
+{
+    <div class="alert alert-success">
+        @TempData["successMessage"]
+    </div>
+}
+<form asp-action="Create" method="post">
+    <div class="mb-3">
+        <label for="FirstName" class="form-label">Imię</label>
+        <input type="text" class="form-control" id="FirstName" name="FirstName" required />
+    </div>
+
+    <div class="mb-3">
+        <label for="LastName" class="form-label">Nazwisko</label>
+        <input type="text" class="form-control" id="LastName" name="LastName" required />
+    </div>
+
+    <div class="mb-3">
+        <label for="CostUnitName" class="form-label">Jednostka kosztów</label>
+        <input type="text" class="form-control" id="CostUnitName" name="CostUnitName" />
+    </div>
+
+    <div class="mb-3">
+        <label for="Cost" class="form-label">Koszt</label>
+        <input type="number" class="form-control" id="Cost" name="Cost" />
+    </div>
+
+    <input type="hidden" id="IsActive" name="IsActive" value="false" />
+
+    <!-- Checkbox, który ustawia wartość na "true" jeśli zaznaczone -->
+    <div class="mb-3 form-check">
+        <input type="checkbox" class="form-check-input" id="IsActiveCheckbox" name="IsActive" value="true" />
+        <label class="form-check-label" for="IsActiveCheckbox">Aktywny</label>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Zapisz</button>
+</form>
+
+<a href="@Url.Action("Index", "Employee")" class="btn btn-secondary">Anuluj</a>

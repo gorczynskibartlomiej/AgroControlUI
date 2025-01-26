@@ -86,5 +86,193 @@
             }
             return RedirectToAction("Index", "Home");
         }
+        //Get
+        [Authorize(Policy = "OwnerOrCoOwner")]
+        [HttpGet]
+        public async Task<IActionResult> Index()
+        {
+            var token = HttpContext.Request.Cookies["token"];
+            _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
+            var endpoint = "/api/farms";
+            var result = await _client.GetAsync(endpoint);
+            result.EnsureSuccessStatusCode();
+
+            var content = await result.Content.ReadAsStringAsync();
+            var farm = JsonConvert.DeserializeObject<FarmDto>(content);
+            return View(farm);
+        }
+        // Create
+        [Authorize]
+        [HttpGet]
+        public IActionResult Create()
+        {
+            return View();
+        }
+
+        [Authorize]
+        [HttpPost]
+        public async Task<IActionResult> Create(FarmDto farmDto)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View(farmDto);
+            }
+
+            try
+            {
+                var token = HttpContext.Request.Cookies["token"];
+                _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
+                var endpoint = "/api/farms";
+                var content = JsonConvert.SerializeObject(farmDto);
+                var stringContent = new StringContent(content, Encoding.UTF8, "application/json");
+                var response = await _client.PostAsync(endpoint, stringContent);
+                response.EnsureSuccessStatusCode();
+
+                return RedirectToAction("Index");
+            }
+            catch (HttpRequestException ex)
+            {
+                TempData["errorMessage"] = "Błąd żądania HTTP: " + ex.Message;
+                return View(farmDto);
+            }
+            catch (Exception ex)
+            {
+                TempData["errorMessage"] = "Wystąpił nieoczekiwany błąd: " + ex.Message;
+                return View(farmDto);
+            }
+        }
+
+        // Delete
+        [Authorize(Policy = "Owner")]
+        [HttpGet]
+        public async Task<IActionResult> Delete(int id)
+        {
+            try
+            {
+                var token = HttpContext.Request.Cookies["token"];
+                _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
+                var endpoint = $"/api/farms/{id}";
+                var response = await _client.GetAsync(endpoint);
+                response.EnsureSuccessStatusCode();
+
+                string content = await response.Content.ReadAsStringAsync();
+                var farm = JsonConvert.DeserializeObject<FarmDto>(content);
+                return View(farm);
+            }
+            catch (HttpRequestException ex)
+            {
+                TempData["errorMessage"] = "Błąd żądania HTTP: " + ex.Message;
+                return View();
+            }
+            catch (Exception ex)
+            {
+                TempData["errorMessage"] = "Wystąpił nieoczekiwany błąd: " + ex.Message;
+                return View();
+            }
+        }
+
+        [Authorize(Policy = "Owner")]
+        [HttpPost]
+        public async Task<IActionResult> DeleteConfirmed(int id)
+        {
+            try
+            {
+                var token = HttpContext.Request.Cookies["token"];
+                _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
+                var endpoint = $"/api/farms/{id}";
+                var response = await _client.DeleteAsync(endpoint);
+                response.EnsureSuccessStatusCode();
+
+                return RedirectToAction("Index");
+            }
+            catch (HttpRequestException ex)
+            {
+                TempData["errorMessage"] = "Błąd żądania HTTP: " + ex.Message;
+                return View();
+            }
+            catch (Exception ex)
+            {
+                TempData["errorMessage"] = "Wystąpił nieoczekiwany błąd: " + ex.Message;
+                return View();
+            }
+        }
+
+        // Edit
+        [Authorize(Policy = "OwnerOrCoOwner")]
+        [HttpGet]
+        public async Task<IActionResult> Edit(int id)
+        {
+            try
+            {
+                var token = HttpContext.Request.Cookies["token"];
+                _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
+                var endpoint = $"/api/farms/{id}";
+                var response = await _client.GetAsync(endpoint);
+                response.EnsureSuccessStatusCode();
+
+                string content = await response.Content.ReadAsStringAsync();
+                var farm = JsonConvert.DeserializeObject<FarmDto>(content);
+                return View(farm);
+            }
+            catch (HttpRequestException ex)
+            {
+                TempData["errorMessage"] = "Błąd żądania HTTP: " + ex.Message;
+                return View();
+            }
+            catch (Exception ex)
+            {
+                TempData["errorMessage"] = "Wystąpił nieoczekiwany błąd: " + ex.Message;
+                return View();
+            }
+        }
+
+        [Authorize(Policy = "OwnerOrCoOwner")]
+        [HttpPost]
+        public async Task<IActionResult> Edit(FarmDto farmDto)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View(farmDto);
+            }
+
+            try
+            {
+                var token = HttpContext.Request.Cookies["token"];
+                _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
+                var endpoint = $"/api/farms/{farmDto.Id}";
+                var content = JsonConvert.SerializeObject(farmDto);
+                var stringContent = new StringContent(content, Encoding.UTF8, "application/json");
+                var response = await _client.PutAsync(endpoint, stringContent);
+                response.EnsureSuccessStatusCode();
+
+                TempData["successMessage"] = "Zmodyfikowano pomyślnie";
+                return RedirectToAction("Index");
+            }
+            catch (HttpRequestException ex)
+            {
+                TempData["errorMessage"] = "Błąd żądania HTTP: " + ex.Message;
+                return View(farmDto);
+            }
+            catch (Exception ex)
+            {
+                TempData["errorMessage"] = "Wystąpił nieoczekiwany błąd: " + ex.Message;
+                return View(farmDto);
+            }
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                _client.Dispose();
+            }
+            base.Dispose(disposing);
+        }
     }
 }

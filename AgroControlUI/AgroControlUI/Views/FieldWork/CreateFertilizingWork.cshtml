@@ -1,0 +1,53 @@
+﻿@using AgroControlUI.DTOs.FieldWorks
+@model FertilizingWorkDto
+
+@{
+    ViewData["Title"] = "Dodaj nawożenie";
+}
+
+<h1>@ViewData["Title"]</h1>
+
+<form asp-action="CreateFertilizingWork" method="post">
+    <div class="form-group">
+        <label asp-for="FieldId">Pole</label>
+        <select class="form-control" id="FieldId" asp-for="FieldId">
+            <option value="">Wybierz pole</option>
+            @foreach (var field in ViewBag.Fields as List<SelectListItem>)
+            {
+                <option value="@field.Value">@field.Text</option>
+            }
+        </select>
+    </div>
+
+    <div class="form-group">
+        <label>Nawozy</label>
+        @* <select class="form-control" asp-for="SelectedFertilizerIds" multiple>
+            @foreach (var fertilizer in ViewBag.Fertilizers as List<SelectListItem>)
+            {
+                <option value="@fertilizer.Value">@fertilizer.Text</option>
+            }
+        </select> *@
+    </div>
+
+    <div class="form-group">
+        <label asp-for="IsPlanned">Czy zaplanowane?</label>
+        <input type="checkbox" asp-for="IsPlanned" class="form-check-input" />
+    </div>
+
+    <div class="form-group">
+        <label asp-for="StartTime">Data rozpoczęcia</label>
+        <input type="datetime-local" asp-for="StartTime" class="form-control" />
+    </div>
+
+    <div class="form-group">
+        <label asp-for="EndTime">Data zakończenia</label>
+        <input type="datetime-local" asp-for="EndTime" class="form-control" />
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Description">Opis</label>
+        <textarea asp-for="Description" class="form-control"></textarea>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Dodaj</button>
+</form>

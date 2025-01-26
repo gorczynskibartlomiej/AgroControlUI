@@ -1,0 +1,16 @@
+﻿@model AgroControlUI.DTOs.CropProtectionProducts.CropProtectionProductCategoryDto
+
+@{
+    ViewData["Title"] = "Dodaj nową kategorię produktu ochrony roślin";
+}
+
+<h1>Dodaj nową kategorię produktu ochrony roślin</h1>
+
+<form asp-action="Create" method="post">
+    <div class="form-group">
+        <label for="Name">Nazwa</label>
+        <input type="text" class="form-control" id="Name" name="Name" value="@Model.Name" required />
+    </div>
+    <button type="submit" class="btn btn-primary">Zapisz</button>
+    <a href="@Url.Action("Index")" class="btn btn-secondary">Anuluj</a>
+</form>

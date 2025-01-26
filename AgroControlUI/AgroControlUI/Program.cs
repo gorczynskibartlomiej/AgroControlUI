@@ -1,11 +1,11 @@
-using AgroControlUI.Models.UserManagement;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using AgroControlUI.Middleware;
-using AgroControlApi.Middleware;
 using AgroControlUI.Services.Implementations;
 using AgroControlUI.Services.Interfaces;
 using Serilog;
+using AgroControlUI.Validators.Account;
+using FluentValidation;
+using FluentValidation.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -22,9 +22,7 @@ builder.Services.AddAuthorization(options =>
 
     options.AddPolicy("OwnerOrAccountant", policy =>
     {
-        policy.RequireRole("W³aœciciel");
-        policy.RequireRole("Wspó³w³aœciciel");
-        policy.RequireRole("Ksiêgowy");
+        policy.RequireRole("W³aœciciel", "Wspó³w³aœciciel", "Ksiêgowy");
     });
     options.AddPolicy("OwnerOrWorker", policy =>
     {
@@ -34,8 +32,7 @@ builder.Services.AddAuthorization(options =>
     });
     options.AddPolicy("OwnerOrCoOwner", policy =>
     {
-        policy.RequireRole("W³aœciciel");
-        policy.RequireRole("Wspó³w³aœciciel");
+        policy.RequireRole("W³aœciciel", "Wspó³w³aœciciel");
     });
     options.AddPolicy("Owner", policy =>
     {
@@ -64,6 +61,13 @@ builder.Services.AddSession(options =>
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+
+//FluentValidation
+builder.Services.AddFluentValidationAutoValidation(options =>
+{
+    options.DisableDataAnnotationsValidation = true; 
+}).AddFluentValidationClientsideAdapters();
+builder.Services.AddValidatorsFromAssemblyContaining<RegisterModelDtoValidator>();
 
 
 builder.Services.AddSingleton<ILoggerService, LoggerService>();

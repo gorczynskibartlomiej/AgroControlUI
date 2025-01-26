@@ -15,6 +15,7 @@ namespace AgroControlUI.Controllers
 
         public IActionResult Index()
         {
+            ViewData["IsHome"] = true;
             return View();
         }
 

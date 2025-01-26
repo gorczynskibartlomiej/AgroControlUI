@@ -1,0 +1,21 @@
+﻿@model AgroControlUI.DTOs.CropProtectionProducts.CropProtectionProductCategoryDto
+
+@{
+    ViewData["Title"] = "Usuń kategorię produktu ochrony roślin";
+}
+
+<h1>Usuń kategorię produktu ochrony roślin</h1>
+
+<div class="alert alert-warning">
+    <strong>Uwaga!</strong> Czy na pewno chcesz usunąć tę kategorię?
+</div>
+
+<div>
+    <p><strong>Nazwa:</strong> @Model.Name</p>
+</div>
+
+<form asp-action="DeleteConfirmed" method="post">
+    <input type="hidden" asp-for="Id" />
+    <button type="submit" class="btn btn-danger">Usuń</button>
+    <a href="@Url.Action("Index")" class="btn btn-secondary">Anuluj</a>
+</form>

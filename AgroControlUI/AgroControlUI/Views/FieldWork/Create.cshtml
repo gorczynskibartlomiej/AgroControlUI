@@ -1,0 +1,60 @@
+﻿@{
+    ViewData["Title"] = "Wybierz typ pracy";
+}
+
+<h1>@ViewData["Title"]</h1>
+
+<div class="row">
+    <div class="col-3">
+        <a href="@Url.Action("CreateFertilizingWork", "FieldWork")" class="work-tile">
+            <div class="tile-content">
+                <h3>Nawożenie</h3>
+            </div>
+        </a>
+    </div>
+    <div class="col-3">
+        <a href="@Url.Action("CreateSprayingWork", "FieldWork")" class="work-tile">
+            <div class="tile-content">
+                <h3>Opryski</h3>
+            </div>
+        </a>
+    </div>
+    <div class="col-3">
+        <a href="@Url.Action("CreateHarvestingWork", "FieldWork")" class="work-tile">
+            <div class="tile-content">
+                <h3>Zbiory</h3>
+            </div>
+        </a>
+    </div>
+    <div class="col-3">
+        <a href="@Url.Action("CreateOtherWork", "FieldWork")" class="work-tile">
+            <div class="tile-content">
+                <h3>Inne</h3>
+            </div>
+        </a>
+    </div>
+</div>
+
+<style>
+    .work-tile {
+        display: block;
+        text-decoration: none;
+        padding: 20px;
+        background-color: #f8f9fa;
+        border: 1px solid #ccc;
+        text-align: center;
+        border-radius: 8px;
+        transition: transform 0.2s, background-color 0.2s;
+        margin: 10px 0;
+    }
+
+        .work-tile:hover {
+            background-color: #e2e6ea;
+            transform: scale(1.05);
+        }
+
+    .tile-content h3 {
+        margin: 0;
+        color: #333;
+    }
+</style>

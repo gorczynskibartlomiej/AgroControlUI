@@ -1,7 +1,6 @@
-﻿using AgroControlUI.Models.FarmData;
-using AgroControlUI.Models.FieldWorks;
-using AgroControlUI.Models.ReferenceData;
-using AgroControlUI.Models.UserManagement;
+﻿using AgroControlUI.DTOs.FarmData;
+using AgroControlUI.DTOs.ReferenceData;
+
 
 namespace AgroControlUI.DTOs.FieldWorks
 {
@@ -21,29 +20,27 @@ namespace AgroControlUI.DTOs.FieldWorks
         public DateTime UpdatedOn { get; set; }
         public int UpdatedBy { get; set; }
 
-        public ICollection<FieldWorkAgriculturalEquipment> FieldWorkAgriculturalEquipment { get; set; } = new List<FieldWorkAgriculturalEquipment>();
-        public required Field Field { get; set; }
-        public Employee? Employee { get; set; }
-        public AgroControlUser? AgroControlUser { get; set; }
+        public ICollection<FieldWorkAgriculturalEquipmentDto> FieldWorkAgriculturalEquipment { get; set; } = new List<FieldWorkAgriculturalEquipmentDto>();
+        public required FieldDto Field { get; set; }
+        public string? EmployeeName { get; set; }
+        public string? AgroControlUserName  { get; set; }
     }
-    public class FertilizingWork : FieldWork
+    public class FertilizingWorkDto : FieldWorkDto
     {
-        public ICollection<FertilizingWorkFertilizer> FertilizingWorkFertilizers { get; set; } = new List<FertilizingWorkFertilizer>();
+        public ICollection<FertilizingWorkFertilizerDto> FertilizingWorkFertilizers { get; set; } = new List<FertilizingWorkFertilizerDto>();
     }
-    public class SprayingWork : FieldWork
+    public class SprayingWorkDto : FieldWorkDto
     {
-        public ICollection<SprayingWorkCropProtectionProduct> SprayingWorkCropProtectionProducts { get; set; } = new List<SprayingWorkCropProtectionProduct>();
+        public ICollection<SprayingWorkCropProtectionProductDto> SprayingWorkCropProtectionProducts { get; set; } = new List<SprayingWorkCropProtectionProductDto>();
     }
-    public class HarvestingWork : FieldWork
+    public class HarvestingWorkDto : FieldWorkDto
     {
         public decimal TotalYield { get; set; }
         public decimal? Moisture { get; set; }
-        public int UnitId { get; set; }
-        public int CropId { get; set; }
-        public required Crop Crop { get; set; }
-        public required Unit Unit { get; set; }
+        public required CropDto Crop { get; set; }
+        public required string unitName { get; set; }
     }
-    public class OtherWork : FieldWork
+    public class OtherWorkDto : FieldWorkDto
     {
 
     }

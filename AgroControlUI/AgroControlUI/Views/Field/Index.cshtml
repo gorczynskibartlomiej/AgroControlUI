@@ -1,0 +1,36 @@
+﻿@model IEnumerable<AgroControlUI.DTOs.FarmData.FieldDto>
+
+@{
+    ViewData["Title"] = "Lista Pól";
+}
+
+<h1>@ViewData["Title"]</h1>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Nazwa</th>
+            <th>Opis</th>
+            <th>Rodzaj gleby</th>
+            <th>Powierzchnia</th>
+            <th>Opcje</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var field in Model)
+        {
+            <tr>
+                <td>@field.Name</td>
+                <td>@field.Description</td>
+                <td>@field.SoilType</td>
+                <td>@field.Area ha</td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@field.Id" class="btn btn-primary btn-sm">Edytuj</a>
+                    <a asp-action="Delete" asp-route-id="@field.Id" class="btn btn-danger btn-sm">Usuń</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<a asp-action="Create" class="btn btn-success">Dodaj Nowe Pole</a>

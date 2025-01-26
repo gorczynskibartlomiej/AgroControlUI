@@ -1,0 +1,67 @@
+﻿@model AgroControlUI.DTOs.FarmData.FarmDto
+
+@{
+    ViewData["Title"] = "Farma - Edytuj";
+}
+
+<h1>@ViewData["Title"]</h1>
+@if (TempData["errorMessage"] != null)
+{
+    <div class="alert alert-danger">
+        @TempData["errorMessage"]
+    </div>
+}
+
+@if (TempData["successMessage"] != null)
+{
+    <div class="alert alert-success">
+        @TempData["successMessage"]
+    </div>
+}
+<form asp-action="Edit" method="post">
+    <input type="hidden" name="Id" value="@Model.Id" />
+
+    <div class="mb-3">
+        <label for="Name" class="form-label">Nazwa farmy</label>
+        <input type="text" class="form-control" id="Name" name="Name" value="@Model.Name" required />
+    </div>
+
+    <div class="mb-3">
+        <label for="FarmNumber" class="form-label">Numer farmy</label>
+        <input type="text" class="form-control" id="FarmNumber" name="FarmNumber" value="@Model.FarmNumber" />
+    </div>
+
+    <div class="mb-3">
+        <label for="Description" class="form-label">Opis</label>
+        <textarea class="form-control" id="Description" name="Description">@Model.Description</textarea>
+    </div>
+
+    <div class="mb-3">
+        <label for="TotalArea" class="form-label">Powierzchnia (ha)</label>
+        <input type="number" class="form-control" id="TotalArea" name="TotalArea" value="@Model.TotalArea" required />
+    </div>
+
+    <div class="mb-3">
+        <label for="YearEstablished" class="form-label">Rok założenia</label>
+        <input type="number" class="form-control" id="YearEstablished" name="YearEstablished" value="@Model.YearEstablished" required />
+    </div>
+
+    <div class="mb-3">
+        <label for="Adress" class="form-label">Adres</label>
+        <input type="text" class="form-control" id="Adress" name="Adress" value="@Model.Adress" required />
+    </div>
+
+    <div class="mb-3">
+        <label for="PostalCode" class="form-label">Kod pocztowy</label>
+        <input type="text" class="form-control" id="PostalCode" name="PostalCode" value="@Model.PostalCode" required />
+    </div>
+
+    <div class="mb-3">
+        <label for="City" class="form-label">Miasto</label>
+        <input type="text" class="form-control" id="City" name="City" value="@Model.City" required />
+    </div>
+
+    <button type="submit" class="btn btn-primary">Zapisz</button>
+</form>
+
+<a class="btn btn-secondary" href="@Url.Action("Index", "Farm")">Anuluj</a>

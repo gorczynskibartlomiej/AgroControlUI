@@ -1,0 +1,35 @@
+﻿@using AgroControlUI.DTOs.FieldWorks
+@model HarvestingWorkDto
+
+<h1>Dodaj pracę - Zbiory</h1>
+
+<form asp-action="CreateHarvesting" method="post">
+    <div class="mb-3">
+        <label for="FieldId" class="form-label">Pole</label>
+        <select class="form-control" id="FieldId" asp-for="FieldId">
+            <option value="">Wybierz pole</option>
+            @foreach (var field in ViewBag.Fields as SelectListItem[])
+            {
+                <option value="@field.Value">@field.Text</option>
+            }
+        </select>
+    </div>
+
+    <div class="mb-3">
+        <label for="CropId" class="form-label">Roślina</label>
+        <select class="form-control" id="CropId" asp-for="Crop">
+            <option value="">Wybierz roślinę</option>
+            @foreach (var crop in ViewBag.Crops as SelectListItem[])
+            {
+                <option value="@crop.Value">@crop.Text</option>
+            }
+        </select>
+    </div>
+
+    <div class="mb-3">
+        <label for="TotalYield" class="form-label">Plon</label>
+        <input type="number" class="form-control" id="TotalYield" asp-for="TotalYield" />
+    </div>
+
+    <button type="submit" class="btn btn-primary">Zapisz</button>
+</form>

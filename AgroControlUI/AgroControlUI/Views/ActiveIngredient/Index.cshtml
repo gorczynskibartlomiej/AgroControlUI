@@ -1,0 +1,47 @@
+﻿@model List<AgroControlUI.DTOs.CropProtectionProducts.ActiveIngredientDto>
+
+@{
+    ViewData["Title"] = "Składniki aktywne";
+}
+
+<h1>Składniki aktywne</h1>
+
+@if (TempData["errorMessage"] != null)
+{
+    <div class="alert alert-danger">
+        @TempData["errorMessage"]
+    </div>
+}
+
+@if (TempData["successMessage"] != null)
+{
+    <div class="alert alert-success">
+        @TempData["successMessage"]
+    </div>
+}
+
+<p>
+    <a href="@Url.Action("Create")" class="btn btn-primary">Dodaj nowy</a>
+</p>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Nazwa</th>
+            <th>Opis</th>
+            <th>Akcje</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var ingredient in Model)
+        {
+            <tr>
+                <td>@ingredient.Name</td>
+                <td>
+                    <a href="@Url.Action("Edit", new { id = ingredient.Id })" class="btn btn-warning">Edytuj</a>
+                    <a href="@Url.Action("Delete", new { id = ingredient.Id })" class="btn btn-danger">Usuń</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

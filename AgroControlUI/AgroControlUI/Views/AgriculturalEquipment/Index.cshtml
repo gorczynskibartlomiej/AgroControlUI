@@ -1,0 +1,47 @@
+﻿@model List<AgroControlUI.DTOs.FarmData.AgriculturalEquipmentDto>
+
+@{
+    ViewData["Title"] = "Sprzęt rolniczy";
+}
+
+<h1>Sprzęt rolniczy</h1>
+
+@if (TempData["errorMessage"] != null)
+{
+    <div class="alert alert-danger">
+        @TempData["errorMessage"]
+    </div>
+}
+
+@if (TempData["successMessage"] != null)
+{
+    <div class="alert alert-success">
+        @TempData["successMessage"]
+    </div>
+}
+
+<p>
+    <a href="@Url.Action("Create")" class="btn btn-primary">Dodaj nowy sprzęt rolniczy</a>
+</p>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Nazwa</th>
+            <th>Typ</th>
+            <th>Akcje</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var equipment in Model)
+        {
+            <tr>
+                <td>@equipment.Name</td>
+                <td>
+                    <a href="@Url.Action("Edit", new { id = equipment.Id })" class="btn btn-warning">Edytuj</a>
+                    <a href="@Url.Action("Delete", new { id = equipment.Id })" class="btn btn-danger">Usuń</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

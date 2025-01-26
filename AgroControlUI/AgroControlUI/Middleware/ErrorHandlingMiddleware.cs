@@ -8,8 +8,10 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ViewFeatures;
 
-namespace AgroControlApi.Middleware
+namespace AgroControlUI.Middleware
 {
     public class ErrorHandlingMiddleware
     {
@@ -41,12 +43,14 @@ namespace AgroControlApi.Middleware
             string message = "An unexpected error occurred.";
             string details = exception.Message;
 
-            // Obsługuje błąd 401 (Unauthorized)
+            
             if (exception is HttpRequestException httpEx && httpEx.StatusCode == HttpStatusCode.Unauthorized)
             {
                 statusCode = HttpStatusCode.Unauthorized;
                 message = "Authentication failed. Please log in.";
                 await context.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+                var tempData = context.Items["TempData"] as ITempDataDictionary;
+                tempData["errorMessage"] = "You are not authorized to view this page. Please log in.";
                 context.Response.Redirect("/Account/Login");
             }
                 return;            

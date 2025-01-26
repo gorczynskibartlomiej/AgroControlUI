@@ -1,0 +1,20 @@
+﻿@using AgroControlUI.DTOs.Fertilizers
+@model FertilizerDto
+
+@{
+    ViewData["Title"] = "Dodaj Fertylizator";
+}
+
+<h2>@ViewData["Title"]</h2>
+
+<form asp-action="Create">
+    <div class="form-group">
+        <label asp-for="Name" class="control-label"></label>
+        <input asp-for="Name" class="form-control" />
+        <span asp-validation-for="Name" class="text-danger"></span>
+    </div>
+
+
+    <button type="submit" class="btn btn-success">Zapisz</button>
+    <a href="@Url.Action("Index")" class="btn btn-secondary">Anuluj</a>
+</form>

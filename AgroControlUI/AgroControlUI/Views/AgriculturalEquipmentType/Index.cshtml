@@ -1,0 +1,47 @@
+﻿@model List<AgroControlUI.DTOs.ReferenceData.AgriculturalEquipmentTypeDto>
+
+@{
+    ViewData["Title"] = "Rodzaje sprzętu rolniczego";
+}
+
+<h1>Rodzaje sprzętu rolniczego</h1>
+
+@if (TempData["errorMessage"] != null)
+{
+    <div class="alert alert-danger">
+        @TempData["errorMessage"]
+    </div>
+}
+
+@if (TempData["successMessage"] != null)
+{
+    <div class="alert alert-success">
+        @TempData["successMessage"]
+    </div>
+}
+
+<p>
+    <a href="@Url.Action("Create")" class="btn btn-primary">Dodaj nowy</a>
+</p>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Nazwa</th>
+            <th>Opis</th>
+            <th>Akcje</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var equipmentType in Model)
+        {
+            <tr>
+                <td>@equipmentType.Name</td>
+                <td>
+                    <a href="@Url.Action("Edit", new { id = equipmentType.Id })" class="btn btn-warning">Edytuj</a>
+                    <a href="@Url.Action("Delete", new { id = equipmentType.Id })" class="btn btn-danger">Usuń</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

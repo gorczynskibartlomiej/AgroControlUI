@@ -1,0 +1,32 @@
+﻿@using AgroControlUI.DTOs.Fertilizers
+@model IEnumerable<FertilizerCategoryDto>
+
+@{
+    ViewData["Title"] = "Fertilizer Categories";
+}
+
+<h1>@ViewData["Title"]</h1>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Description</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var category in Model)
+        {
+            <tr>
+                <td>@category.Name</td>
+                <td>
+                    <a href="@Url.Action("Edit", new { id = category.Id })" class="btn btn-primary">Edit</a>
+                    <a href="@Url.Action("Delete", new { id = category.Id })" class="btn btn-danger">Delete</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<a href="@Url.Action("Create")" class="btn btn-success">Add New Category</a>

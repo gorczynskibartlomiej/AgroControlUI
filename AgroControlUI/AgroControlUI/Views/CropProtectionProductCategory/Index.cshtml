@@ -1,0 +1,47 @@
+﻿@model List<AgroControlUI.DTOs.CropProtectionProducts.CropProtectionProductCategoryDto>
+
+@{
+    ViewData["Title"] = "Kategorie produktów ochrony roślin";
+}
+
+<h1>Kategorie produktów ochrony roślin</h1>
+
+@if (TempData["errorMessage"] != null)
+{
+    <div class="alert alert-danger">
+        @TempData["errorMessage"]
+    </div>
+}
+
+@if (TempData["successMessage"] != null)
+{
+    <div class="alert alert-success">
+        @TempData["successMessage"]
+    </div>
+}
+
+<p>
+    <a href="@Url.Action("Create")" class="btn btn-primary">Dodaj nową kategorię</a>
+</p>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Nazwa</th>
+            <th>Opis</th>
+            <th>Akcje</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var category in Model)
+        {
+            <tr>
+                <td>@category.Name</td>
+                <td>
+                    <a href="@Url.Action("Edit", new { id = category.Id })" class="btn btn-warning">Edytuj</a>
+                    <a href="@Url.Action("Delete", new { id = category.Id })" class="btn btn-danger">Usuń</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

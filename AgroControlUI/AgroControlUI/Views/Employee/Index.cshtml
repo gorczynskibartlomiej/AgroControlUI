@@ -1,0 +1,54 @@
+﻿@model IEnumerable<AgroControlUI.DTOs.FarmData.EmployeeDto>
+
+@{
+    ViewData["Title"] = "Pracownicy";
+}
+
+<h1>@ViewData["Title"]</h1>
+@if (TempData["errorMessage"] != null)
+{
+    <div class="alert alert-danger">
+        @TempData["errorMessage"]
+    </div>
+}
+
+@if (TempData["successMessage"] != null)
+{
+    <div class="alert alert-success">
+        @TempData["successMessage"]
+    </div>
+}
+<table class="table">
+    <thead>
+        <tr>
+            <th>Imię</th>
+            <th>Nazwisko</th>
+            <th>Jednostka kosztów</th>
+            <th>Koszt</th>
+            <th>Aktywny</th>
+            <th>Data utworzenia</th>
+            <th>Data aktualizacji</th>
+            <th>Akcje</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var employee in Model)
+        {
+            <tr>
+                <td>@employee.FirstName</td>
+                <td>@employee.LastName</td>
+                <td>@employee.CostUnitName</td>
+                <td>@employee.Cost</td>
+                <td>@employee.IsActive ? "Tak" : "Nie"</td>
+                <td>@employee.CreatedOn</td>
+                <td>@employee.UpdatedOn</td>
+                <td>
+                    <a href="@Url.Action("Edit", "Employee", new { id = employee.Id })" class="btn btn-warning">Edytuj</a>
+                    <a href="@Url.Action("Delete", "Employee", new { id = employee.Id })" class="btn btn-danger">Usuń</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<a class="btn btn-primary" asp-area="" asp-controller="Employee" asp-action="Create">Dodaj pracownika</a>

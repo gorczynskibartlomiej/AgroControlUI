@@ -1,0 +1,22 @@
+﻿@model AgroControlUI.DTOs.FarmData.CropRotationPlannerDto
+
+@{
+    ViewData["Title"] = "Edytuj plan rotacji";
+}
+
+<h1>Edytuj plan rotacji</h1>
+
+<form asp-action="Edit" method="post">
+    <input type="hidden" asp-for="Id" />
+    <div class="form-group">
+        <label for="CropName">Uprawa</label>
+        <input type="text" class="form-control" id="CropName" name="CropName" value="@Model.CropName" required />
+    </div>
+    <div class="form-group">
+        <label for="Year">Rok</label>
+        <input type="number" class="form-control" id="Year" name="Year" value="@Model.Year" required />
+    </div>
+
+    <button type="submit" class="btn btn-primary">Zapisz</button>
+    <a href="@Url.Action("Index")" class="btn btn-secondary">Anuluj</a>
+</form>

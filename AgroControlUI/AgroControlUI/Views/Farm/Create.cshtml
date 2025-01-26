@@ -1,0 +1,62 @@
+﻿@model AgroControlUI.DTOs.FarmData.FarmDto
+
+@{
+    ViewData["Title"] = "Farma - Dodaj nową";
+}
+
+<h1>@ViewData["Title"]</h1>
+@if (TempData["errorMessage"] != null)
+{
+    <div class="alert alert-danger">
+        @TempData["errorMessage"]
+    </div>
+}
+
+@if (TempData["successMessage"] != null)
+{
+    <div class="alert alert-success">
+        @TempData["successMessage"]
+    </div>
+}
+<form asp-action="Create" method="post">
+    <div class="mb-3">
+        <label for="Name" class="form-label">Nazwa gospodarstwa</label>
+        <input type="text" class="form-control" id="Name" name="Name" required />
+    </div>
+
+    <div class="mb-3">
+        <label for="FarmNumber" class="form-label">Numer gospodarstwa</label>
+        <input type="text" class="form-control" id="FarmNumber" name="FarmNumber" />
+    </div>
+
+    <div class="mb-3">
+        <label for="Description" class="form-label">Opis</label>
+        <textarea class="form-control" id="Description" name="Description"></textarea>
+    </div>
+
+    <input type="hidden" id="TotalArea" name="TotalArea" value="0" />
+
+    <div class="mb-3">
+        <label for="YearEstablished" class="form-label">Rok założenia</label>
+        <input type="number" class="form-control" id="YearEstablished" name="YearEstablished" required />
+    </div>
+
+    <div class="mb-3">
+        <label for="Adress" class="form-label">Adres</label>
+        <input type="text" class="form-control" id="Adress" name="Adress" required />
+    </div>
+
+    <div class="mb-3">
+        <label for="PostalCode" class="form-label">Kod pocztowy</label>
+        <input type="text" class="form-control" id="PostalCode" name="PostalCode" required />
+    </div>
+
+    <div class="mb-3">
+        <label for="City" class="form-label">Miejscowość</label>
+        <input type="text" class="form-control" id="City" name="City" required />
+    </div>
+
+    <button type="submit" class="btn btn-primary">Zapisz</button>
+</form>
+
+<a class="btn btn-secondary" href="@Url.Action("Index", "Farm")">Anuluj</a>

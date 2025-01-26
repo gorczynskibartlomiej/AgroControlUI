@@ -1,0 +1,49 @@
+﻿@model List<AgroControlUI.DTOs.FarmData.CropRotationPlannerDto>
+
+@{
+    ViewData["Title"] = "Planowanie Rotacji Upraw";
+}
+
+<h1>Planowanie Rotacji Upraw</h1>
+
+@if (TempData["errorMessage"] != null)
+{
+    <div class="alert alert-danger">
+        @TempData["errorMessage"]
+    </div>
+}
+
+@if (TempData["successMessage"] != null)
+{
+    <div class="alert alert-success">
+        @TempData["successMessage"]
+    </div>
+}
+
+<p>
+    <a href="@Url.Action("Create")" class="btn btn-primary">Dodaj nowy plan rotacji</a>
+</p>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Uprawa</th>
+            <th>Rok</th>
+            <th>Sezon</th>
+            <th>Akcje</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var rotation in Model)
+        {
+            <tr>
+                <td>@rotation.CropName</td>
+                <td>@rotation.Year</td>
+                <td>
+                    <a href="@Url.Action("Edit", new { id = rotation.Id })" class="btn btn-warning">Edytuj</a>
+                    <a href="@Url.Action("Delete", new { id = rotation.Id })" class="btn btn-danger">Usuń</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

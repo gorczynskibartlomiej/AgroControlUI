@@ -1,0 +1,19 @@
+﻿@model AgroControlUI.DTOs.FarmData.EmployeeDto
+
+@{
+    ViewData["Title"] = "Usuń Pracownika";
+}
+
+<h1>@ViewData["Title"]</h1>
+
+<div>
+    <h3>Czy na pewno chcesz usunąć pracownika @Model.FirstName @Model.LastName?</h3>
+    <p>Usunięcie pracownika jest nieodwracalne.</p>
+</div>
+
+<form asp-action="DeleteConfirmed" method="post">
+    <input type="hidden" name="id" value="@Model.Id" />
+    <button type="submit" class="btn btn-danger">Usuń</button>
+</form>
+
+<a href="@Url.Action("Index", "Employee")" class="btn btn-secondary">Anuluj</a>

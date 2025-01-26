@@ -1,0 +1,57 @@
+﻿@model IEnumerable<AgroControlUI.DTOs.FieldWorks.FieldWorkDto>
+
+<h1>Prace Polowe</h1>
+
+<div>
+    <form method="get">
+        <div>
+            <label>Filtruj według typu:</label>
+            <select name="filterType">
+                <option value="">Wszystkie</option>
+                <option value="fertilizing">Nawożenie</option>
+                <option value="spraying">Oprysk</option>
+                <option value="harvesting">Zbiory</option>
+                <option value="other">Inne</option>
+            </select>
+        </div>
+        <div>
+            <label>Filtruj według zaplanowane:</label>
+            <select name="isPlanned">
+                <option value="">Wszystkie</option>
+                <option value="true">Zaplanowane</option>
+                <option value="false">Wykonane</option>
+            </select>
+        </div>
+        <button type="submit">Filtruj</button>
+    </form>
+</div>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Id</th>
+            <th>Typ</th>
+            <th>Opis</th>
+            <th>Czas rozpoczęcia</th>
+            <th>Zaplanowane</th>
+            <th>Opcje</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var fieldWork in Model)
+        {
+            <tr>
+                <td>@fieldWork.Id</td>
+                <td>@fieldWork.Description</td>
+                <td>@fieldWork.StartTime</td>
+                <td>@fieldWork.IsPlanned</td>
+                <td>
+                    <a href="@Url.Action("Details", "FieldWork", new { id = fieldWork.Id })">Szczegóły</a> |
+                    <a href="@Url.Action("Delete", "FieldWork", new { id = fieldWork.Id })" onclick="return confirm('Czy na pewno chcesz usunąć?')">Usuń</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<a href="@Url.Action("Create", "FieldWork")" class="btn btn-primary">Dodaj pracę</a>

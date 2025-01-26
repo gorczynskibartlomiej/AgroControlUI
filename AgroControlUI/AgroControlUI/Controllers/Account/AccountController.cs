@@ -27,7 +27,7 @@ public class AccountController : Controller
         return View();
     }
     [HttpPost]
-    public async Task<IActionResult> LoginAsync(LoginModel login)
+    public async Task<IActionResult> LoginAsync(LoginModelDto login)
     {
         if (!ModelState.IsValid)
         {
@@ -36,7 +36,6 @@ public class AccountController : Controller
 
         try
         {
-
             var endpoint = "/login";
             var content = JsonConvert.SerializeObject(login);
             var stringContent = new StringContent(content, Encoding.UTF8, "application/json");
@@ -47,22 +46,7 @@ public class AccountController : Controller
             var token = (string)json.accessToken;
             var refreshToken = (string)json.refreshToken;
             var expiresIn = (int)json.expiresIn;
-            endpoint = $"/api/Admin/{login.Email}";
-            //var userData = _services.GetFromApi<List<string>>(endpoint, _client, token);
 
-            //HttpContext.Session.SetString("token", token);
-
-            //var firstLogin = Boolean.Parse(userData[1]);
-            //if (firstLogin)
-            //{
-            //    TempData["UserName"] = login.Email;
-            //    TempData["UserRole"] = userData[0];
-            //    TempData["token"] = token;
-            //    TempData["refreshToken"] = refreshToken;
-            //    return RedirectToAction("ResetPassword", "Identity");
-            //}
-            //else
-            //{
             var claims = new[]
             {
                   new Claim(ClaimTypes.Name, login.Email)
@@ -83,24 +67,29 @@ public class AccountController : Controller
             HttpContext.Response.Cookies.Append("token", token, cookieOptions);
             cookieOptions.Expires = DateTimeOffset.UtcNow.AddSeconds(expiresIn);
             HttpContext.Response.Cookies.Append("refreshToken", refreshToken, cookieOptions);
-
-            return RedirectToAction("Index", "Home");
+            TempData["successMessage"] = "Zalgowano pomyślnie.";
+            return RedirectToAction("Select", "Farm");
         }
         catch (HttpRequestException ex)
         {
             if (ex.StatusCode == HttpStatusCode.Unauthorized)
             {
-                TempData["loginError"] = "Błędne dane logowania";
+                TempData["errorMessage"] = "Błędne dane logowania.";
             }
             else
             {
-                TempData["loginError"] = "Błąd logowania";
+                TempData["errorMessage"] = "Błąd logowania. Spróbuj ponownie później.";
             }
             return View();
         }
     }
+    [HttpGet]
+    public IActionResult Register()
+    {
+        return View();
+    }
     [HttpPost]
-    public async Task<IActionResult> RegisterAsync(RegisterModel register)
+    public async Task<IActionResult> RegisterAsync(RegisterModelDto register)
     {
         if (!ModelState.IsValid)
         {
@@ -117,15 +106,17 @@ public class AccountController : Controller
 
             if (response.IsSuccessStatusCode)
             {
-                return RedirectToAction("Login", "Account");
+                var loginModel = new LoginModelDto { Email = register.Email, Password = register.Password};
+                LoginAsync(loginModel);
+                return RedirectToAction("Select", "Farm");
             }
 
-            TempData["registerError"] = "Registration failed. Please try again.";
+            TempData["errorMessage"] = "Wystąpił błąd podczas rejestracji użytkownika. Spróbuj ponownie później.";
             return View(register);
         }
         catch (HttpRequestException)
         {
-            TempData["registerError"] = "An error occurred while processing your request.";
+            TempData["errorMessage"] = "Wystąpił błąd podczas rejestracji użytkownika. Spróbuj ponownie później.";
             return View(register);
         }
     }

@@ -1,0 +1,16 @@
+﻿@using AgroControlUI.DTOs.Fertilizers
+@model FertilizerCategoryDto
+
+@{
+    ViewData["Title"] = "Delete Fertilizer Category";
+}
+
+<h1>@ViewData["Title"]</h1>
+
+<p>Are you sure you want to delete the category <strong>@Model.Name</strong>?</p>
+
+<form asp-action="DeleteConfirmed" method="post">
+    <input type="hidden" name="Id" value="@Model.Id" />
+    <button type="submit" class="btn btn-danger">Delete</button>
+    <a href="@Url.Action("Index")" class="btn btn-secondary">Cancel</a>
+</form>

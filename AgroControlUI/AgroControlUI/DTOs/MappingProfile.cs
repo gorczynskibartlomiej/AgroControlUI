@@ -11,7 +11,7 @@ using AgroControlUI.Models.FieldWorks;
 using AgroControlUI.Models.ReferenceData;
 using AgroControlUI.Models.UserManagement;
 using AutoMapper;
-namespace AgroControlApi.DTOs
+namespace AgroControlUI.DTOs
 {
     public class MappingProfile : Profile
     {

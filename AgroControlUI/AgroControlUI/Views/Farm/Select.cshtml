@@ -1,26 +1,156 @@
 ﻿@model List<AgroControlUI.DTOs.UserManagement.AgroControlUserFarmDto>
 
-<div class="container mt-4">
-    <h1>Your Farms</h1>
-    <div class="row">
-        @foreach (var farm in Model)
-        {
-            <div class="col-md-4 mb-4">
-                <div class="card">
-                    <div class="card-header">
-                        <h4>@farm.FarmName</h4>
-                    </div>
-                    <div class="card-body">
-                        <p><strong>Role in this Farm:</strong> @farm.RoleName</p>
+<style>
+    /* Nagłówek */
+    .header-title {
+        font-size: 2.5rem;
+        font-weight: 700;
+        color: #444D89;
+        text-align: center;
+        margin-bottom: 2rem;
+    }
 
-                        <!-- Formularz do ustawienia farmy -->
-                        <form method="post" action="@Url.Action("SetCurrentFarm", "Farm")">
-                            <input type="hidden" name="farmId" value="@farm.FarmId" />
-                            <button type="submit" class="btn btn-primary">Select this Farm</button>
-                        </form>
-                    </div>
-                </div>
-            </div>
+    /* Styl kafelków */
+    .card {
+        border-radius: 20px; /* Zaokrąglenie całego kafelka */
+        height: 300px;
+        transition: transform 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease;
+        text-decoration: none;
+        overflow: hidden;
+        box-shadow: 0px 4px 6px rgba(0, 0, 0.1, 0.2);
+    }
+
+        .card:hover {
+            box-shadow: 0 0 30px rgba(68, 77, 137, 0.8);
+            transform: translateY(-10px);
+            background-color: #f4f6fa;
         }
+
+    /* Górna część kafelka */
+    .card-header {
+        background-color: #444D89;
+        color: white;
+        text-align: center;
+        font-size: 1.5rem;
+        font-weight: 700;
+        padding: 0.75rem;
+        border-radius: 20px 20px 0 0;
+    }
+
+    /* Ikona farmy */
+    .farm-icon {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100px;
+    }
+
+        .farm-icon i {
+            font-size: 2.5rem;
+            color: #444D89;
+            transition: color 0.3s ease;
+        }
+
+    .card:hover .farm-icon i {
+        color: #6675c3;
+    }
+
+    /* Treści w dolnej części kafelka */
+    .card-body {
+        text-align: center;
+    }
+
+        .card-body p {
+            margin: 0.5rem 0;
+            font-size: 1rem;
+            color: #6c757d;
+        }
+
+    .info-text {
+        font-size: 0.9rem;
+        color: #6c757d;
+    }
+
+    /* Kafelek "Dodaj nową farmę" */
+    .add-farm-card {
+        border: 2px dashed #444D89;
+        text-align: center;
+        cursor: pointer;
+    }
+
+        .add-farm-card h1 {
+            font-size: 3rem;
+            color: #444D89;
+            margin-bottom: 1rem;
+        }
+
+        .add-farm-card h4 {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: #444D89;
+        }
+
+        .add-farm-card:hover {
+            background-color: #f4f6fa;
+        }
+
+    @@media (max-width: 768px) {
+        .card {
+            height: auto;
+        }
+
+        .card-header {
+            font-size: 1.3rem;
+        }
+
+        .card-body p {
+            font-size: 0.9rem;
+        }
+
+        .add-farm-card h1 {
+            font-size: 2.5rem;
+        }
+
+        .add-farm-card h4 {
+            font-size: 1.1rem;
+        }
+    }
+</style>
+
+<div class="container mt-5">
+    <h1 class="header-title">Twoje Gospodarstwa</h1>
+    <div class="row justify-content-center">
+        @if (Model != null)
+        {
+            @foreach (var farm in Model)
+            {
+                <div class="col-lg-4 col-md-6 mb-4">
+                    <form method="post" action="@Url.Action("SetCurrentFarm", "Farm")" class="card text-decoration-none" style="cursor: pointer;" onsubmit="return true;">
+                        <input type="hidden" name="farmId" value="@farm.FarmId" />
+                        <div class="card-header">
+                            <h3>@farm.FarmName</h3>
+                        </div>
+                        <div class="card-body" onclick="this.closest('form').submit();">
+                            <div class="farm-icon">
+                                <i class="fas fa-tractor"></i>
+                            </div>
+                            <p><strong>Rola na tej farmie:</strong> @farm.RoleName</p>
+                            <p class="info-text">Kliknij, aby wybrać to gospodarstwo</p>
+                        </div>
+                    </form>
+                </div>
+            }
+        }
+
+        <!-- Kafelek do dodania nowej farmy -->
+        <div class="col-lg-4 col-md-6 mb-4">
+            <a href="@Url.Action("Create", "Farm")" class="card add-farm-card text-decoration-none">
+                <div class="card-body">
+                    <h1>+</h1>
+                    <h4>Dodaj nową farmę</h4>
+                    <p class="info-text">Kliknij, aby utworzyć nowe gospodarstwo</p>
+                </div>
+            </a>
+        </div>
     </div>
 </div>
