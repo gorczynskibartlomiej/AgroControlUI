@@ -48,7 +48,7 @@ body {
 .dropdown-menu .dropdown-item {
     background-color: #28a745;
     padding: 0.5rem 1rem;
-    color:#fff;
+    color: #fff;
 }
 .dropdown-menu .dropdown-item:hover {
     transition: all 0.5s ease;
