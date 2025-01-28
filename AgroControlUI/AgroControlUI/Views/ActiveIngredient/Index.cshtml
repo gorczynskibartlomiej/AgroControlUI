@@ -1,47 +1,35 @@
 ﻿@model List<AgroControlUI.DTOs.CropProtectionProducts.ActiveIngredientDto>
 
-@{
-    ViewData["Title"] = "Składniki aktywne";
-}
+<link rel="stylesheet" href="~/css/indexList.css">
+<h1 class="blue">Substancje aktywne</h1>
 
-<h1>Składniki aktywne</h1>
-
-@if (TempData["errorMessage"] != null)
-{
-    <div class="alert alert-danger">
-        @TempData["errorMessage"]
-    </div>
-}
-
-@if (TempData["successMessage"] != null)
-{
-    <div class="alert alert-success">
-        @TempData["successMessage"]
-    </div>
-}
-
-<p>
-    <a href="@Url.Action("Create")" class="btn btn-primary">Dodaj nowy</a>
-</p>
-
-<table class="table table-striped">
-    <thead>
-        <tr>
-            <th>Nazwa</th>
-            <th>Opis</th>
-            <th>Akcje</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var ingredient in Model)
+<div class="wrapper">
+    <p>
+        <a asp-action="Create" class="add-btn btn"><img src="~/images/plus-solid.svg"/>Dodaj substancję aktywną</a>
+    </p>
+    <div class="table">
+        <div class="row header">
+            <div class="cell">
+                Nazwa substancji aktywnej
+            </div>
+            <div class="cell">
+                Akcje
+            </div>
+        </div>
+        @foreach (var activeIngredient in Model)
         {
-            <tr>
-                <td>@ingredient.Name</td>
-                <td>
-                    <a href="@Url.Action("Edit", new { id = ingredient.Id })" class="btn btn-warning">Edytuj</a>
-                    <a href="@Url.Action("Delete", new { id = ingredient.Id })" class="btn btn-danger">Usuń</a>
-                </td>
-            </tr>
+            <div class="row">
+                <div class="cell" data-title="Nazwa substancji aktywnej">
+                    @activeIngredient.Name
+                </div>
+                <div class="cell" data-title="Akcje">
+                    <div class="action-buttons">
+                        <a asp-action="Edit" asp-route-id="@activeIngredient.Id" class="btn edit-btn"><img src="~/images/edit.svg" />Edytuj</a>
+                        <a asp-action="Delete" asp-route-id="@activeIngredient.Id" class="btn delete-btn"><img src="~/images/delete.svg"/>Usuń</a>
+                    </div>
+                </div>
+            </div>
         }
-    </tbody>
-</table>
+
+    </div>
+</div>

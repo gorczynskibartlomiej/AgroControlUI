@@ -1,47 +1,82 @@
 ﻿@model List<AgroControlUI.DTOs.CropProtectionProducts.CropProtectionProductDto>
 
-@{
-    ViewData["Title"] = "Produkty ochrony roślin";
-}
+<link rel="stylesheet" href="~/css/indexList.css">
 
-<h1>Produkty ochrony roślin</h1>
+<h1 class="blue">Środki ochrony roślin</h1>
 
-@if (TempData["errorMessage"] != null)
-{
-    <div class="alert alert-danger">
-        @TempData["errorMessage"]
-    </div>
-}
-
-@if (TempData["successMessage"] != null)
-{
-    <div class="alert alert-success">
-        @TempData["successMessage"]
-    </div>
-}
-
-<p>
-    <a href="@Url.Action("Create")" class="btn btn-primary">Dodaj nowy produkt ochrony roślin</a>
-</p>
-
-<table class="table table-striped">
-    <thead>
-        <tr>
-            <th>Nazwa</th>
-            <th>Kategoria</th>
-            <th>Akcje</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var product in Model)
+<div class="wrapper">
+    <p>
+        <a asp-action="Create" class="add-btn btn"><img src="~/images/plus-solid.svg" />Dodaj środek ochrony roślin</a>
+    </p>
+    <div class="table">
+        <div class="row header blue">
+            <div class="cell">
+                Nazwa środka ochrony roślin
+            </div>
+            <div class="cell">
+                Producent
+            </div>
+            <div class="cell">
+                Kategorie
+            </div>
+            <div class="cell">
+                Skład
+            </div>
+            <div class="cell">
+                Rośliny
+            </div>
+            <div class="cell">
+                Akcje
+            </div>
+        </div>
+        @foreach (var cropProtectionProduct in Model)
         {
-            <tr>
-                <td>@product.Name</td>
-                <td>
-                    <a href="@Url.Action("Edit", new { id = product.Id })" class="btn btn-warning">Edytuj</a>
-                    <a href="@Url.Action("Delete", new { id = product.Id })" class="btn btn-danger">Usuń</a>
-                </td>
-            </tr>
+            <div class="row">
+                <div class="cell" data-title="Nazwa środka ochrony roślin">
+                    @cropProtectionProduct.Name
+                </div>
+                <div class="cell" data-title="Producent">
+                    @cropProtectionProduct.ProducerName
+                </div>
+                <div class="cell" data-title="Kategorie">
+                    @foreach (var cropProtectionProductCategory in cropProtectionProduct.cropProtectionProductCategories)
+                    {
+                        @($"{cropProtectionProductCategory.Name}")
+                        @if (cropProtectionProductCategory != cropProtectionProduct.cropProtectionProductCategories.Last())
+                        {
+                            @(", ")
+                        }
+                    }
+                </div>
+                <div class="cell" data-title="Skład">
+                    @foreach (var cropProtectionProductComponent in cropProtectionProduct.cropProtectionProductComponents)
+                    {
+                        @($"{cropProtectionProductComponent.ActiveIngredientName} ({cropProtectionProductComponent.Concentration}g)")
+                        @if (cropProtectionProductComponent != cropProtectionProduct.cropProtectionProductComponents.Last())
+                        {
+                            @(", ")
+                        }
+                    }
+                </div>
+                <div class="cell" data-title="Rośliny">
+                    @foreach (var cropProtectionProductCrop in cropProtectionProduct.cropProtectionProductCrops)
+                    {
+                        @($"{cropProtectionProductCrop.Name}")
+                        @if (cropProtectionProductCrop != cropProtectionProduct.cropProtectionProductCrops.Last())
+                        {
+                            @(", ")
+                        }
+                    }
+                </div>
+                <div class="cell" data-title="Akcje">
+                    <div class="action-buttons">
+                        <a asp-action="Details" asp-route-id="@cropProtectionProduct.Id" class="btn cancel-btn"><img src="~/images/details.svg" />Edytuj</a>
+                        <a asp-action="Edit" asp-route-id="@cropProtectionProduct.Id" class="btn edit-btn"><img src="~/images/edit.svg" />Edytuj</a>
+                        <a asp-action="Delete" asp-route-id="@cropProtectionProduct.Id" class="btn delete-btn"><img src="~/images/delete.svg" />Usuń</a>
+                    </div>
+                </div>
+            </div>
         }
-    </tbody>
-</table>
+
+    </div>
+</div>

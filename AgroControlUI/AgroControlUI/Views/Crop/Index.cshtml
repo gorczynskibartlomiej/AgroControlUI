@@ -1,40 +1,36 @@
 ﻿@model IEnumerable<AgroControlUI.DTOs.ReferenceData.CropDto>
 
-@{
-    ViewData["Title"] = "View";
-}
+<link rel="stylesheet" href="~/css/indexList.css">
 
-<h1>View</h1>
+<h1 class="yellow">Rodzaje upraw</h1>
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Id)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Name)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Id)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Name)
-            </td>
-            <td>
-                @Html.ActionLink("Edit", "Edit", new {  id=item.Id  }) |
-                @Html.ActionLink("Delete", "Delete", new {  id=item.Id  })
-            </td>
-        </tr>
-}
-    </tbody>
-</table>
+<div class="wrapper">
+    <p>
+        <a asp-action="Create" class="add-btn btn"><img src="~/images/plus-solid.svg" />Dodaj rodzaj uprawy</a>
+    </p>
+    <div class="table">
+        <div class="row header yellow">
+            <div class="cell">
+                Nazwa uprawy
+            </div>
+            <div class="cell">
+                Akcje
+            </div>
+        </div>
+        @foreach (var crop in Model)
+        {
+            <div class="row">
+                <div class="cell" data-title="Nazwa uprawy">
+                    @crop.Name
+                </div>
+                <div class="cell" data-title="Akcje">
+                    <div class="action-buttons">
+                        <a asp-action="Edit" asp-route-id="@crop.Id" class="btn edit-btn"><img src="~/images/edit.svg" />Edytuj</a>
+                        <a asp-action="Delete" asp-route-id="@crop.Id" class="btn delete-btn"><img src="~/images/delete.svg" />Usuń</a>
+                    </div>
+                </div>
+            </div>
+        }
+
+    </div>
+</div>

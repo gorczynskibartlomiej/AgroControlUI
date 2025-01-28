@@ -1,31 +1,62 @@
-﻿@using AgroControlUI.DTOs.Fertilizers
-@model IEnumerable<FertilizerDto>
+﻿@model List<AgroControlUI.DTOs.Fertilizers.FertilizerDto>
 
-@{
-    ViewData["Title"] = "Fertylizer";
-}
+<link rel="stylesheet" href="~/css/indexList.css">
 
-<h2>@ViewData["Title"]</h2>
+<h1 class="green">Nawozy</h1>
 
-<table class="table">
-    <thead>
-        <tr>
-            <th>@Html.DisplayNameFor(model => model.Name)</th>
-            <th>Akcje</th>
-        </tr>
-    </thead>
-    <tbody>
+<div class="wrapper">
+    <p>
+        <a asp-action="Create" class="add-btn btn"><img src="~/images/plus-solid.svg" />Dodaj nawóz</a>
+    </p>
+    <div class="table">
+        <div class="row header green">
+            <div class="cell">
+                Nazwa nawozu
+            </div>
+            <div class="cell">
+                Producent
+            </div>
+            <div class="cell">
+                Kategoria
+            </div>
+            <div class="cell">
+                Skład
+            </div>
+            <div class="cell">
+                Akcje
+            </div>
+        </div>
         @foreach (var fertilizer in Model)
         {
-            <tr>
-                <td>@fertilizer.Name</td>
-                <td>
-                    <a href="@Url.Action("Edit", new { id = fertilizer.Id })" class="btn btn-primary">Edytuj</a>
-                    <a href="@Url.Action("Delete", new { id = fertilizer.Id })" class="btn btn-danger">Usuń</a>
-                </td>
-            </tr>
+            <div class="row">
+                <div class="cell" data-title="Nazwa nawozu">
+                    @fertilizer.Name
+                </div>
+                <div class="cell" data-title="Producent">
+                    @fertilizer.ProducerName
+                </div>
+                <div class="cell" data-title="Kategoria">
+                    @fertilizer.FertilizerCategoryName
+                </div>
+                <div class="cell" data-title="Skład">
+                    @foreach (var fertilizerComponent in fertilizer.fertilizerComponents)
+                    {
+                        @($"{fertilizerComponent.ChemicalElement} ({fertilizerComponent.ElementPercentage}%)")
+                        @if (fertilizerComponent != fertilizer.fertilizerComponents.Last())
+                        {
+                            @(", ")
+                        }
+                    }
+                </div>
+                <div class="cell" data-title="Akcje">
+                    <div class="action-buttons">
+                        <a asp-action="Details" asp-route-id="@fertilizer.Id" class="btn cancel-btn"><img src="~/images/details.svg" />Edytuj</a>
+                        <a asp-action="Edit" asp-route-id="@fertilizer.Id" class="btn edit-btn"><img src="~/images/edit.svg" />Edytuj</a>
+                        <a asp-action="Delete" asp-route-id="@fertilizer.Id" class="btn delete-btn"><img src="~/images/delete.svg" />Usuń</a>
+                    </div> 
+                </div>
+            </div>
         }
-    </tbody>
-</table>
 
-<a href="@Url.Action("Create")" class="btn btn-success">Dodaj nowy fertilizator</a>
+    </div>
+</div>

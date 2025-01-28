@@ -36,14 +36,14 @@ namespace AgroControlUI.Controllers.FarmData
         }
 
         // Create
-        [Authorize(Policy = "AdminOnly")]
+        [Authorize(Policy = "OwnerOrCoOwner")]
         [HttpGet]
         public IActionResult Create()
         {
             return View();
         }
 
-        [Authorize(Policy = "AdminOnly")]
+        [Authorize(Policy = "OwnerOrCoOwner")]
         [HttpPost]
         public async Task<IActionResult> Create(AgriculturalEquipmentDto equipmentDto)
         {
@@ -78,7 +78,7 @@ namespace AgroControlUI.Controllers.FarmData
         }
 
         // Delete
-        [Authorize(Policy = "AdminOnly")]
+        [Authorize(Policy = "OwnerOrCoOwner")]
         [HttpGet]
         public async Task<IActionResult> Delete(int id)
         {
@@ -107,7 +107,7 @@ namespace AgroControlUI.Controllers.FarmData
             }
         }
 
-        [Authorize(Policy = "AdminOnly")]
+        [Authorize(Policy = "OwnerOrCoOwner")]
         [HttpPost]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
@@ -135,7 +135,7 @@ namespace AgroControlUI.Controllers.FarmData
         }
 
         // Edit
-        [Authorize(Policy = "AdminOnly")]
+        [Authorize(Policy = "OwnerOrCoOwner")]
         [HttpGet]
         public async Task<IActionResult> Edit(int id)
         {
@@ -164,7 +164,7 @@ namespace AgroControlUI.Controllers.FarmData
             }
         }
 
-        [Authorize(Policy = "AdminOnly")]
+        [Authorize(Policy = "OwnerOrCoOwner")]
         [HttpPost]
         public async Task<IActionResult> Edit(AgriculturalEquipmentDto equipmentDto)
         {

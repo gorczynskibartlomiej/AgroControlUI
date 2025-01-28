@@ -1,1 +1,36 @@
-﻿
+﻿@model List<AgroControlUI.DTOs.ReferenceData.CostUnitDto>
+
+<link rel="stylesheet" href="~/css/indexList.css">
+
+<h1 class="yellow">Jednostki kosztów pracy</h1>
+
+<div class="wrapper">
+    <p>
+        <a asp-action="Create" class="add-btn btn"><img src="~/images/plus-solid.svg" />Dodaj jednostkę kosztów pracy</a>
+    </p>
+    <div class="table">
+        <div class="row header yellow">
+            <div class="cell">
+                Jednostki kosztów pracy
+            </div>
+            <div class="cell">
+                Akcje
+            </div>
+        </div>
+        @foreach (var costUnit in Model)
+        {
+            <div class="row">
+                <div class="cell" data-title="Jednostki kosztów pracy">
+                    @costUnit.Name
+                </div>
+                <div class="cell" data-title="Akcje">
+                    <div class="action-buttons">
+                        <a asp-action="Edit" asp-route-id="@costUnit.Id" class="btn edit-btn"><img src="~/images/edit.svg" />Edytuj</a>
+                        <a asp-action="Delete" asp-route-id="@costUnit.Id" class="btn delete-btn"><img src="~/images/delete.svg" />Usuń</a>
+                    </div>
+                </div>
+            </div>
+        }
+
+    </div>
+</div>

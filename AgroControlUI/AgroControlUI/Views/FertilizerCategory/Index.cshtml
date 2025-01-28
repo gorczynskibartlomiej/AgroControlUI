@@ -1,32 +1,36 @@
 ﻿@using AgroControlUI.DTOs.Fertilizers
 @model IEnumerable<FertilizerCategoryDto>
 
-@{
-    ViewData["Title"] = "Fertilizer Categories";
-}
+<link rel="stylesheet" href="~/css/indexList.css">
+<h1 class="green">Kategorie nawozów</h1>
 
-<h1>@ViewData["Title"]</h1>
-
-<table class="table">
-    <thead>
-        <tr>
-            <th>Name</th>
-            <th>Description</th>
-            <th>Actions</th>
-        </tr>
-    </thead>
-    <tbody>
+<div class="wrapper">
+    <p>
+        <a asp-controller="FertilizerCategory" asp-action="Create" class="add-btn btn"><img src="~/images/plus-solid.svg"/>Dodaj kategorię nawozów</a>
+    </p>
+    <div class="table">
+        <div class="row header green">
+            <div class="cell">
+                Nazwa kategorii
+            </div>
+            <div class="cell">
+                Akcje
+            </div>
+        </div>
         @foreach (var category in Model)
         {
-            <tr>
-                <td>@category.Name</td>
-                <td>
-                    <a href="@Url.Action("Edit", new { id = category.Id })" class="btn btn-primary">Edit</a>
-                    <a href="@Url.Action("Delete", new { id = category.Id })" class="btn btn-danger">Delete</a>
-                </td>
-            </tr>
+            <div class="row">
+                <div class="cell" data-title="Nazwa kategorii">
+                    @category.Name
+                </div>
+                <div class="cell" data-title="Akcje">
+                    <div class="action-buttons">
+                        <a asp-action="Edit" asp-route-id="@category.Id" class="btn edit-btn"><img src="~/images/edit.svg" />Edytuj</a>
+                        <a asp-action="Delete" asp-route-id="@category.Id" class="btn delete-btn"><img src="~/images/delete.svg"/>Usuń</a>
+                    </div>
+                </div>
+            </div>
         }
-    </tbody>
-</table>
 
-<a href="@Url.Action("Create")" class="btn btn-success">Add New Category</a>
+    </div>
+</div>

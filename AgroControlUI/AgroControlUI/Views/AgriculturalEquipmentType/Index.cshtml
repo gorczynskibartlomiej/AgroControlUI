@@ -1,47 +1,36 @@
 ﻿@model List<AgroControlUI.DTOs.ReferenceData.AgriculturalEquipmentTypeDto>
 
-@{
-    ViewData["Title"] = "Rodzaje sprzętu rolniczego";
-}
+<link rel="stylesheet" href="~/css/indexList.css">
 
-<h1>Rodzaje sprzętu rolniczego</h1>
+<h1 class="yellow">Rodzaje maszyn</h1>
 
-@if (TempData["errorMessage"] != null)
-{
-    <div class="alert alert-danger">
-        @TempData["errorMessage"]
-    </div>
-}
-
-@if (TempData["successMessage"] != null)
-{
-    <div class="alert alert-success">
-        @TempData["successMessage"]
-    </div>
-}
-
-<p>
-    <a href="@Url.Action("Create")" class="btn btn-primary">Dodaj nowy</a>
-</p>
-
-<table class="table table-striped">
-    <thead>
-        <tr>
-            <th>Nazwa</th>
-            <th>Opis</th>
-            <th>Akcje</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var equipmentType in Model)
+<div class="wrapper">
+    <p>
+        <a asp-action="Create" class="add-btn btn"><img src="~/images/plus-solid.svg" />Dodaj rodzaj maszyn</a>
+    </p>
+    <div class="table">
+        <div class="row header yellow">
+            <div class="cell">
+                Nazwa rodzaju maszyn
+            </div>
+            <div class="cell">
+                Akcje
+            </div>
+        </div>
+        @foreach (var agriculturalEquipmentType in Model)
         {
-            <tr>
-                <td>@equipmentType.Name</td>
-                <td>
-                    <a href="@Url.Action("Edit", new { id = equipmentType.Id })" class="btn btn-warning">Edytuj</a>
-                    <a href="@Url.Action("Delete", new { id = equipmentType.Id })" class="btn btn-danger">Usuń</a>
-                </td>
-            </tr>
+            <div class="row">
+                <div class="cell" data-title="Nazwa rodzaju maszyn">
+                    @agriculturalEquipmentType.Name
+                </div>
+                <div class="cell" data-title="Akcje">
+                    <div class="action-buttons">
+                        <a asp-action="Edit" asp-route-id="@agriculturalEquipmentType.Id" class="btn edit-btn"><img src="~/images/edit.svg" />Edytuj</a>
+                        <a asp-action="Delete" asp-route-id="@agriculturalEquipmentType.Id" class="btn delete-btn"><img src="~/images/delete.svg" />Usuń</a>
+                    </div>
+                </div>
+            </div>
         }
-    </tbody>
-</table>
+
+    </div>
+</div>

@@ -1,47 +1,36 @@
 ﻿@model List<AgroControlUI.DTOs.CropProtectionProducts.CropProtectionProductCategoryDto>
 
-@{
-    ViewData["Title"] = "Kategorie produktów ochrony roślin";
-}
+<link rel="stylesheet" href="~/css/indexList.css">
 
-<h1>Kategorie produktów ochrony roślin</h1>
+<h1 class="blue">Kategorie środków ochrony roślin</h1>
 
-@if (TempData["errorMessage"] != null)
-{
-    <div class="alert alert-danger">
-        @TempData["errorMessage"]
-    </div>
-}
-
-@if (TempData["successMessage"] != null)
-{
-    <div class="alert alert-success">
-        @TempData["successMessage"]
-    </div>
-}
-
-<p>
-    <a href="@Url.Action("Create")" class="btn btn-primary">Dodaj nową kategorię</a>
-</p>
-
-<table class="table table-striped">
-    <thead>
-        <tr>
-            <th>Nazwa</th>
-            <th>Opis</th>
-            <th>Akcje</th>
-        </tr>
-    </thead>
-    <tbody>
+<div class="wrapper">
+    <p>
+        <a asp-action="Create" class="add-btn btn"><img src="~/images/plus-solid.svg" />Dodaj kategorię nawozów</a>
+    </p>
+    <div class="table">
+        <div class="row header blue">
+            <div class="cell">
+                Nazwa kategorii
+            </div>
+            <div class="cell">
+                Akcje
+            </div>
+        </div>
         @foreach (var category in Model)
         {
-            <tr>
-                <td>@category.Name</td>
-                <td>
-                    <a href="@Url.Action("Edit", new { id = category.Id })" class="btn btn-warning">Edytuj</a>
-                    <a href="@Url.Action("Delete", new { id = category.Id })" class="btn btn-danger">Usuń</a>
-                </td>
-            </tr>
+            <div class="row">
+                <div class="cell" data-title="Nazwa kategorii">
+                    @category.Name
+                </div>
+                <div class="cell" data-title="Akcje">
+                    <div class="action-buttons">
+                        <a asp-action="Edit" asp-route-id="@category.Id" class="btn edit-btn"><img src="~/images/edit.svg" />Edytuj</a>
+                        <a asp-action="Delete" asp-route-id="@category.Id" class="btn delete-btn"><img src="~/images/delete.svg" />Usuń</a>
+                    </div>
+                </div>
+            </div>
         }
-    </tbody>
-</table>
+
+    </div>
+</div>

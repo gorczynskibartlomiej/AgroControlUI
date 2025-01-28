@@ -8,7 +8,6 @@ namespace AgroControlUI.DTOs.CropProtectionProducts
         public int Id { get; set; }
         public required string Name { get; set; }
         public required string ProducerName { get; set; }
-        public string? Description { get; set; }
 
         public ICollection<CropDto> cropProtectionProductCrops = new List<CropDto>();
         public ICollection<CropProtectionProductComponentDto> cropProtectionProductComponents = new List<CropProtectionProductComponentDto>();
