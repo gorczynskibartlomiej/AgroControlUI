@@ -42,32 +42,35 @@ namespace AgroControlUI.Controllers.RefereneceData
         }
         [Authorize(Policy = "AdminOnly")]
         [HttpPost]
-        public IActionResult Create(CropDto cropDto)
+        public IActionResult Create(UnitDto unitDto)
         {
             if (!ModelState.IsValid)
             {
-                return View(cropDto);
+                return View(unitDto);
             }
             try
             {
-                var endpoint = "/api/crops";
-                var content = JsonConvert.SerializeObject(cropDto);
+                var token = HttpContext.Request.Cookies["token"];
+                _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
+                var endpoint = "/api/units";
+                var content = JsonConvert.SerializeObject(unitDto);
                 var stringContent = new StringContent(content, Encoding.UTF8, "application/json");
                 var response = _client.PostAsync(endpoint, stringContent).Result;
                 response.EnsureSuccessStatusCode();
-                //TempData["successMessage"] = "Etat został dodany";
+               
                 return RedirectToAction("Index");
 
             }
             catch (HttpRequestException ex)
             {
                 TempData["errorMessage"] = "Błąd żądania HTTP: " + ex.Message;
-                return View(cropDto);
+                return View(unitDto);
             }
             catch (Exception ex)
             {
                 TempData["errorMessage"] = "Wystąpił nieoczekiwany błąd: " + ex.Message;
-                return View(cropDto);
+                return View(unitDto);
             }
         }
 
@@ -78,12 +81,15 @@ namespace AgroControlUI.Controllers.RefereneceData
         {
             try
             {
-                var endpoint = $"/api/crops/{id}";
+                var token = HttpContext.Request.Cookies["token"];
+                _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
+                var endpoint = $"/api/units/{id}";
                 var response = _client.GetAsync(endpoint).Result;
                 response.EnsureSuccessStatusCode();
                 string content = response.Content.ReadAsStringAsync().Result;
-                var crop = JsonConvert.DeserializeObject<CropDto>(content);
-                return View(crop);
+                var unit = JsonConvert.DeserializeObject<UnitDto>(content);
+                return View(unit);
             }
             catch (HttpRequestException ex)
             {
@@ -102,7 +108,10 @@ namespace AgroControlUI.Controllers.RefereneceData
         {
             try
             {
-                var endpoint = $"/api/crops/{id}";
+                var token = HttpContext.Request.Cookies["token"];
+                _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
+                var endpoint = $"/api/units/{id}";
                 var result = _client.DeleteAsync(endpoint).Result;
                 result.EnsureSuccessStatusCode();
                 //TempData["successMessage"] = "Uprawa została usunięta";
@@ -127,12 +136,15 @@ namespace AgroControlUI.Controllers.RefereneceData
         {
             try
             {
-                var endpoint = $"/api/crops/{id}";
+                var token = HttpContext.Request.Cookies["token"];
+                _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
+                var endpoint = $"/api/units/{id}";
                 var response = _client.GetAsync(endpoint).Result;
                 response.EnsureSuccessStatusCode();
                 string content = response.Content.ReadAsStringAsync().Result;
-                var crop = JsonConvert.DeserializeObject<CropDto>(content);
-                return View(crop);
+                var unit = JsonConvert.DeserializeObject<UnitDto>(content);
+                return View(unit);
             }
             catch (HttpRequestException ex)
             {
@@ -147,16 +159,19 @@ namespace AgroControlUI.Controllers.RefereneceData
         }
         [Authorize(Policy = "AdminOnly")]
         [HttpPost]
-        public IActionResult Edit(CropDto cropDto)
+        public IActionResult Edit(UnitDto unitDto)
         {
             if (!ModelState.IsValid)
             {
-                return View(cropDto);
+                return View(unitDto);
             }
             try
             {
-                var endpoint = $"/api/crops/{cropDto.Id}";
-                var content = JsonConvert.SerializeObject(cropDto);
+                var token = HttpContext.Request.Cookies["token"];
+                _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
+                var endpoint = $"/api/units/{unitDto.Id}";
+                var content = JsonConvert.SerializeObject(unitDto);
                 var stringContent = new StringContent(content, Encoding.UTF8, "application/json");
                 var response = _client.PutAsync(endpoint, stringContent).Result;
                 response.EnsureSuccessStatusCode();
@@ -166,12 +181,12 @@ namespace AgroControlUI.Controllers.RefereneceData
             catch (HttpRequestException ex)
             {
                 TempData["errorMessage"] = "Błąd żądania HTTP: " + ex.Message;
-                return View(cropDto);
+                return View(unitDto);
             }
             catch (Exception ex)
             {
                 TempData["errorMessage"] = "Wystąpił nieoczekiwany błąd: " + ex.Message;
-                return View(cropDto);
+                return View(unitDto);
             }
         }
 

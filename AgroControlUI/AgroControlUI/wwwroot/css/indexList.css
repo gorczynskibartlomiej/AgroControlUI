@@ -136,7 +136,7 @@
     color: white;
     padding: 6px 12px;
     background-color: #28A745;
-    border-radius: 4px;
+    border-radius: 8px;
     margin-bottom: 20px;
 }
 
@@ -159,7 +159,7 @@
     text-decoration: none;
     color: white;
     padding: 6px 12px;
-    border-radius: 4px;
+    border-radius: 8px;
     background-color: #E0C465;
 }
     .edit-btn img {
@@ -180,7 +180,7 @@
     text-decoration: none;
     color: white;
     padding: 6px 12px;
-    border-radius: 4px;
+    border-radius: 8px;
     background-color: #E06570;
 }
     .delete-btn img {
@@ -201,7 +201,7 @@
     text-decoration: none;
     color: white;
     padding: 6px 12px;
-    border-radius: 4px;
+    border-radius: 8px;
     background-color: #6576E0;
 }
     .cancel-btn img {

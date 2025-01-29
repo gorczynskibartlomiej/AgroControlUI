@@ -50,6 +50,9 @@ namespace AgroControlUI.Controllers.Crop
             }
             try
             {
+                var token = HttpContext.Request.Cookies["token"];
+                _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
                 var endpoint = "/api/crops";
                 var content = JsonConvert.SerializeObject(cropDto);
                 var stringContent = new StringContent(content, Encoding.UTF8, "application/json");
@@ -78,6 +81,9 @@ namespace AgroControlUI.Controllers.Crop
         {
             try
             {
+                var token = HttpContext.Request.Cookies["token"];
+                _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
                 var endpoint = $"/api/crops/{id}";
                 var response = _client.GetAsync(endpoint).Result;
                 response.EnsureSuccessStatusCode();
@@ -102,6 +108,9 @@ namespace AgroControlUI.Controllers.Crop
         {
             try
             {
+                var token = HttpContext.Request.Cookies["token"];
+                _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
                 var endpoint = $"/api/crops/{id}";
                 var result = _client.DeleteAsync(endpoint).Result;
                 result.EnsureSuccessStatusCode();
@@ -127,6 +136,9 @@ namespace AgroControlUI.Controllers.Crop
         {
             try
             {
+                var token = HttpContext.Request.Cookies["token"];
+                _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
                 var endpoint = $"/api/crops/{id}";
                 var response = _client.GetAsync(endpoint).Result;
                 response.EnsureSuccessStatusCode();
@@ -155,6 +167,9 @@ namespace AgroControlUI.Controllers.Crop
             }
             try
             {
+                var token = HttpContext.Request.Cookies["token"];
+                _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
                 var endpoint = $"/api/crops/{cropDto.Id}";
                 var content = JsonConvert.SerializeObject(cropDto);
                 var stringContent = new StringContent(content, Encoding.UTF8, "application/json");

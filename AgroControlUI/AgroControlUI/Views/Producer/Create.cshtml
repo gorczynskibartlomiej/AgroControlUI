@@ -1,18 +1,18 @@
-﻿@model AgroControlUI.DTOs.ReferenceData.CropDto
+﻿@model AgroControlUI.DTOs.ReferenceData.ProducerDto
 
 <link rel="stylesheet" href="~/css/add.css">
 
 <div class="form-container">
     <div class="green-form">
         <form asp-action="Create" method="post">
-            <h1>Dodaj uprawę</h1>
+            <h1>Dodaj producenta</h1>
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
             <div class="group">
                 <input asp-for="Name" required />
                 <span class="highlight"></span>
                 <span class="bar"></span>
-                <label asp-for="Name">Nazwa uprawy</label>
+                <label asp-for="Name">Nazwa producenta</label>
                 <span asp-validation-for="Name" class="text-danger"></span>
             </div>
             <div class="action-buttons">
