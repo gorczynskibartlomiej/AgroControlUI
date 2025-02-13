@@ -1,99 +1,149 @@
 ﻿using AgroControlUI.Constants;
-using AgroControlUI.DTOs.CropProtectionProducts;
+using AgroControlUI.DTOs.ReferenceData;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using System.Net.Http.Headers;
 using System.Text;
 
-namespace AgroControlUI.Controllers.CropProtectionProducts
+namespace AgroControlUI.Controllers.Fuel
 {
-    public class CropProtectionProductCategoryController : Controller
+    public class FuelController : Controller
     {
         private readonly HttpClient _client;
-
-        public CropProtectionProductCategoryController(IHttpClientFactory httpClientFactory)
+        public FuelController(IHttpClientFactory httpClientFactory)
         {
             _client = httpClientFactory.CreateClient();
             _client.BaseAddress = new Uri(Options.ApiUrl);
         }
-
-        // GetAll
-        [Authorize(Policy = "AdminOnly")]
+        //GetAll
+        [Authorize]
         [HttpGet]
         public async Task<IActionResult> Index()
         {
             var token = HttpContext.Request.Cookies["token"];
             _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
-            var endpoint = "/api/cropProtectionProductCategories";
+            var endpoint = "/api/fuels";
             var result = await _client.GetAsync(endpoint);
             result.EnsureSuccessStatusCode();
 
             var content = await result.Content.ReadAsStringAsync();
-            var categories = JsonConvert.DeserializeObject<List<CropProtectionProductCategoryDto>>(content);
-            return View(categories);
+            var fuels = JsonConvert.DeserializeObject<List<FuelDto>>(content);
+            return View(fuels);
         }
 
-        // Create
+        //Create
         [Authorize(Policy = "AdminOnly")]
         [HttpGet]
         public IActionResult Create()
         {
             return View();
         }
-
         [Authorize(Policy = "AdminOnly")]
         [HttpPost]
-        public async Task<IActionResult> Create(CropProtectionProductCategoryDto categoryDto)
+        public IActionResult Create(FuelDto fuelDto)
         {
             if (!ModelState.IsValid)
             {
-                return View(categoryDto);
+                return View(fuelDto);
             }
-
             try
             {
                 var token = HttpContext.Request.Cookies["token"];
                 _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
-                var endpoint = "/api/cropProtectionProductCategories";
-                var content = JsonConvert.SerializeObject(categoryDto);
+                var endpoint = "/api/fuels";
+                var content = JsonConvert.SerializeObject(fuelDto);
                 var stringContent = new StringContent(content, Encoding.UTF8, "application/json");
-                var response = await _client.PostAsync(endpoint, stringContent);
+                var response = _client.PostAsync(endpoint, stringContent).Result;
                 response.EnsureSuccessStatusCode();
+                //TempData["successMessage"] = "Etat został dodany";
+                return RedirectToAction("Index");
 
+            }
+            catch (HttpRequestException ex)
+            {
+                TempData["errorMessage"] = "Błąd żądania HTTP: " + ex.Message;
+                return View(fuelDto);
+            }
+            catch (Exception ex)
+            {
+                TempData["errorMessage"] = "Wystąpił nieoczekiwany błąd: " + ex.Message;
+                return View(fuelDto);
+            }
+        }
+
+        //Delete
+        [Authorize(Policy = "AdminOnly")]
+        [HttpGet]
+        public IActionResult Delete(int id)
+        {
+            try
+            {
+                var token = HttpContext.Request.Cookies["token"];
+                _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
+                var endpoint = $"/api/fuels/{id}";
+                var response = _client.GetAsync(endpoint).Result;
+                response.EnsureSuccessStatusCode();
+                string content = response.Content.ReadAsStringAsync().Result;
+                var fuel = JsonConvert.DeserializeObject<FuelDto>(content);
+                return View(fuel);
+            }
+            catch (HttpRequestException ex)
+            {
+                TempData["errorMessage"] = "Błąd żądania HTTP: " + ex.Message;
+                return View();
+            }
+            catch (Exception ex)
+            {
+                TempData["errorMessage"] = "Wystąpił nieoczekiwany błąd: " + ex.Message;
+                return View();
+            }
+        }
+        [Authorize(Policy = "AdminOnly")]
+        [HttpPost]
+        public IActionResult DeleteConfirmed(int id)
+        {
+            try
+            {
+                var token = HttpContext.Request.Cookies["token"];
+                _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
+                var endpoint = $"/api/fuels/{id}";
+                var result = _client.DeleteAsync(endpoint).Result;
+                result.EnsureSuccessStatusCode();
                 return RedirectToAction("Index");
             }
             catch (HttpRequestException ex)
             {
                 TempData["errorMessage"] = "Błąd żądania HTTP: " + ex.Message;
-                return View(categoryDto);
+                return View();
             }
             catch (Exception ex)
             {
                 TempData["errorMessage"] = "Wystąpił nieoczekiwany błąd: " + ex.Message;
-                return View(categoryDto);
+                return View();
             }
         }
 
-        // Delete
+        //Edit
         [Authorize(Policy = "AdminOnly")]
         [HttpGet]
-        public async Task<IActionResult> Delete(int id)
+        public IActionResult Edit(int id)
         {
             try
             {
                 var token = HttpContext.Request.Cookies["token"];
                 _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
-                var endpoint = $"/api/cropProtectionProductCategories/{id}";
-                var response = await _client.GetAsync(endpoint);
+                var endpoint = $"/api/fuels/{id}";
+                var response = _client.GetAsync(endpoint).Result;
                 response.EnsureSuccessStatusCode();
-
-                string content = await response.Content.ReadAsStringAsync();
-                var category = JsonConvert.DeserializeObject<CropProtectionProductCategoryDto>(content);
-                return View(category);
+                string content = response.Content.ReadAsStringAsync().Result;
+                var fuel = JsonConvert.DeserializeObject<FuelDto>(content);
+                return View(fuel);
             }
             catch (HttpRequestException ex)
             {
@@ -106,96 +156,36 @@ namespace AgroControlUI.Controllers.CropProtectionProducts
                 return View();
             }
         }
-
         [Authorize(Policy = "AdminOnly")]
         [HttpPost]
-        public async Task<IActionResult> DeleteConfirmed(int id)
-        {
-            try
-            {
-                var token = HttpContext.Request.Cookies["token"];
-                _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
-
-                var endpoint = $"/api/cropProtectionProductCategories/{id}";
-                var response = await _client.DeleteAsync(endpoint);
-                response.EnsureSuccessStatusCode();
-
-                return RedirectToAction("Index");
-            }
-            catch (HttpRequestException ex)
-            {
-                TempData["errorMessage"] = "Błąd żądania HTTP: " + ex.Message;
-                return View();
-            }
-            catch (Exception ex)
-            {
-                TempData["errorMessage"] = "Wystąpił nieoczekiwany błąd: " + ex.Message;
-                return View();
-            }
-        }
-
-        // Edit
-        [Authorize(Policy = "AdminOnly")]
-        [HttpGet]
-        public async Task<IActionResult> Edit(int id)
-        {
-            try
-            {
-                var token = HttpContext.Request.Cookies["token"];
-                _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
-
-                var endpoint = $"/api/cropProtectionProductCategories/{id}";
-                var response = await _client.GetAsync(endpoint);
-                response.EnsureSuccessStatusCode();
-
-                string content = await response.Content.ReadAsStringAsync();
-                var category = JsonConvert.DeserializeObject<CropProtectionProductCategoryDto>(content);
-                return View(category);
-            }
-            catch (HttpRequestException ex)
-            {
-                TempData["errorMessage"] = "Błąd żądania HTTP: " + ex.Message;
-                return View();
-            }
-            catch (Exception ex)
-            {
-                TempData["errorMessage"] = "Wystąpił nieoczekiwany błąd: " + ex.Message;
-                return View();
-            }
-        }
-
-        [Authorize(Policy = "AdminOnly")]
-        [HttpPost]
-        public async Task<IActionResult> Edit(CropProtectionProductCategoryDto categoryDto)
+        public IActionResult Edit(FuelDto fuelDto)
         {
             if (!ModelState.IsValid)
             {
-                return View(categoryDto);
+                return View(fuelDto);
             }
-
             try
             {
                 var token = HttpContext.Request.Cookies["token"];
                 _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
-                var endpoint = $"/api/cropProtectionProductCategories/{categoryDto.Id}";
-                var content = JsonConvert.SerializeObject(categoryDto);
+                var endpoint = $"/api/fuels/{fuelDto.Id}";
+                var content = JsonConvert.SerializeObject(fuelDto);
                 var stringContent = new StringContent(content, Encoding.UTF8, "application/json");
-                var response = await _client.PutAsync(endpoint, stringContent);
+                var response = _client.PutAsync(endpoint, stringContent).Result;
                 response.EnsureSuccessStatusCode();
-
                 TempData["successMessage"] = "Zmodyfikowano pomyślnie";
                 return RedirectToAction("Index");
             }
             catch (HttpRequestException ex)
             {
                 TempData["errorMessage"] = "Błąd żądania HTTP: " + ex.Message;
-                return View(categoryDto);
+                return View(fuelDto);
             }
             catch (Exception ex)
             {
                 TempData["errorMessage"] = "Wystąpił nieoczekiwany błąd: " + ex.Message;
-                return View(categoryDto);
+                return View(fuelDto);
             }
         }
 
@@ -207,5 +197,6 @@ namespace AgroControlUI.Controllers.CropProtectionProducts
             }
             base.Dispose(disposing);
         }
+
     }
 }

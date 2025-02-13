@@ -26,6 +26,7 @@ namespace AgroControlUI.Controllers.Crop
 
             var endpoint = "/api/crops";
             var result = await _client.GetAsync(endpoint);
+
             result.EnsureSuccessStatusCode();
 
             var content = await result.Content.ReadAsStringAsync();
@@ -104,7 +105,7 @@ namespace AgroControlUI.Controllers.Crop
         }
         [Authorize(Policy = "AdminOnly")]
         [HttpPost]
-        public IActionResult DeleteConfirmed(int id)
+        public async Task<IActionResult> DeleteConfirmed(int id)
         {
             try
             {
@@ -112,9 +113,9 @@ namespace AgroControlUI.Controllers.Crop
                 _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
                 var endpoint = $"/api/crops/{id}";
-                var result = _client.DeleteAsync(endpoint).Result;
+                var result = await _client.DeleteAsync(endpoint);
                 result.EnsureSuccessStatusCode();
-                //TempData["successMessage"] = "Uprawa została usunięta";
+                TempData["successMessage"] = "Uprawa została usunięta";
                 return RedirectToAction("Index");
             }
             catch (HttpRequestException ex)

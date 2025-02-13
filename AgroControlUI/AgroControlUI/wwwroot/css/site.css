@@ -31,7 +31,7 @@ body {
     transition: all 0.3s ease;
 }
 .navbar {
-    background: linear-gradient(135deg, #28a745 50%, #1e5300 100%);
+    background: linear-gradient(135deg, var(--main-app-color) 50%, #1e5300 100%);
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 .navbar-nav .nav-link:hover {

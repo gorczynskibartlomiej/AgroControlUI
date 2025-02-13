@@ -10,6 +10,7 @@ using Microsoft.EntityFrameworkCore;
 using Serilog;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
+using AspNetCoreGeneratedDocument;
 
 namespace AgroControlUI.Middleware
 {
@@ -53,7 +54,7 @@ namespace AgroControlUI.Middleware
                 tempData["errorMessage"] = "You are not authorized to view this page. Please log in.";
                 context.Response.Redirect("/Account/Login");
             }
-                return;            
+                return ;            
         }
     }
 }

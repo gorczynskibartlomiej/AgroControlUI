@@ -19,7 +19,7 @@ namespace AgroControlUI.Controllers.Fertilizers
         }
 
         // GetAll
-        [Authorize]
+        [Authorize(Policy = "AdminOnly")]
         [HttpGet]
         public async Task<IActionResult> Index()
         {
@@ -120,6 +120,7 @@ namespace AgroControlUI.Controllers.Fertilizers
                 var response = await _client.DeleteAsync(endpoint);
                 response.EnsureSuccessStatusCode();
 
+                TempData["successMessage"] = "Kategoria nawozów została pomyślnie usunięta.";
                 return RedirectToAction("Index");
             }
             catch (HttpRequestException ex)

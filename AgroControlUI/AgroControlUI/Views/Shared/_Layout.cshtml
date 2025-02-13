@@ -4,6 +4,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"]AgroControl</title>
+    <link rel="stylesheet" href="~/css/colors.css">
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/AgroControlUI.styles.css" asp-append-version="true" />
@@ -139,9 +140,18 @@
                     <ul class="navbar-nav justify-content-end">
                         @if (User.Identity.IsAuthenticated)
                         {
-                            <li class="nav-item">
-                                <a class="nav-link" asp-area="" asp-controller="Farm" asp-action="Select">Bardzi długa Nazwa farmy(zmień)</a>
-                            </li>
+                            @if (User.FindFirst("FarmName")!=null)
+                            {
+                                <li class="nav-item">
+                                    <a class="nav-link" asp-area="" asp-controller="Farm" asp-action="Select">@User.FindFirst("FarmName")?.Value (zmień)</a>
+                                </li>
+                            }
+                            else
+                            {
+                                <li class="nav-item">
+                                    <a class="nav-link" asp-area="" asp-controller="Farm" asp-action="Select">Wybierz gopsodarstwo</a>
+                                </li>
+                            }
                             <li class="nav-item">
                                 <a class="nav-link" asp-area="" asp-controller="Account" asp-action="Logout">Wyloguj</a>
                             </li>

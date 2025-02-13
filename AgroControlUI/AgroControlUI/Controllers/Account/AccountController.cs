@@ -123,7 +123,8 @@ public class AccountController : Controller
 
     public IActionResult AccessDenied()
     {
-        return View();
+        TempData["errorMessage"] = "Nie masz uprawnień do tej strony. Zaloguj się na odpowiednie konto.";
+        return RedirectToAction("Index", "Home");
     }
     [HttpGet]
     public async Task<IActionResult> Logout()

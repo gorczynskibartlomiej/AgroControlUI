@@ -4,13 +4,12 @@
 
 <div class="form-container">
     <div class="green-form">
-        <form asp-action="Edit" method="post">
-            <h1>Edytuj kategorię nawozów</h1>
+        <form asp-action="Create" method="post">
+            <h1>Dodaj kategorię nawozów</h1>
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
             <div class="group">
-                <input type="hidden" name="Id" value="@Model.Id" />
-                <input asp-for="Name" required value="@Model.Name"/>
+                <input asp-for="Name" required value=""/>
                 <span class="highlight"></span>
                 <span class="bar"></span>
                 <label asp-for="Name">Nazwa kategorii</label>
@@ -18,7 +17,7 @@
             </div>
             <div class="action-buttons">
                 <a asp-action="Index" class="cancel-btn btn">Anuluj</a>
-                <button type="submit" class="add-btn btn">Edytuj</button>
+                <button type="submit" class="add-btn btn">Dodaj</button>
             </div>
         </form>
     </div>

@@ -52,7 +52,9 @@
                     <div class="action-buttons">
                         <a asp-action="Details" asp-route-id="@fertilizer.Id" class="btn cancel-btn"><img src="~/images/details.svg" />Edytuj</a>
                         <a asp-action="Edit" asp-route-id="@fertilizer.Id" class="btn edit-btn"><img src="~/images/edit.svg" />Edytuj</a>
-                        <a asp-action="Delete" asp-route-id="@fertilizer.Id" class="btn delete-btn"><img src="~/images/delete.svg" />Usuń</a>
+                        <button type="button" class="delete-btn" data-bs-toggle="modal" data-bs-target="#deleteModal" onclick="setDeleteUrl('@Url.Action("DeleteConfirmed", new { id = fertilizer.Id })')">
+                            <img src="~/images/delete.svg" />Usuń
+                        </button>
                     </div> 
                 </div>
             </div>

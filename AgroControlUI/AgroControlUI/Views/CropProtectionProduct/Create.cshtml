@@ -1,1 +1,243 @@
-﻿
+﻿@model AgroControlUI.DTOs.CropProtectionProducts.CreateCropProtectionProductDto
+
+<link rel="stylesheet" href="~/css/add.css">
+<link href="https://cdn.jsdelivr.net/npm/tom-select/dist/css/tom-select.css" rel="stylesheet">
+<style>
+    /* Styl ogólny dla wszystkich TomSelect */
+    .ts-wrapper {
+        border: 2px solid #4CAF50; /* Zielona ramka */
+        border-radius: 8px; /* Zaokrąglenia */
+        padding: 8px;
+        font-size: 16px;
+        background-color: #fff;
+        transition: all 0.3s ease-in-out;
+    }
+
+        /* Zmiana koloru po kliknięciu */
+        .ts-wrapper.focus {
+            border-color: #2E7D32;
+            box-shadow: 0 0 5px rgba(46, 125, 50, 0.5);
+        }
+
+    /* Pole do wpisywania */
+    .ts-control {
+        min-height: 45px; /* Większa wysokość */
+        padding: 10px;
+        font-size: 16px;
+    }
+
+    /* Opcje listy */
+    .ts-dropdown {
+        border-radius: 8px;
+        border: 1px solid #ddd;
+        background-color: white;
+        font-size: 16px;
+    }
+
+        /* Efekt hover dla opcji */
+        .ts-dropdown .option:hover {
+            background-color: #4CAF50;
+            color: white;
+        }
+
+    /* Zaznaczone elementy */
+    .ts-wrapper.multi .ts-control > div {
+        background-color: #4CAF50;
+        color: white;
+        padding: 5px 10px;
+        border-radius: 15px;
+        font-size: 14px;
+    }
+
+    /* Placeholder */
+    .ts-control input {
+        color: #555;
+    }
+
+    /* Ikona usuwania */
+    .ts-wrapper.multi .item .remove {
+        font-size: 14px;
+        margin-left: 5px;
+        color: #fff;
+        cursor: pointer;
+    }
+
+        .ts-wrapper.multi .item .remove:hover {
+            color: #ff0000;
+        }
+
+    /* Poniżej dodajemy styl, aby "X" było widoczne */
+    .ts-wrapper.multi .item {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding-right: 15px; /* Zwiększa przestrzeń dla ikony usuwania */
+    }
+
+        .ts-wrapper.multi .item .remove {
+            display: block;
+            padding-left: 5px;
+        }
+
+    .description-field {
+        transition: border-color 0.3s;
+        resize: none; /* Brak ręcznej zmiany rozmiaru */
+        word-wrap: break-word; /* Zawija długie słowa */
+    }
+
+
+        /* W przypadku focus, zielona ramka */
+        .description-field:focus {
+            outline: none;
+            border-color: #4caf50; /* Zielona ramka podczas focus */
+        }
+
+        /* Styl dla etykiety w polu "Opis" */
+        .description-field ~ label {
+            color: #999;
+            font-size: 18px;
+            font-weight: normal;
+            position: absolute;
+            pointer-events: none;
+            left: 5px;
+            top: 10px;
+            transition: 0.2s ease all;
+            z-index: 2;
+        }
+
+        /* Styl etykiety po focus */
+        .description-field:focus ~ label, .description-field:valid ~ label {
+            top: -20px;
+            font-size: 14px;
+            color: black;
+        }
+</style>
+<div class="form-container">
+    <div class="green-form">
+        <form asp-action="Create" method="post">
+            <h1>Dodaj środek ochrony roślin</h1>
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+            <div class="group">
+                <input asp-for="Name" required />
+                <span class="highlight"></span>
+                <span class="bar"></span>
+                <label asp-for="Name">Nazwa środka ochrony roślin</label>
+                <span asp-validation-for="Name" class="text-danger"></span>
+            </div>
+            <div class="group">
+                <textarea asp-for="Description" class="description-field" required></textarea>
+                <span class="highlight"></span>
+                <span class="bar"></span>
+                <label asp-for="Name">Opis</label>
+                <span asp-validation-for="Name" class="text-danger"></span>
+            </div>
+            <div class="group">
+                <label asp-for="ProducerId">Producent</label>
+                <select asp-for="ProducerId" asp-items="ViewBag.Producers" id="producerSelect">
+                    <option value="">Wybierz producenta</option>
+                </select>
+            </div>
+            <div class="group">
+                <label asp-for="CategoryIds">Kategorie</label>
+                <select asp-for="CategoryIds" asp-items="ViewBag.Categories" id="categorySelect" multiple>
+                </select>
+            </div>
+            <div class="group">
+                <label asp-for="ComponentIds">Składniki aktywne</label>
+                <select asp-for="ComponentIds" asp-items="ViewBag.Components" id="componentSelect" multiple>
+                </select>
+            </div>
+            <div class="group">
+                <label asp-for="CropIds">Rośliny</label>
+                <select asp-for="CropIds" asp-items="ViewBag.Crops" id="cropSelect" multiple>
+                </select>
+            </div>
+            <div class="action-buttons">
+                <a asp-action="Index" class="cancel-btn btn">Anuluj</a>
+                <button type="submit" class="add-btn btn">Dodaj</button>
+            </div>
+        </form>
+    </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/tom-select/dist/js/tom-select.complete.min.js"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        new TomSelect("#producerSelect", {
+            create: true,
+            sortField: { field: "text", direction: "asc" },
+            placeholder: "Wybierz producenta",
+            searchField: "text",
+            removeItem: true,
+            plugins: ['remove_button'],
+            score: function(search) {
+            return function(item) {
+                return item.text.toLowerCase().includes(search.toLowerCase()) ? 1 : 0;
+                };
+            },
+            render: {
+                no_results: function(data, escape) {
+                    return '<div class="no-results">Nie znaleziono</div>';
+                }
+            }
+        });
+
+        new TomSelect("#categorySelect", {
+            create: false,
+            sortField: { field: "text", direction: "asc" },
+            placeholder: "Wybierz kategorie",
+            maxItems: null,
+            removeItem: true,
+            plugins: ['remove_button'],
+            searchField: "text",
+            score: function(search) {
+            return function(item) {
+                return item.text.toLowerCase().includes(search.toLowerCase()) ? 1 : 0;
+                };
+            },
+            render: {
+                no_results: function(data, escape) {
+                    return '<div class="no-results">Nie znaleziono</div>';
+                }
+            }
+        });
+        new TomSelect("#cropSelect", {
+            create: false,
+            sortField: { field: "text", direction: "asc" },
+            placeholder: "Wybierz rośliny",
+            maxItems: null ,
+            removeItem: true,
+            plugins: ['remove_button'],
+            searchField: "text",
+            score: function(search) {
+            return function(item) {
+                return item.text.toLowerCase().includes(search.toLowerCase()) ? 1 : 0;
+                };
+            },
+            render: {
+                no_results: function(data, escape) {
+                    return '<div class="no-results">Nie znaleziono</div>';
+                }
+            }
+        });
+        new TomSelect("#componentSelect", {
+            create: false,
+            sortField: { field: "text", direction: "asc" },
+            placeholder: "Wybierz składniki aktywne",
+            maxItems: null ,
+            removeItem: true,
+            plugins: ['remove_button'],
+            searchField: "text",
+            score: function(search) {
+            return function(item) {
+                return item.text.toLowerCase().includes(search.toLowerCase()) ? 1 : 0;
+                };
+            },
+            render: {
+                no_results: function(data, escape) {
+                    return '<div class="no-results">Nie znaleziono</div>';
+                }
+            }
+        });
+    });        
+</script>

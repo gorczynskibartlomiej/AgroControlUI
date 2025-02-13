@@ -19,7 +19,7 @@ namespace AgroControlUI.Controllers.Fertilizers
         }
 
         // GetAll
-        [Authorize]
+        [Authorize(Policy = "AdminOnly")]
         [HttpGet]
         public async Task<IActionResult> Index()
         {

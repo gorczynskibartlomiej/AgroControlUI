@@ -10,7 +10,7 @@
     padding-bottom: 56.25%;
     overflow: hidden;
     border-radius: 18px;
-    border: solid 2px #4caf50;
+    border: solid 2px var(--main-app-color);    
 }
 
 .mySlides {
@@ -54,7 +54,7 @@
 
     .prev:hover, .next:hover {
         background-color: rgba(0, 0, 0, 0.7);
-        color: #4caf50;
+        color: var(--main-app-color);
         text-decoration: none;
     }
 
@@ -92,12 +92,12 @@
 }
 
     .active, .dot:hover {
-        background-color: #4caf50;
+        background-color: var(--main-app-color);
     }
 
 .feature {
     background-color: #fff;
-    border: 2px solid #4caf50;
+    border: 2px solid var(--main-app-color);
     border-radius: 15px;
     overflow: hidden;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
@@ -108,7 +108,7 @@
     min-height: 450px;
 }
 
-@@media (max-width: 1200px) {
+@media (max-width: 1200px) {
     .feature {
         min-height: 550px;
     }
@@ -121,14 +121,14 @@
 
 .feature img {
     width: 80%;
-    border-bottom: 3px solid #4caf50;
+    border-bottom: 3px solid var(--main-app-color);
     height: auto;
     padding-bottom: 20px;
 }
 
 .feature h3 {
     font-size: 1.2rem;
-    color: #4caf50;
+    color: var(--main-app-color);
     margin: 15px 0 10px;
     font-weight: bold;
 }
@@ -139,11 +139,12 @@
 }
 
 .app-description {
-    margin-top: 50px;
+    margin-top: 10px;
+    margin-bottom:30px;
     text-align: center;
     background-color: white;
     color: #333;
-    border-bottom: 5px solid #4caf50;
+    border-bottom: 5px solid var(--main-app-color);
     border-radius: 15px;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
 }
@@ -151,7 +152,7 @@
     .app-description h1 {
         font-size: 2.5rem;
         margin-bottom: 15px;
-        color: #4caf50;
+        color: var(--main-app-color);     
     }
 
     .app-description p {
@@ -159,3 +160,160 @@
         margin-bottom: 20px;
         line-height: 1.6;
     }
+.category {
+    background-color: white;
+    border-radius: 15px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    overflow: hidden;
+    height: 100%;
+}
+
+.category-wraper:nth-child(1) .category {
+    border: 3px solid #6576E0;
+}
+
+.category-wraper:nth-child(2) .category {
+    border: 3px solid #28A745;
+}
+
+.category-wraper:nth-child(3) .category {
+    border: 3px solid #E0C465;
+}
+
+.category-wraper:nth-child(4) .category {
+    border: 3px solid #E06570;
+}
+
+.category-wraper:nth-child(1) .category h3 {
+    color: #6576E0;
+}
+
+.category-wraper:nth-child(2) .category h3 {
+    color: #28A745;
+}
+
+.category-wraper:nth-child(3) .category h3 {
+    color: #E0C465;
+}
+
+.category-wraper:nth-child(4) .category h3 {
+    color: #E06570;
+}
+
+
+.category h3 {
+    font-size: 2rem;
+    text-align: center;
+    margin-bottom: 20px;
+    border-bottom: 3px solid currentColor;
+    padding-bottom: 10px;
+    font-weight: bold;
+}
+
+
+.tile {
+    background-color: #f9f9f9;
+    border: 2px solid #ddd;
+    border-radius: 10px;
+    text-align: center;
+    overflow: hidden;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    position: relative;
+    padding: 0;
+    overflow: hidden;
+    transition: transform 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease;
+    height: auto;
+    min-height: 175px;
+    justify-content: center;
+    align-content: center;
+}
+
+/* Dziedziczenie kolorów kategorii */
+.category-wraper:nth-child(1) .category .tile {
+    background-color: #eef1fc;
+    border-color: #6576E0; /* Kolor ramki */
+}
+
+.category-wraper:nth-child(2) .category .tile {
+    background-color: #e9f7ec; /* Jasny zielony */
+    border-color: #28A745;
+}
+
+.category-wraper:nth-child(3) .category .tile {
+    background-color: #fff9e7; /* Jasny żółty */
+    border-color: #E0C465;
+}
+
+.category-wraper:nth-child(4) .category .tile {
+    background-color: #fceeef;
+    border-color: #E06570;
+}
+
+.category-wraper:nth-child(1) .category .tile:hover {
+    transform: translateY(-5px);
+    box-shadow: 0px 0px 20px 5px rgba(101, 118, 224, 0.88);
+}
+
+.category-wraper:nth-child(2) .category .tile:hover {
+    transform: translateY(-5px);
+    box-shadow: 0px 0px 20px 5px rgba(40, 167, 69, 0.65);
+}
+
+.category-wraper:nth-child(3) .category .tile:hover {
+    transform: translateY(-5px);
+    box-shadow: 0px 0px 20px 5px rgba(224, 196, 101, 0.88);
+}
+
+.category-wraper:nth-child(4) .category .tile:hover {
+    transform: translateY(-5px);
+    box-shadow: 0px 0px 20px 5px rgba(224, 101, 112, 0.88);
+}
+/* Obrazki w kafelkach */
+.tile img {
+    width: 80px;
+    height: 80px;
+    margin-bottom: 10px;
+    object-fit: contain;
+}
+
+/* Tekst w kafelkach */
+.tile h4 {
+    font-size: 1.2rem;
+    margin: 0;
+    font-weight: bold;
+}
+
+.tile a {
+    position: absolute; /* Absolutne pozycjonowanie względem .tile */
+    top: 0;
+    left: 0;
+    width: 100%; /* Rozciąga link na całą szerokość kafelka */
+    height: 100%; /* Rozciąga link na całą wysokość kafelka */
+    display: flex; /* Użycie flexboxa do centrowania zawartości */
+    flex-direction: column; /* Ustawienie kolumnowego układu */
+    align-items: center; /* Wyśrodkowanie obrazka i tekstu h4 w poziomie */
+    justify-content: center; /* Wyśrodkowanie obrazka i tekstu h4 w pionie */
+    text-decoration: none;
+}
+
+/* Kolory tekstów kafelków w zależności od kategorii */
+.category-wraper:nth-child(1) .category .tile h4 {
+    color: #6576E0; /* Niebieski */
+}
+
+.category-wraper:nth-child(2) .category .tile h4 {
+    color: #28A745; /* Zielony */
+}
+
+.category-wraper:nth-child(3) .category .tile h4 {
+    color: #E0C465; /* Żółty */
+}
+
+.category-wraper:nth-child(4) .category .tile h4 {
+    color: #E06570; /* Czerwony */
+}
+
+.container {
+    padding-top: 10px;
+}

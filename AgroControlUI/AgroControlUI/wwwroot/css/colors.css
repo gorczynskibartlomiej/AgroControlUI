@@ -1,0 +1,15 @@
+﻿:root {
+    --add-btn-color: #28A745;
+    --cancel-btn-color: #6576E0;
+    --edit-btn-color: #E0C465;
+    --delete-btn-color: #E06570;
+    --category1-light-color: #eef1fc;
+    --category2-light-color: #e9f7ec;
+    --category3-light-color: #fff9e7;
+    --category4-light-color: #fceeef;
+    --category1-color: #28A745;
+    --category2-color: #6576E0;
+    --category3-color: #E0C465;
+    --category4-color: #E06570;
+    --main-app-color: #28A745;
+}

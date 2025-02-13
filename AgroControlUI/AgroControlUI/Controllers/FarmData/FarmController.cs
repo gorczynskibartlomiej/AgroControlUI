@@ -62,12 +62,13 @@
             if (currentUser.Identity.IsAuthenticated)
             {
                 var existingClaims = currentUser.Claims.ToList();
-                existingClaims.RemoveAll(c => c.Type == ClaimTypes.Role || c.Type == "FarmId");
+                existingClaims.RemoveAll(c => c.Type == ClaimTypes.Role || c.Type == "FarmId"||c.Type=="FarmName");
                 foreach (var role in roles)
                 {
                     existingClaims.Add(new Claim(ClaimTypes.Role, role.RoleName));
+                    existingClaims.Add(new Claim("FarmName", role.FarmName));
                 }
-                existingClaims.Add(new Claim("FarmId", farmId.ToString()));
+                existingClaims.Add(new Claim("FarmId", farmId.ToString())); 
 
                 var claimsIdentity = new ClaimsIdentity(existingClaims, CookieAuthenticationDefaults.AuthenticationScheme);
 
