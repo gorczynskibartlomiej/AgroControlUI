@@ -7,7 +7,7 @@
         public string? Description { get; set; }
 
         public List<int> CropIds { get; set; } = new List<int>();
-        public List<int> ComponentIds { get; set; } = new List<int>();
+        public List<CreateCropProtectionProductComponent> ActiveIngredients { get; set; } = new List<CreateCropProtectionProductComponent>();
         public List<int> CategoryIds { get; set; } = new List<int>();
     }
 }

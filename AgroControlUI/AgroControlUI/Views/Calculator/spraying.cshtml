@@ -1,0 +1,188 @@
+﻿<link rel="stylesheet" href="~/css/add.css">
+
+<div class="form-container">
+    <div class="green-form">
+        <h1>Kalkulator oprysku</h1>
+
+        <form id="calculatorForm">
+            <div class="group">
+                <input type="number" is="decimal-input" id="pesticideDose" min="0" required step="0.01">
+                <span class="bar"></span>
+                <label for="pesticideDose">Dawka ŚOR (l/ha)</label>
+            </div>
+
+            <div class="group">
+                <input type="number" is="decimal-input" id="fieldArea" min="0" required step="0.01">
+                <span class="bar"></span>
+                <label for="fieldArea">Areał pola (ha)</label>
+            </div>
+
+            <div class="group">
+                <input type="number" is="decimal-input" id="waterDose" min="0" required step="0.01">
+                <span class="bar"></span>
+                <label for="waterDose">Dawka wody (l/ha)</label>
+            </div>
+
+            <div class="group">
+                <input type="number" is="decimal-input" id="sprayerCapacity" min="0" required step="1">
+                <span class="bar"></span>
+                <label for="sprayerCapacity">Pojemność opryskiwacza (l)</label>
+            </div>
+            <div class="group">
+                <button type="button" class="add-btn" style="width:100%" id="calculateButton" onclick="validateAndCalculate()" disabled>Oblicz</button>
+            </div>
+            <div class="result-group" id="resultGroup" style="display: none;">
+                <h4><strong>Całkowita ilość ŚOR:</strong> <span id="totalPesticideAmount">---</span> l</h4>
+
+                <h4><strong>Przykładowe napełnienia opryskiwacza:</strong></h4>
+                <table id="fillingTable" style="width: 100%; border-collapse: collapse;">
+                    <thead>
+                        <tr>
+                            <th style="width: 20%; text-align: center;">Napełnienie</th>
+                            <th style="width: 20%; text-align: center;">Woda (l)</th>
+                            <th style="width: 20%; text-align: center;">ŚOR (l)</th>
+                            <th style="width: 20%; text-align: center;">Areał (ha)</th>
+                            <th style="width: 20%; text-align: center;">&nbsp;</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Dynamicznie generowane napełnienia -->
+                    </tbody>
+                </table>
+                <div style="display:none">
+                    <h3><strong><span id="sumaText">Suma:</span></strong></h3>
+                    <p><strong>Woda:</strong> <span id="totalWaterAmount">---</span> l</p>
+                    <p><strong>ŚOR:</strong> <span id="totalPesticideAmountFinal">---</span> l</p>
+                    <p><strong>Areał:</strong> <span id="totalArea">---</span> ha</p>
+                </div>
+            </div>
+
+            <div class="action-buttons">
+                <a href="javascript:history.back()" class="cancel-btn">Wróć</a>
+                <button type="reset" class="add-btn" onclick="resetCalculator()">Reset</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+
+    class DecimalInput extends HTMLInputElement {
+        constructor() {
+            super();
+            this.addEventListener('change', (e) => {
+                const val = parseFloat(this.value.replace(',', '.')) || 0,
+                      min = parseFloat(this.min),
+                      max = parseFloat(this.max),
+                      step = parseFloat(this.step);
+
+                // Zaokrąglanie wartości na podstawie kroku
+                let roundedVal = Math.round(val / step) * step;
+
+                // Jeśli step jest 1 → pełna liczba, jeśli nie → 2 miejsca po przecinku
+                this.value = (step === 1) ? Math.round(roundedVal) : roundedVal.toFixed(2);
+
+                // Sprawdzamy zakres wartości
+                if (val > max) this.value = max;
+                if (val < min) this.value = min;
+
+                // Uruchamiamy obliczenia
+                validateAndCalculate();
+            });
+        }
+    }
+
+    // Rejestrujemy niestandardowy element
+    customElements.define('decimal-input', DecimalInput, { extends: 'input' });
+
+    // Funkcja resetująca formularz
+    function resetCalculator() {
+        document.getElementById("calculatorForm").reset();
+        document.getElementById("resultGroup").style.display = "none";
+        document.getElementById("fillingTable").getElementsByTagName('tbody')[0].innerHTML = "";
+        document.getElementById("totalPesticideAmount").textContent = "---";
+        document.getElementById("totalWaterAmount").textContent = "---";
+        document.getElementById("totalPesticideAmountFinal").textContent = "---";
+        document.getElementById("totalArea").textContent = "---";
+    }
+
+    // Funkcja walidacji i obliczania wyników
+    function validateAndCalculate() {
+        let pesticideDose = parseFloat(document.getElementById("pesticideDose").value) || 0;
+        let fieldArea = parseFloat(document.getElementById("fieldArea").value) || 0;
+        let waterDose = parseFloat(document.getElementById("waterDose").value) || 0;
+        let sprayerCapacity = parseFloat(document.getElementById("sprayerCapacity").value) || 0;
+
+        if (pesticideDose > 0 && fieldArea > 0 && waterDose > 0 && sprayerCapacity > 0) {
+            document.getElementById("resultGroup").style.display = "block";
+
+            let totalPesticideAmount = pesticideDose * fieldArea;
+            let totalWaterAmount = waterDose * fieldArea;
+            let totalArea = 0;
+            let remainingWater = totalWaterAmount;
+            let remainingPesticide = totalPesticideAmount;
+            let fillNumber = 1;
+
+            let fillingTableBody = document.getElementById("fillingTable").getElementsByTagName('tbody')[0];
+            fillingTableBody.innerHTML = "";
+
+            let groupedData = [];
+
+            while (remainingWater > 0) {
+                let waterInFill = Math.min(remainingWater, sprayerCapacity);
+                let pesticideInFill = (waterInFill / totalWaterAmount) * totalPesticideAmount;
+                let areaInFill = (waterInFill / waterDose);
+
+                remainingWater -= waterInFill;
+                remainingPesticide -= pesticideInFill;
+                totalArea += areaInFill;
+
+                let lastGroup = groupedData[groupedData.length - 1];
+
+                if (lastGroup && lastGroup.waterInFill.toFixed(2) === waterInFill.toFixed(2)) {
+                    lastGroup.count++;
+                } else {
+                    groupedData.push({
+                        startFill: fillNumber,
+                        waterInFill,
+                        pesticideInFill,
+                        areaInFill,
+                        count: 1
+                    });
+                }
+
+                fillNumber++;
+            }
+
+            groupedData.forEach(group => {
+                let row = fillingTableBody.insertRow();
+                let fillRange = (group.count === 1) ? `${group.startFill}` : `${group.startFill} - ${group.startFill + group.count - 1}`;
+
+                row.innerHTML = `
+                    <td style="text-align: center;">${fillRange}</td>
+                    <td style="text-align: center;">${group.waterInFill.toFixed(2)}</td>
+                    <td style="text-align: center;">${group.pesticideInFill.toFixed(2)}</td>
+                    <td style="text-align: center;">${group.areaInFill.toFixed(2)}</td>
+                    <td style="text-align: center;">&nbsp;</td>
+                `;
+            });
+
+            let sumRow = fillingTableBody.insertRow();
+            sumRow.innerHTML = `
+                <td style="text-align: center; font-weight: bold; text-decoration: underline;">Suma</td>
+                <td style="text-align: center; font-weight: bold;">${totalWaterAmount.toFixed(2)} l</td>
+                <td style="text-align: center; font-weight: bold;">${totalPesticideAmount.toFixed(2)} l</td>
+                <td style="text-align: center; font-weight: bold;">${totalArea.toFixed(2)} ha</td>
+                <td style="text-align: center;">&nbsp;</td>
+            `;
+
+            document.getElementById("totalPesticideAmount").textContent = totalPesticideAmount.toFixed(2);
+            document.getElementById("totalWaterAmount").textContent = totalWaterAmount.toFixed(2);
+            document.getElementById("totalPesticideAmountFinal").textContent = totalPesticideAmount.toFixed(2);
+            document.getElementById("totalArea").textContent = totalArea.toFixed(2);
+        } else {
+            document.getElementById("resultGroup").style.display = "none";
+        }
+    }
+
+</script>

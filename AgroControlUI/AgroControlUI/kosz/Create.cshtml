@@ -1,0 +1,313 @@
+﻿@model AgroControlUI.DTOs.CropProtectionProducts.CreateCropProtectionProductDto
+
+<link rel="stylesheet" href="~/css/add.css">
+<link href="https://cdn.jsdelivr.net/npm/tom-select/dist/css/tom-select.css" rel="stylesheet">
+<link rel="stylesheet" href="~/css/colors.css"/>
+<style>
+    .ts-wrapper{
+        border: 2px solid #757575;
+        border-radius: 8px;
+        transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    }
+
+        .ts-wrapper.input-active {
+            border-color: #4caf50 !important;
+            outline: none;
+        }
+    .ts-control {
+        border: none;
+        border-radius: 8px;
+        padding: 10px;
+        font-size: 16px;
+        background-color: white;
+    }
+
+    .ts-dropdown {
+        border: 2px solid #4caf50;
+        border-radius: 8px;
+        background-color: white;
+        overflow: hidden;
+    }
+
+        .ts-dropdown .option {
+            padding: 10px;
+            font-size: 16px;
+            transition: background-color 0.3s ease;
+            
+        }
+
+    .ts-control::before {
+        content: attr(data-placeholder);
+        color: #757575;
+        position: absolute;
+        left: 10px;
+        pointer-events: none;
+        display: block;
+    }
+            .ts-dropdown .option:hover {
+                background-color: #4caf50;
+                color:white;              
+            }
+    .ts-control .item {
+        background-color: #4caf50!important;
+        color: white !important;
+        border-radius: 5px;
+        padding: 5px 5px !important;
+        margin: 8px;
+        display: flex;
+        align-items: center;
+        font-size: 16px;
+        pointer-events: none;
+    }
+
+        .ts-control .item .remove {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 24px;
+            height: 24px; 
+            font-size: 22px;
+            margin-left: 0px;
+            cursor: pointer;
+            background-color: #4caf50 !important;
+            pointer-events: auto;
+            cursor: pointer;
+        }
+
+        .ts-control .item .remove:hover {
+            background-color: #4caf50 !important;
+            color:black;
+        }
+
+            .ts-control .item .remove::before {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                width: 100%;
+                height: 100%;
+            }
+
+    .ts-wrapper.plugin-remove_button:not(.rtl) .item {
+         padding-right: 5px !important; 
+    }
+    /* Stylowanie kontrolki z wieloma opcjami */
+    .ts-control {
+        background-color: white;
+        border: none; /* Usunięcie obramowania */
+        border-radius: 8px;
+        padding: 10px;
+        font-size: 16px;
+    }
+
+    /* Stylowanie dropdowna */
+    .ts-dropdown {
+        border: 2px solid #4caf50;
+        border-radius: 8px;
+        background-color: white;
+        overflow: hidden;
+        box-shadow: none;
+    }
+
+        /* Stylowanie opcji w dropdownie */
+        .ts-dropdown .option {
+            padding: 10px;
+            font-size: 16px;
+            transition: background-color 0.3s ease;
+        }
+
+            /* Kolorowanie opcji przy najechaniu */
+            .ts-dropdown .option:hover {
+                background-color: #4caf50;
+                color: white;
+            }
+
+    .group-dropdown {
+        position: relative;
+        margin-bottom: 40px;
+        margin-top: -10px;
+        min-height: 40px
+    }
+
+    #producerSelect + .ts-wrapper .ts-control {
+        display: block;
+        padding: 10px;
+        min-height: 40px;
+        background-color: white;
+    }
+
+        #producerSelect + .ts-wrapper .ts-control .item {
+            background-color: transparent !important;
+            color: black !important;
+            pointer-events: none;
+            display: block;
+            font-size: 16px;
+            padding: 0;
+            margin: 0;
+        }
+
+        #producerSelect + .ts-wrapper .ts-control .remove {
+            display: none;
+        }
+
+    .ts-dropdown [data-selectable] .highlight {
+        background: none;
+        font-weight: bold;
+        font-size: 16px;
+        transition: background-color 0.3s ease;
+        opacity: 1;
+        display: inline;
+        position:unset !important;
+    }
+
+    /* Styl scrollbara dla WebKit (Chrome, Edge, Safari) */
+    .ts-dropdown-content::-webkit-scrollbar {
+        width: 12px;
+    }
+
+    .ts-dropdown-content::-webkit-scrollbar-track {
+        border-radius: 8px;
+        background-color: #e7e7e7;
+        border: 1px solid #cacaca;
+        box-shadow: inset 0 0 6px rgba(0, 0, 0, .3);
+    }
+
+    .ts-dropdown-content::-webkit-scrollbar-thumb {
+        border-radius: 8px;
+        background-color: #363636;
+    }
+
+</style>
+<div class="form-container">
+    <div class="green-form">
+        <form asp-action="Create" method="post">
+            <h1>Dodaj środek ochrony roślin</h1>
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+            <div class="group">
+                <input asp-for="Name" required />
+                
+                <span class="bar"></span>
+                <label asp-for="Name">Nazwa środka ochrony roślin</label>
+                <span asp-validation-for="Name" class="text-danger"></span>
+            </div>           
+            <div class="group-dropdown">
+                <label asp-for="ProducerId">Producent</label>
+                <select asp-for="ProducerId" asp-items="ViewBag.Producers" id="producerSelect">
+                    <option value="">Wybierz producenta</option>
+                </select>
+            </div>
+            <div class="group-dropdown">
+                <label asp-for="CategoryIds">Kategorie</label>
+                <select asp-for="CategoryIds" asp-items="ViewBag.Categories" id="categorySelect" multiple>
+                </select>
+            </div>
+            <div class="group-dropdown">
+                <label asp-for="ComponentIds">Składniki aktywne</label>
+                <select asp-for="ComponentIds" asp-items="ViewBag.Components" id="componentSelect" multiple>
+                </select>
+            </div>
+            <div class="group-dropdown">
+                <label asp-for="CropIds">Rośliny</label>
+                <select asp-for="CropIds" asp-items="ViewBag.Crops" id="cropSelect" multiple>
+                </select>
+            </div>
+            <div class="group">
+                <textarea asp-for="Description" class="description-field" required></textarea>
+                
+                <span class="bar"></span>
+                <label asp-for="Description">Opis</label>
+                <span asp-validation-for="Description" class="text-danger"></span>
+            </div>
+            <div class="action-buttons">
+                <a asp-action="Index" class="cancel-btn btn">Anuluj</a>
+                <button type="submit" class="add-btn btn">Dodaj</button>
+            </div>
+        </form>
+    </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/tom-select/dist/js/tom-select.complete.min.js"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+
+            new TomSelect("#producerSelect", {
+        create: false,
+        sortField: { field: "text", direction: "asc" },
+        placeholder: "Wybierz lub wyszukaj producenta",
+        searchField: "text",
+        hideSelected: true, 
+        allowEmptyOption: false, 
+        score: function(search) {
+            return function(item) {
+                return item.text.toLowerCase().includes(search.toLowerCase()) ? 1 : 0;
+                };
+            },
+        render: {
+            no_results: function(data, escape) {
+                return '<div class="no-results">Nie znaleziono</div>';
+            }
+        }
+    });
+   
+        new TomSelect("#categorySelect", {
+            create: false,
+            sortField: { field: "text", direction: "asc" },
+            placeholder: "Wybierz lub wyszukaj kategorie",
+            maxItems: null,
+            removeItem: true,
+            plugins: ['remove_button'],
+            searchField: "text",
+            score: function(search) {
+            return function(item) {
+                return item.text.toLowerCase().includes(search.toLowerCase()) ? 1 : 0;
+                };
+            },
+            render: {
+                no_results: function(data, escape) {
+                    return '<div class="no-results">Nie znaleziono</div>';
+                }
+            }
+        });
+        new TomSelect("#cropSelect", {
+            create: false,
+            sortField: { field: "text", direction: "asc" },
+            placeholder: "Wybierz lub wyszukaj rośliny",
+            maxItems: null ,
+            removeItem: true,
+            plugins: ['remove_button'],
+            searchField: "text",
+            score: function(search) {
+            return function(item) {
+                return item.text.toLowerCase().includes(search.toLowerCase()) ? 1 : 0;
+                };
+            },
+            render: {
+                no_results: function(data, escape) {
+                    return '<div class="no-results">Nie znaleziono</div>';
+                }
+            }
+        });
+        new TomSelect("#componentSelect", {
+            create: false,
+            sortField: { field: "text", direction: "asc" },
+            placeholder: "Wybierz lub wyszukaj składniki aktywne",
+            maxItems: null ,
+            removeItem: true,
+            plugins: ['remove_button'],
+            searchField: "text",
+            score: function(search) {
+            return function(item) {
+                return item.text.toLowerCase().includes(search.toLowerCase()) ? 1 : 0;
+                };
+            },
+            render: {
+                no_results: function(data, escape) {
+                    return '<div class="no-results">Nie znaleziono</div>';
+                },
+            }
+
+        });
+    });
+        new TomSelect('#ex-dropdown-input',{
+        plugins: ['dropdown_input'],
+    });
+</script>

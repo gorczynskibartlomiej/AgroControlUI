@@ -1,0 +1,102 @@
+﻿<link rel="stylesheet" href="~/css/add.css">
+
+<div class="form-container">
+    <div class="green-form">
+        <h1>Kalkulator obsady roślin</h1>
+
+        <form id="calculatorForm">
+            <div class="group">
+                <input type="number" is="decimal-input" id="plantsPerRow" min="0" step="1" required>
+                <span class="bar"></span>
+                <label for="plantsPerRow">Ilość roślin na długość pomiaru (szt.)</label>
+            </div>
+
+            <div class="group">
+                <input type="number" is="decimal-input" id="measurementLength" min="0" step="0.01" required>
+                <span class="bar"></span>
+                <label for="measurementLength">Długość pomiaru (m)</label>
+            </div>
+
+            <div class="group">
+                <input type="number" is="decimal-input" id="rowSpacing" min="0" step="1" required>
+                <span class="bar"></span>
+                <label for="rowSpacing">Szerokość międzyrzędzi (cm)</label>
+            </div>
+            <div class="group">
+                <button type="button" class="add-btn" style="width:100%" onclick="validateAndCalculate()">Oblicz</button>
+            </div>
+            <div class="result-group">
+                <h3><strong>Obsada roślin:</strong> <span id="plantDensityResult">---</span> szt./m²</h3>
+            </div>
+
+            <div class="action-buttons">
+                <a href="javascript:history.back()" class="cancel-btn btn">Wróć</a>
+                <button type="reset" class="add-btn btn" onclick="resetCalculator()">Reset</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    class DecimalInput extends HTMLInputElement {
+        constructor() {
+            super();
+            this.addEventListener('change', (e) => {
+                const val = parseFloat(this.value.replace(',', '.')) || 0,
+                      min = parseFloat(this.min),
+                      max = parseFloat(this.max),
+                      step = parseFloat(this.step);
+
+                // Zaokrąglanie wartości na podstawie kroku
+                let roundedVal = Math.round(val / step) * step;
+
+                // Jeśli step jest 1 → pełna liczba, jeśli nie → 2 miejsca po przecinku
+                this.value = (step === 1) ? Math.round(roundedVal) : roundedVal.toFixed(2);
+
+                // Sprawdzamy zakres wartości
+                if (val > max) this.value = max;
+                if (val < min) this.value = min;
+
+                // Uruchamiamy obliczenia
+                validateAndCalculate();
+            });
+        }
+    }
+
+    // Rejestrujemy niestandardowy element
+    customElements.define('decimal-input', DecimalInput, { extends: 'input' });
+
+    function validateAndCalculate() {
+        let plantsPerRow = parseFloat(document.getElementById("plantsPerRow").value) || 0;
+        let measurementLength = parseFloat(document.getElementById("measurementLength").value) || 0;
+        let rowSpacing = parseFloat(document.getElementById("rowSpacing").value) || 0;
+
+        if (plantsPerRow < 0) {
+            document.getElementById("plantsPerRow").value = 0;
+            plantsPerRow = 0;
+        }
+        if (measurementLength < 0) {
+            document.getElementById("measurementLength").value = 0;
+            measurementLength = 0;
+        }
+        if (rowSpacing < 0) {
+            document.getElementById("rowSpacing").value = 0;
+            rowSpacing = 0;
+        }
+
+        let resultElement = document.getElementById("plantDensityResult");
+
+        if (!isNaN(plantsPerRow) && !isNaN(measurementLength) && !isNaN(rowSpacing) && rowSpacing > 0) {
+            // Obliczenie obsady roślin (szt./m²)
+            let plantDensity = (plantsPerRow * 100) / (measurementLength * rowSpacing);
+            resultElement.textContent = plantDensity.toFixed(2);
+        } else {
+            resultElement.textContent = "---";
+        }
+    }
+
+    function resetCalculator() {
+        document.getElementById("calculatorForm").reset();
+        document.getElementById("plantDensityResult").textContent = "---";
+    }
+</script>

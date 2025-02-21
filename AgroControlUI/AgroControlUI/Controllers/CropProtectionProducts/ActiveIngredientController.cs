@@ -63,6 +63,7 @@ namespace AgroControlUI.Controllers.CropProtectionProducts
                 var response = await _client.PostAsync(endpoint, stringContent);
                 response.EnsureSuccessStatusCode();
 
+                TempData["successMessage"] = "Nowy składnik aktywny został pomyślnie dodany!";
                 return RedirectToAction("Index");
             }
             catch (HttpRequestException ex)
@@ -120,6 +121,7 @@ namespace AgroControlUI.Controllers.CropProtectionProducts
                 var response = await _client.DeleteAsync(endpoint);
                 response.EnsureSuccessStatusCode();
 
+                TempData["successMessage"] = "Składnik aktywny został pomyślnie usunięty!";
                 return RedirectToAction("Index");
             }
             catch (HttpRequestException ex)
@@ -184,7 +186,7 @@ namespace AgroControlUI.Controllers.CropProtectionProducts
                 var response = await _client.PutAsync(endpoint, stringContent);
                 response.EnsureSuccessStatusCode();
 
-                TempData["successMessage"] = "Zmodyfikowano pomyślnie";
+                TempData["successMessage"] = "Składnik aktywny został pomyślnie zaaktualizowany!";
                 return RedirectToAction("Index");
             }
             catch (HttpRequestException ex)

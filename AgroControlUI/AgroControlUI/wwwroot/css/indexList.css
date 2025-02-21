@@ -2,11 +2,18 @@
     margin: 0 auto;
     max-width: 100%;
 }
+.row > * {
+    width: auto !important;
+}
 
+.row > .cell.name {
+    width: 100% !important;
+}
 .table {
     margin: 0 0 40px 0;
     width: 100%;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+    display:table;
 }
 
 .row {
@@ -95,9 +102,8 @@
     text-decoration: none;
     color: white;
     padding: 6px 12px;
-    background-color: #28A745;
+    background-color: var(--add-btn-color);
     border-radius: 8px;
-    margin-bottom: 20px;
     transition: transform 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease;
 }
 

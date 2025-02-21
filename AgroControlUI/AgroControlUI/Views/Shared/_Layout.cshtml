@@ -128,6 +128,15 @@
                                     <a class="dropdown-item" asp-area="" asp-controller="Producer" asp-action="Index">Raporty magazynowe</a>
                                 </div>
                             </li>
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button">Kalkulatory</a>
+                                <div class="dropdown-menu">
+                                    <a class="dropdown-item" asp-area="" asp-controller="Calculator" asp-action="SeedRate">Kalkulator normy wysiewu</a>
+                                    <a class="dropdown-item" asp-area="" asp-controller="Calculator" asp-action="PlantPopulation">Kalkulator obsady roślin</a>
+                                    <a class="dropdown-item" asp-area="" asp-controller="Calculator" asp-action="Spraying">Kalkulator oprsków</a>
+                                    <a class="dropdown-item" asp-area="" asp-controller="Calculator" asp-action="CornDrying">Kalkulator suszenia kukurydzy</a>
+                                </div>
+                            </li>
                         }
                         else if(User.IsInRole("Pracownik"))
                         {

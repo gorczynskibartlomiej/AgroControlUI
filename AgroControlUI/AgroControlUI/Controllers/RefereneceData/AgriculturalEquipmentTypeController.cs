@@ -19,7 +19,7 @@ namespace AgroControlUI.Controllers.RefereneceData
         }
 
         // GetAll
-        [Authorize]
+        [Authorize(Policy ="AdminOnly")]
         [HttpGet]
         public async Task<IActionResult> Index()
         {
@@ -63,6 +63,7 @@ namespace AgroControlUI.Controllers.RefereneceData
                 var response = await _client.PostAsync(endpoint, stringContent);
                 response.EnsureSuccessStatusCode();
 
+                TempData["successMessage"] = "Nowy rodzaj maszyn został pomyślnie dodany!";
                 return RedirectToAction("Index");
             }
             catch (HttpRequestException ex)
@@ -120,6 +121,7 @@ namespace AgroControlUI.Controllers.RefereneceData
                 var response = await _client.DeleteAsync(endpoint);
                 response.EnsureSuccessStatusCode();
 
+                TempData["successMessage"] = "Rodzaj maszyn został pomyślnie usunięty!";
                 return RedirectToAction("Index");
             }
             catch (HttpRequestException ex)
@@ -183,6 +185,7 @@ namespace AgroControlUI.Controllers.RefereneceData
                 var stringContent = new StringContent(content, Encoding.UTF8, "application/json");
                 var response = await _client.PutAsync(endpoint, stringContent);
                 response.EnsureSuccessStatusCode();
+                TempData["successMessage"] = "Rodzaj maszyn został pomyślnie zaaktualizowany!";
 
                 TempData["successMessage"] = "Zmodyfikowano pomyślnie";
                 return RedirectToAction("Index");

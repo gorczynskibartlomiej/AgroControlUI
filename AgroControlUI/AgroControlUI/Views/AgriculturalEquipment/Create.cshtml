@@ -1,51 +1,61 @@
 ﻿@* @model AgroControlUI.DTOs.FarmData.AgriculturalEquipmentCreateDto
  
-<h1>Dodaj nowy sprzęt rolniczy</h1>
-
 <div class="form-container">
-    <div class="green-form">
+    <div class="blue-form">
         <form asp-action="Create" method="post">
-            <h1>Dodaj nowy sprzęt rolniczy</h1>
+            <h1>Dodaj maszynę rolniczą</h1>
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
             <div class="group">
                 <input asp-for="Name" required />
-                <span class="highlight"></span>
                 <span class="bar"></span>
-                <label asp-for="Name">Imię</label>
-                <span asp-validation-for="FirstName" class="text-danger"></span>
+                <label asp-for="Name">Nazwa środka ochrony roślin</label>
+                <span asp-validation-for="Name" class="text-danger"></span>
             </div>
-            <div class="group">
-                <input asp-for="LastName" required />
-                <span class="highlight"></span>
+
+            <div class="single-dropdown">
+                <select asp-for="ProducerId" asp-items="ViewBag.Producers" id="producerSelect">
+                    <option value=""></option>
+                </select>
                 <span class="bar"></span>
-                <label asp-for="LastName">Nazwisko</label>
-                <span asp-validation-for="LastName" class="text-danger"></span>
+                <label asp-for="ProducerId">Producent</label>
             </div>
-            <div class="group">
-                <input asp-for="Email" required />
-                <span class="highlight"></span>
+
+            <div class="multi-dropdown">
+                <select asp-for="CategoryIds" asp-items="ViewBag.Categories" id="categorySelect" multiple></select>
                 <span class="bar"></span>
-                <label asp-for="Email">Email</label>
-                <span asp-validation-for="Email" class="text-danger"></span>
+                <label asp-for="CategoryIds">Kategorie</label>
+            </div>
+
+            <div class="multi-dropdown">
+                <select asp-for="CropIds" asp-items="ViewBag.Crops" id="cropSelect" multiple></select>
+                <span class="bar"></span>
+                <label asp-for="CropIds">Rośliny</label>
+            </div>
+
+            <div class="adding-dropdown">
+                <div id="adding-container" class="adding-container">
+                    <div class="adding-wrapper">
+                        <select asp-for="ActiveIngredients[0].ActiveIngredientId" asp-items="ViewBag.Components" class="ingredient-select"></select>
+                        <input asp-for="ActiveIngredients[0].Concentration" type="number" class="ingredient-amount" placeholder="Ilość" min="0" step="1">
+                        <button type="button" class="remove-row">X</button>
+                    </div>
+                </div>
+                <label>Składniki aktywne</label>
+                <button type="button" id="add-ingredient">Dodaj kolejny</button>
             </div>
 
             <div class="group">
-                <input asp-for="Password" required type="password" />
-                <span class="highlight"></span>
+                <textarea asp-for="Description" class="description-field" required></textarea>
                 <span class="bar"></span>
-                <label asp-for="Password">Hasło</label>
-                <span asp-validation-for="Password" class="text-danger"></span>
+                <label asp-for="Description">Opis</label>
+                <span asp-validation-for="Description" class="text-danger"></span>
             </div>
-            <div class="group">
-                <input asp-for="ReapeatedPassword" required type="password" />
-                <span class="highlight"></span>
-                <span class="bar"></span>
-                <label asp-for="ReapeatedPassword">Powtórz hasło</label>
-                <span asp-validation-for="ReapeatedPassword" class="text-danger"></span>
+
+            <div class="action-buttons">
+                <a asp-action="Index" class="cancel-btn btn">Anuluj</a>
+                <button type="submit" class="add-btn btn">Dodaj</button>
             </div>
-            <button type="submit" class="btn btn-primary">Zarejestruj</button>
         </form>
     </div>
-</div>
- *@
+</div> *@

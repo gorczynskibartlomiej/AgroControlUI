@@ -212,7 +212,7 @@
                 var token = HttpContext.Request.Cookies["token"];
                 _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
-                var endpoint = $"/api/farms/{id}";
+                var endpoint = $"/api/farms";
                 var response = await _client.GetAsync(endpoint);
                 response.EnsureSuccessStatusCode();
 

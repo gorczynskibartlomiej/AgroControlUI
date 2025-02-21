@@ -1,155 +1,92 @@
 ﻿@model List<AgroControlUI.DTOs.FarmData.AgriculturalEquipmentDto>
-<style>
-    @@media screen and (max-width: 580px) {
-        body
 
-    {
-        font-size: 16px;
-        line-height: 22px;
-    }
+@await Html.PartialAsync("_DeleteConfirmationModal")
+<link rel="stylesheet" href="~/css/indexList.css">
+<link rel="stylesheet" href="~/css/listOperations.css">
 
-    }
+<h1 class="blue">Moje maszyny</h1>
 
-    .wrapper {
-        margin: 0 auto;
-        padding: 40px;
-        max-width: 100%;
-    }
-
-    .table {
-        margin: 0 0 40px 0;
-        width: 100%;
-        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
-        display: table;
-    }
-
-    @@media screen and (max-width: 580px) {
-        .table
-
-    {
-        display: block;
-    }
-
-    }
-
-    .row {
-        display: table-row;
-        background: #f6f6f6;
-    }
-
-        .row:nth-of-type(odd) {
-            background: #e9e9e9;
-        }
-
-        .row.header {
-            font-weight: 900;
-            color: #ffffff;
-            background: #ea6153;
-        }
-
-        .row.green {
-            background: #27ae60;
-        }
-
-        .row.blue {
-            background: #2980b9;
-        }
-
-    @@media screen and (max-width: 580px) {
-        .row
-
-    {
-        padding: 14px 0 7px;
-        display: block;
-    }
-
-    .row.header {
-        padding: 0;
-        height: 6px;
-    }
-
-        .row.header .cell {
-            display: none;
-        }
-
-    .row .cell {
-        margin-bottom: 10px;
-    }
-
-        .row .cell:before {
-            margin-bottom: 3px;
-            content: attr(data-title);
-            min-width: 98px;
-            font-size: 10px;
-            line-height: 10px;
-            font-weight: bold;
-            text-transform: uppercase;
-            color: #969696;
-            display: block;
-        }
-
-    }
-
-    .cell {
-        padding: 6px 12px;
-        display: table-cell;
-    }
-
-    @@media screen and (max-width: 580px) {
-        .cell
-    {
-        padding: 2px 16px;
-        display: block;
-    }
-
-    }
-</style>
-<h1>Sprzęt rolniczy</h1>
-
-<p>
-    <a asp-controller="AgriculturalEquipment" asp-action="Create" class="btn btn-primary">Dodaj nowy sprzęt rolniczy</a>
-</p>
-
-<div class="wrapper">
+<div id="categories" class="wrapper">
+    <p>
+        <a asp-action="Create" class="add-btn btn"><img src="~/images/plus-solid.svg" />Dodaj nową maszynę</a>
+    </p>
     <div class="table">
-        <div class="row header green">
-            <div class="cell">
-                Nazwa maszyny
+        <div class="row header blue" id="headerRow">
+            <div class="cell" data-sort="name" onclick="sortByColumn(this)">
+                <div class="sort-wrapper">
+                    <span class="sort-text">Nazwa maszyny</span>
+                    <span class="sort-arrow">▼</span>
+                </div>
             </div>
-            <div class="cell">
-                Marka
+            <div class="cell" data-sort="brand" onclick="sortByColumn(this)">
+                <div class="sort-wrapper">
+                    <span class="sort-text">Marka</span>
+                    <span class="sort-arrow">▼</span>
+                </div>
             </div>
-            <div class="cell">
-                Typ
+            <div class="cell" data-sort="type" onclick="sortByColumn(this)">
+                <div class="sort-wrapper">
+                    <span class="sort-text">Typ</span>
+                    <span class="sort-arrow">▼</span>
+                </div>
             </div>
-            <div class="cell">
-                Aktywność
+            <div class="cell" data-sort="isActive" onclick="sortByColumn(this)">
+                <div class="sort-wrapper">
+                    <span class="sort-text">Aktywność</span>
+                    <span class="sort-arrow">▼</span>
+                </div>
             </div>
             <div class="cell">
                 Akcje
             </div>
         </div>
+        <div class="row">
+            <div class="cell">
+                <input type="text" class="search-input" data-search="name" placeholder="Szukaj..." oninput="searchByColumn()" />
+            </div>
+            <div class="cell">
+                <input type="text" class="search-input" data-search="brand" placeholder="Szukaj..." oninput="searchByColumn()" />
+            </div>
+            <div class="cell">
+                <input type="text" class="search-input" data-search="type" placeholder="Szukaj..." oninput="searchByColumn()" />
+            </div>
+            <div class="cell">
+            </div>
+            <div class="cell">
+            </div>
+        </div>
+        <div class="list">
         @foreach (var equipment in Model)
         {
             <div class="row">
-                <div class="cell" data-title="Nazwa maszyny">
+                <div class="cell name" data-title="Nazwa maszyny">
                     @equipment.Name
                 </div>
-                <div class="cell" data-title="Marka">
+                <div class="cell brand" data-title="Marka">
                     @equipment.Brand
                 </div>
-                <div class="cell" data-title="Typ">
+                <div class="cell type" data-title="Typ">
                     @equipment.AgriculturalEquipmentTypeName
                 </div>
-                <div class="cell" data-title="Aktywność">
+                <div class="cell isActive" data-title="Aktywność">
                     @equipment.IsActive
                 </div>
                 <div class="cell" data-title="Akcje">
-                    <a href="@Url.Action("Edit", new { id = equipment.Id })" class="btn btn-warning">Edytuj</a>
-                    <a href="@Url.Action("Delete", new { id = equipment.Id })" class="btn btn-danger">Usuń</a>
+                    <div class="action-buttons">
+                        <a asp-action="Edit" asp-route-id="@equipment.Id" class="btn edit-btn"><img src="~/images/edit.svg" />Edytuj</a>
+                        <button type="button" class="delete-btn" data-bs-toggle="modal" data-bs-target="#deleteModal" onclick="setDeleteUrl('@Url.Action("DeleteConfirmed", new { id = equipment.Id })')">
+                            <img src="~/images/delete.svg" />Usuń
+                        </button>
+                    </div>
                 </div>
             </div>
         }
 
     </div>
+    </div>
+    <ul class="pagination"></ul>
 </div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/list.js/2.3.1/list.min.js"></script>
+<script src="~/js/listOperations.js"></script>
+<script src="~/js/deleteModal.js"></script>

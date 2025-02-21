@@ -63,6 +63,7 @@ namespace AgroControlUI.Controllers.Fertilizers
                 var response = await _client.PostAsync(endpoint, stringContent);
                 response.EnsureSuccessStatusCode();
 
+                TempData["successMessage"] = "Nowa kategoria nawozów została pomyślnie dodana!";
                 return RedirectToAction("Index");
             }
             catch (HttpRequestException ex)
@@ -185,7 +186,7 @@ namespace AgroControlUI.Controllers.Fertilizers
                 var response = await _client.PutAsync(endpoint, stringContent);
                 response.EnsureSuccessStatusCode();
 
-                TempData["successMessage"] = "Zmodyfikowano pomyślnie";
+                TempData["successMessage"] = "Kategoria nawozów została pomyślnie zaaktualizowana!";
                 return RedirectToAction("Index");
             }
             catch (HttpRequestException ex)

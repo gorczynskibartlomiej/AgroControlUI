@@ -67,7 +67,7 @@ public class AccountController : Controller
             HttpContext.Response.Cookies.Append("token", token, cookieOptions);
             cookieOptions.Expires = DateTimeOffset.UtcNow.AddSeconds(expiresIn);
             HttpContext.Response.Cookies.Append("refreshToken", refreshToken, cookieOptions);
-            TempData["successMessage"] = "Zalgowano pomyślnie.";
+            TempData["successMessage"] = "Zalogowano pomyślnie.";
             return RedirectToAction("Select", "Farm");
         }
         catch (HttpRequestException ex)

@@ -11,14 +11,14 @@
             <div class="group">
                 <input type="hidden" name="Id" value="@Model.Id" />
                 <input asp-for="Name" required value="@Model.Name"/>
-                <span class="highlight"></span>
+                
                 <span class="bar"></span>
                 <label asp-for="Name">Nazwa rodzaju paliwa</label>
                 <span asp-validation-for="Name" class="text-danger"></span>
             </div>
             <div class="group">
                 <input asp-for="FuelSymbol" required />
-                <span class="highlight"></span>
+                
                 <span class="bar"></span>
                 <label asp-for="FuelSymbol">Symbol</label>
                 <span asp-validation-for="Name" class="text-danger"></span>

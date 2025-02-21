@@ -63,6 +63,7 @@ namespace AgroControlUI.Controllers.CropProtectionProducts
                 var response = await _client.PostAsync(endpoint, stringContent);
                 response.EnsureSuccessStatusCode();
 
+                TempData["successMessage"] = "Nowa kategoria środków ochrony roślin została pomyślnie dodana!";
                 return RedirectToAction("Index");
             }
             catch (HttpRequestException ex)
@@ -120,6 +121,7 @@ namespace AgroControlUI.Controllers.CropProtectionProducts
                 var response = await _client.DeleteAsync(endpoint);
                 response.EnsureSuccessStatusCode();
 
+                TempData["successMessage"] = "Kategoria środków ochrony roślin została pomyślnie usunięta!";
                 return RedirectToAction("Index");
             }
             catch (HttpRequestException ex)
@@ -184,7 +186,7 @@ namespace AgroControlUI.Controllers.CropProtectionProducts
                 var response = await _client.PutAsync(endpoint, stringContent);
                 response.EnsureSuccessStatusCode();
 
-                TempData["successMessage"] = "Zmodyfikowano pomyślnie";
+                TempData["successMessage"] = "Kategoria środków ochrony roślin została pomyślnie zaaktualizowana!";
                 return RedirectToAction("Index");
             }
             catch (HttpRequestException ex)

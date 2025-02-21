@@ -1,44 +1,69 @@
 ﻿@model List<AgroControlUI.DTOs.CropProtectionProducts.CropProtectionProductDto>
 
+@await Html.PartialAsync("_DeleteConfirmationModal")
 <link rel="stylesheet" href="~/css/indexList.css">
+<link rel="stylesheet" href="~/css/listOperations.css">
 
 <h1 class="blue">Środki ochrony roślin</h1>
 
-<div class="wrapper">
+<div id="categories" class="wrapper">
     <p>
-        <a asp-action="Create" class="add-btn btn"><img src="~/images/plus-solid.svg" />Dodaj środek ochrony roślin</a>
+        <a asp-action="Create" class="add-btn"><img src="~/images/plus-solid.svg" />Dodaj środek ochrony roślin</a>
     </p>
     <div class="table">
-        <div class="row header blue">
-            <div class="cell">
-                Nazwa środka ochrony roślin
+        <div class="row header blue" id="headerRow">
+            <div class="cell" data-sort="name" onclick="sortByColumn(this)">
+                <div class="sort-wrapper">
+                    <span class="sort-text">Nazwa środka ochrony roślin</span>
+                    <span class="sort-arrow">▼</span>
+                </div>
             </div>
-            <div class="cell">
-                Producent
+            <div class="cell" data-sort="producer" onclick="sortByColumn(this)">
+                <div class="sort-wrapper">
+                    <span class="sort-text">Producent</span>
+                    <span class="sort-arrow">▼</span>
+                </div>
             </div>
-            <div class="cell">
+            <div class="cell" data-sort="cppcategory">
                 Kategorie
             </div>
-            <div class="cell">
+            <div class="cell" data-sort="activeIngredients">
                 Skład
             </div>
-            <div class="cell">
+            <div class="cell" data-sort="crops">
                 Rośliny
             </div>
             <div class="cell">
                 Akcje
             </div>
         </div>
+        <div class="row">
+            <div class="cell">
+                <input type="text" class="search-input" data-search="name" placeholder="Szukaj..." oninput="searchByColumn()" />
+            </div>
+            <div class="cell">
+                <input type="text" class="search-input" data-search="producer" placeholder="Szukaj..." oninput="searchByColumn()" />
+            </div>
+            <div class="cell">
+            </div>
+            <div class="cell">
+            </div>
+            <div class="cell">
+            </div>
+            <div class="cell">
+            </div>
+        </div>
+        <div class="list">
         @foreach (var cropProtectionProduct in Model)
         {
             <div class="row">
-                <div class="cell" data-title="Nazwa środka ochrony roślin">
+                <div class="cell name" data-title="Nazwa środka ochrony roślin">
                     @cropProtectionProduct.Name
                 </div>
-                <div class="cell" data-title="Producent">
+                <div class="cell producer" data-title="Producent">
                     @cropProtectionProduct.ProducerName
                 </div>
-                <div class="cell" data-title="Kategorie">
+                <div class="cell cppcategory" data-title="Kategorie">
                     @foreach (var cropProtectionProductCategory in cropProtectionProduct.cropProtectionProductCategories)
                     {
                         @($"{cropProtectionProductCategory.Name}")
@@ -48,17 +73,17 @@
                         }
                     }
                 </div>
-                <div class="cell" data-title="Skład">
+                <div class="cell activeIngredients" data-title="Skład">
                     @foreach (var cropProtectionProductComponent in cropProtectionProduct.cropProtectionProductComponents)
                     {
-                        @($"{cropProtectionProductComponent.ActiveIngredientName} ({cropProtectionProductComponent.Concentration}g)")
+                        @($"{cropProtectionProductComponent.ActiveIngredientName}({cropProtectionProductComponent.Concentration}g)")
                         @if (cropProtectionProductComponent != cropProtectionProduct.cropProtectionProductComponents.Last())
                         {
                             @(", ")
                         }
                     }
                 </div>
-                <div class="cell" data-title="Rośliny">
+                <div class="cell crops" data-title="Rośliny">
                     @foreach (var cropProtectionProductCrop in cropProtectionProduct.cropProtectionProductCrops)
                     {
                         @($"{cropProtectionProductCrop.Name}")
@@ -81,4 +106,9 @@
         }
 
     </div>
+    </div>
+    <ul class="pagination"></ul>
 </div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/list.js/2.3.1/list.min.js"></script>
+<script src="~/js/listOperations.js"></script>
+<script src="~/js/deleteModal.js"></script>

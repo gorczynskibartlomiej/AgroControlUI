@@ -1,0 +1,138 @@
+﻿<link rel="stylesheet" href="~/css/add.css">
+
+<div class="form-container">
+    <div class="green-form">
+        <h1>Kalkulator normy wysiewu</h1>
+
+        <form id="calculatorForm">
+            <div class="group">
+                <input type="number" is="decimal-input" id="mtz" min="0" required step="0.01" />
+                <span class="bar"></span>
+                <label for="mtz">MTZ (masa tysiąca nasion w g)</label>
+            </div>
+
+            <div class="group">
+                <input type="number" is="decimal-input" id="plantDensity" min="0" required step="1" />
+                <span class="bar"></span>
+                <label for="plantDensity">Obsada (szt/m²)</label>
+            </div>
+
+            <div class="group">
+                <input type="number" is="decimal-input" id="germinationRate" min="1" max="100" step="0.1" required />
+                <span class="bar"></span>
+                <label for="germinationRate">Siła kiełkowania (%)</label>
+            </div>
+
+            <div class="group">
+                <input type="number" is="decimal-input" id="seedPurity" min="1" max="100" step="0.1" required />
+                <span class="bar"></span>
+                <label for="seedPurity">Czystość nasion (%)</label>
+            </div>
+            <div class="group">
+                <button type="button" class="add-btn" style="width:100%" onclick="validateAndCalculate()">Oblicz</button>
+            </div>
+            <div class="result-group">
+                <h3><strong>Norma wysiewu:</strong> <span id="seedRateResult">---</span> kg/ha</h3>
+            </div>
+
+            <div class="action-buttons">
+                <a href="javascript:history.back()" class="cancel-btn ">Wróć</a>
+                <button type="reset" class="add-btn" onclick="resetCalculator()">Reset</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    // Klasa DecimalInput z poprawionym zaokrąglaniem
+    class DecimalInput extends HTMLInputElement {
+        constructor() {
+            super();
+            this.addEventListener('change', (e) => {
+                const val = parseFloat(this.value),
+                      min = parseFloat(this.min),
+                      max = parseFloat(this.max),
+                      step = parseFloat(this.step);
+
+                // Zaokrąglanie wartości na 2 miejsca po przecinku (jeśli krok nie jest równy 1)
+                let roundedVal = (Math.round(val / step) * step);
+
+                // Jeśli step jest równy 1, usuwamy miejsca po przecinku
+                if (step === 1) {
+                    this.value = Math.round(roundedVal); // Zaokrąglamy do liczby całkowitej
+                } else {
+                    this.value = roundedVal.toFixed(2); // Zaokrąglamy na 2 miejsca po przecinku
+                }
+
+                // Sprawdzamy, czy wartość mieści się w dozwolonym zakresie
+                if (val > max) {
+                    this.value = max;
+                }
+                if (val < min) {
+                    this.value = min;
+                }
+
+                // Uruchamiamy obliczenia po każdej zmianie
+                validateAndCalculate();
+            });
+        }
+    }
+
+    // Definicja niestandardowego elementu
+    customElements.define('decimal-input', DecimalInput, { extends: 'input' });
+
+    // Funkcja walidacji i obliczania wyniku
+    function validateAndCalculate() {
+        let mtz = parseFloat(document.getElementById("mtz").value);
+        let plantDensity = parseFloat(document.getElementById("plantDensity").value);
+        let germinationRate = parseFloat(document.getElementById("germinationRate").value);
+        let seedPurity = parseFloat(document.getElementById("seedPurity").value);
+
+        // Walidacja danych wejściowych
+        if (germinationRate > 100) {
+            document.getElementById("germinationRate").value = 100;
+            germinationRate = 100;
+        } else if (germinationRate < 1 && !isNaN(germinationRate)) {
+            document.getElementById("germinationRate").value = 1;
+            germinationRate = 1;
+        }
+
+        if (seedPurity > 100) {
+            document.getElementById("seedPurity").value = 100;
+            seedPurity = 100;
+        } else if (seedPurity < 1 && !isNaN(seedPurity)) {
+            document.getElementById("seedPurity").value = 1;
+            seedPurity = 1;
+        }
+
+        if (mtz < 0) {
+            document.getElementById("mtz").value = 0;
+            mtz = 0;
+        }
+        if (plantDensity < 0) {
+            document.getElementById("plantDensity").value = 0;
+            plantDensity = 0;
+        }
+
+        let resultElement = document.getElementById("seedRateResult");
+
+        if (!isNaN(mtz) && !isNaN(plantDensity) && !isNaN(germinationRate) && !isNaN(seedPurity) && germinationRate > 0 && seedPurity > 0) {
+            let seedRate = (mtz * plantDensity * 100) / (germinationRate * seedPurity);
+
+            // Sprawdzamy, czy zaokrąglamy do pełnej liczby, czy z miejscami po przecinku
+            if (plantDensity % 1 === 0) {
+                resultElement.textContent = Math.round(seedRate); // Bez miejsc po przecinku
+            } else {
+                resultElement.textContent = seedRate.toFixed(2); // Z dwoma miejscami po przecinku
+            }
+        } else {
+            resultElement.textContent = "---";
+        }
+    }
+
+    // Funkcja resetująca formularz
+    function resetCalculator() {
+        document.getElementById("calculatorForm").reset();
+        document.getElementById("seedRateResult").textContent = "---";
+    }
+</script>

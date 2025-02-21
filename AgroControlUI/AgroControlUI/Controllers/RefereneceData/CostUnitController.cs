@@ -17,7 +17,7 @@ namespace AgroControlUI.Controllers.RefereneceData
             _client.BaseAddress = new Uri(Options.ApiUrl);
         }
         //GetAll
-        [Authorize]
+        [Authorize(Policy = "AdminOnly")]
         [HttpGet]
         public async Task<IActionResult> Index()
         {
@@ -58,7 +58,8 @@ namespace AgroControlUI.Controllers.RefereneceData
                 var stringContent = new StringContent(content, Encoding.UTF8, "application/json");
                 var response = _client.PostAsync(endpoint, stringContent).Result;
                 response.EnsureSuccessStatusCode();
-                //TempData["successMessage"] = "Etat został dodany";
+
+                TempData["successMessage"] = "Nowa jednostka kosztów została pomyślnie dodana!";
                 return RedirectToAction("Index");
 
             }
@@ -114,7 +115,8 @@ namespace AgroControlUI.Controllers.RefereneceData
                 var endpoint = $"/api/costUnits/{id}";
                 var response = await _client.DeleteAsync(endpoint);
                 response.EnsureSuccessStatusCode();
-                //TempData["successMessage"] = "Uprawa została usunięta";
+
+                TempData["successMessage"] = "Jednostka kosztów została pomyślnie usunięta!";
                 return RedirectToAction("Index");
             }
             catch (HttpRequestException ex)
@@ -175,7 +177,8 @@ namespace AgroControlUI.Controllers.RefereneceData
                 var stringContent = new StringContent(content, Encoding.UTF8, "application/json");
                 var response = _client.PutAsync(endpoint, stringContent).Result;
                 response.EnsureSuccessStatusCode();
-                TempData["successMessage"] = "Zmodyfikowano pomyślnie";
+
+                TempData["successMessage"] = "Jednostka kosztów została pomyślnie zaaktualizowana!";
                 return RedirectToAction("Index");
             }
             catch (HttpRequestException ex)

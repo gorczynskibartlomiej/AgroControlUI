@@ -36,6 +36,8 @@ namespace AgroControlUI.Controllers.CropProtectionProducts
             var products = JsonConvert.DeserializeObject<List<CropProtectionProductDto>>(content);
             return View(products);
         }
+
+        // Create
         [Authorize(Policy = "AdminOnly")]
         [HttpGet]
         public async Task<IActionResult> Create()
@@ -44,7 +46,6 @@ namespace AgroControlUI.Controllers.CropProtectionProducts
             return View();
         }
 
-        // POST: Dodanie nowego środka ochrony roślin
         [Authorize(Policy = "AdminOnly")]
         [HttpPost]
         public async Task<IActionResult> Create(CreateCropProtectionProductDto productDto)
@@ -54,7 +55,6 @@ namespace AgroControlUI.Controllers.CropProtectionProducts
                 await LoadSelectLists();
                 return View(productDto);
             }
-
             try
             {
                 var token = HttpContext.Request.Cookies["token"];
@@ -67,6 +67,7 @@ namespace AgroControlUI.Controllers.CropProtectionProducts
                 var response = await _client.PostAsync(endpoint, stringContent);
                 response.EnsureSuccessStatusCode();
 
+                TempData["successMessage"] = "Nowy środek ochrony roślin został pomyślnie dodany!";
                 return RedirectToAction("Index");
             }
             catch (HttpRequestException ex)
@@ -96,7 +97,7 @@ namespace AgroControlUI.Controllers.CropProtectionProducts
             }
             catch (Exception ex)
             {
-                TempData["errorMessage"] = "Nie udało się załadować list: ";
+                TempData["errorMessage"] = "Nie udało się załadować list";
             }
         }
 
@@ -204,6 +205,7 @@ namespace AgroControlUI.Controllers.CropProtectionProducts
                 var response = await _client.DeleteAsync(endpoint);
                 response.EnsureSuccessStatusCode();
 
+                TempData["successMessage"] = "Środek ochrony roślin został pomyślnie usunięty!";
                 return RedirectToAction("Index");
             }
             catch (HttpRequestException ex)
