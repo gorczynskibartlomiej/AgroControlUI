@@ -8,14 +8,7 @@ namespace AgroControlUI.DTOs.FarmData
     {
         public int Id { get; set; }
         public required string Name { get; set; }
-        public string? Description { get; set; }
-        public Polygon? FieldBorder { get; set; }
         public decimal Area { get; set; }
-        public string? SoilType { get; set; }
-
-        public DateTime CreatedOn { get; set; }
-        public int CreatedBy { get; set; }
-        public DateTime UpdatedOn { get; set; }
-        public int UpdatedBy { get; set; }
+        public ICollection<string> SoilTypes { get; set; } = new List<string>();
     }
 }

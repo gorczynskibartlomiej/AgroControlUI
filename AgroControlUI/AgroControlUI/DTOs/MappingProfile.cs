@@ -34,7 +34,7 @@ namespace AgroControlUI.DTOs
 
             CreateMap<CropRotationPlanner, CropRotationPlannerDto>();
 
-            CreateMap<CropRotationPlanner, CropRotationPLannerDetailsDto>();
+            CreateMap<CropRotationPlanner, CropRotationPlannerDetailsDto>();
 
             CreateMap<Employee, EmployeeDto>();
 

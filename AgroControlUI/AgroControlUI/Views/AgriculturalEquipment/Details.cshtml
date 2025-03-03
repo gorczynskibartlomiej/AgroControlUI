@@ -1,0 +1,123 @@
+﻿@model AgroControlUI.DTOs.FarmData.AgriculturalEquipmentDetailsDto
+
+@await Html.PartialAsync("_DeleteConfirmationModal")
+<link rel="stylesheet" href="~/css/Details.css" />
+
+<div class="details-container">
+    <h1>Szczegóły maszyny</h1>
+
+    <div class="info-section">
+        <p class="info-title">Nazwa maszyny:</p>
+        <h2 class="info-name">@Model.Name</h2>
+    </div>
+
+    <div class="info-section">
+        <p class="info-title">Marka:</p>
+        <p>@Model.Brand</p>
+    </div>
+
+    <div class="info-section">
+        <p class="info-title">Status:</p>
+        <p>@(Model.IsActive ? "Aktywna" : "Nieaktywna")</p>
+    </div>
+
+    <div class="info-section">
+        <p class="info-title">Rok produkcji:</p>
+        <p>@(Model.YearOfManufacture?.ToString() ?? "Brak danych")</p>
+    </div>
+
+    <div class="info-section">
+    <p class="info-title">Rodzaj paliwa:</p>
+    <p>@(Model.Fuel != null ? Model.Fuel.Name : "Brak danych")</p>
+</div>
+
+    <div class="info-section">
+        <p class="info-title">Pojemność paliwa:</p>
+        <p>@(Model.FuelCapacity.HasValue ? $"{Model.FuelCapacity} l" : "Brak danych")</p>
+    </div>
+
+    <div class="info-section">
+        <p class="info-title">Moc silnika:</p>
+        <p>@(Model.EnginePower.HasValue ? $"{Model.EnginePower} KM" : "Brak danych")</p>
+    </div>
+
+    <div class="info-section">
+        <p class="info-title">Waga:</p>
+        <p>@(Model.Weight.HasValue ? $"{Model.Weight} kg" : "Brak danych")</p>
+    </div>
+
+    <div class="info-section">
+        <p class="info-title">Szerokość:</p>
+        <p>@(Model.Width.HasValue ? $"{Model.Width} m" : "Brak danych")</p>
+    </div>
+
+    <div class="info-section">
+        <p class="info-title">Wysokość:</p>
+        <p>@(Model.Height.HasValue ? $"{Model.Height} m" : "Brak danych")</p>
+    </div>
+
+    <div class="info-section">
+        <p class="info-title">Prędkość robocza:</p>
+        <p>@(Model.WorkingSpeed.HasValue ? $"{Model.WorkingSpeed} km/h" : "Brak danych")</p>
+    </div>
+
+    <div class="info-section">
+        <p class="info-title">Prędkość transportowa:</p>
+        <p>@(Model.TransportSpeed.HasValue ? $"{Model.TransportSpeed} km/h" : "Brak danych")</p>
+    </div>
+
+    <div class="info-section">
+        <p class="info-title">Szerokość robocza:</p>
+        <p>@(Model.WorkingWidth.HasValue ? $"{Model.WorkingWidth} m" : "Brak danych")</p>
+    </div>
+
+
+    <div class="info-section">
+        <p class="info-title">Ostatni serwis:</p>
+        <p>@(Model.LastServiceDate?.ToString("yyyy-MM-dd") ?? "Brak danych")</p>
+    </div>
+
+    <div class="info-section">
+        <p class="info-title">Następny serwis:</p>
+        <p>@(Model.NextServiceDate?.ToString("yyyy-MM-dd") ?? "Brak danych")</p>
+    </div>
+
+    <div class="info-section">
+        <p class="info-title">Typ maszyny:</p>
+        <p>@Model.AgriculturalEquipmentType.Name</p>
+    </div>
+
+    <div class="info-section">
+        <p class="info-title">Utworzono:</p>
+        <p class="timestamp">@Model.CreatedOn.ToString("yyyy-MM-dd HH:mm") przez @Model.CreatedBy</p>
+    </div>
+
+    <div class="info-section">
+        <p class="info-title">Ostatnia aktualizacja:</p>
+        <p class="timestamp">@Model.UpdatedOn.ToString("yyyy-MM-dd HH:mm") przez @Model.UpdatedBy</p>
+    </div>
+
+    <div class="info-section">
+        <p class="info-title">Opis:</p>
+        @if (!string.IsNullOrEmpty(Model.Description))
+        {
+            <p>@Model.Description</p>
+        }
+        else
+        {
+            <p>Brak</p>
+        }
+    </div>
+
+    <div class="action-buttons">
+        <a asp-action="Edit" asp-route-id="@Model.Id" class="edit-btn">Edytuj</a>
+        <button type="button" class="delete-btn" data-bs-toggle="modal" data-bs-target="#deleteModal"
+                onclick="setDeleteUrl('@Url.Action("DeleteConfirmed", new { id = Model.Id })')">
+            Usuń
+        </button>
+        <a asp-action="FieldWorks" asp-route-id="@Model.Id" class="add-btn">Prace polowe</a>
+        <a asp-action="Index" class="cancel-btn">Powrót do listy</a>
+    </div>
+</div>
+
+<script src="~/js/deleteModal.js"></script>

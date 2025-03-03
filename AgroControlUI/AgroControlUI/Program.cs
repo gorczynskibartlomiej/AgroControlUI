@@ -26,9 +26,7 @@ builder.Services.AddAuthorization(options =>
     });
     options.AddPolicy("OwnerOrWorker", policy =>
     {
-        policy.RequireRole("W³aœciciel");
-        policy.RequireRole("Wspó³w³aœciciel");
-        policy.RequireRole("Pracownik");
+        policy.RequireRole("W³aœciciel", "Wspó³w³aœciciel", "Pracownik");
     });
     options.AddPolicy("OwnerOrCoOwner", policy =>
     {
@@ -60,7 +58,10 @@ builder.Services.AddSession(options =>
 });
 
 // Add services to the container.
-builder.Services.AddControllersWithViews();
+builder.Services.AddControllersWithViews(options =>
+{
+    options.ModelValidatorProviders.Clear();
+});
 
 //FluentValidation
 builder.Services.AddFluentValidationAutoValidation(options =>

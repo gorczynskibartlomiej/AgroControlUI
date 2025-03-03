@@ -1,49 +1,191 @@
 ﻿@model List<AgroControlUI.DTOs.FarmData.CropRotationPlannerDto>
 
-@{
-    ViewData["Title"] = "Planowanie Rotacji Upraw";
-}
+@await Html.PartialAsync("_DeleteConfirmationModal")
 
-<h1>Planowanie Rotacji Upraw</h1>
+<link rel="stylesheet" href="~/css/indexList.css">
+<link href="~/css/addWithSelects.css" rel="stylesheet" />
+<link rel="stylesheet" href="~/css/listOperations.css">
 
-@if (TempData["errorMessage"] != null)
-{
-    <div class="alert alert-danger">
-        @TempData["errorMessage"]
-    </div>
-}
+<h1 class="blue">Planowanie zmianowania upraw</h1>
 
-@if (TempData["successMessage"] != null)
-{
-    <div class="alert alert-success">
-        @TempData["successMessage"]
-    </div>
-}
+<style>
+    .single-dropdown select {
+        opacity: 0;
+        position: absolute;
+        z-index: -1;
+    }
 
-<p>
-    <a href="@Url.Action("Create")" class="btn btn-primary">Dodaj nowy plan rotacji</a>
-</p>
+    .ts-dropdown {
+        position: absolute !important;
+        z-index: 1000;
+        width:100%;
+    }
 
-<table class="table table-striped">
-    <thead>
-        <tr>
-            <th>Uprawa</th>
-            <th>Rok</th>
-            <th>Sezon</th>
-            <th>Akcje</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var rotation in Model)
-        {
-            <tr>
-                <td>@rotation.CropName</td>
-                <td>@rotation.Year</td>
-                <td>
-                    <a href="@Url.Action("Edit", new { id = rotation.Id })" class="btn btn-warning">Edytuj</a>
-                    <a href="@Url.Action("Delete", new { id = rotation.Id })" class="btn btn-danger">Usuń</a>
-                </td>
-            </tr>
+    .bar {
+        position: relative;
+        display: block;
+        width: 100%;
+    }
+
+        .bar:before, .bar:after {
+            content: '';
+            height: 2px;
+            width: 0;
+            bottom: 1px;
+            position: absolute;
+            background: #4caf50;
+            transition: 0.2s ease all;
         }
-    </tbody>
-</table>
+
+        .bar:before {
+            left: 50%;
+        }
+
+        .bar:after {
+            right: 50%;
+        }
+
+    input:focus ~ .bar:before, input:focus ~ .bar:after {
+        width: 50%;}
+
+    .ts-dropdown.single {
+        margin-top: 5px;
+    }
+
+    .ts-wrapper.has-items input::placeholder {
+        opacity: 0;
+    }
+</style>
+<div id="categories" class="wrapper">
+    <p style="padding-bottom:50px;">
+        <a asp-action="Create" class="add-btn"><img src="~/images/plus-solid.svg" />Dodaj nową uprawę</a>
+    </p>
+
+    <div class="single-dropdown">
+        <select id="fieldDropdown" asp-items="ViewBag.Fields">
+            <option value=""></option>
+        </select>
+        <label>Pole</label>
+        <span class="bar"></span>
+    </div>
+
+    <div class="table">
+        <div class="row header blue" id="headerRow">
+            <div class="cell" data-sort="fieldName" onclick="sortByColumn(this)">
+                <div class="sort-wrapper">
+                    <span class="sort-text">Nazwa pola</span>
+                    <span class="sort-arrow">▼</span>
+                </div>
+            </div>
+            <div class="cell" data-sort="cropName" onclick="sortByColumn(this)">
+                <div class="sort-wrapper">
+                    <span class="sort-text">Uprawa</span>
+                    <span class="sort-arrow">▼</span>
+                </div>
+            </div>
+            <div class="cell" data-sort="year" onclick="sortByColumn(this)">
+                <div class="sort-wrapper">
+                    <span class="sort-text">Rok</span>
+                    <span class="sort-arrow">▼</span>
+                </div>
+            </div>
+            <div class="cell">
+                Opis
+            </div>
+            <div class="cell">
+                Akcje
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="cell">
+                <input type="text" class="search-input" data-search="fieldName" placeholder="Szukaj pola..." oninput="searchByColumn()" />
+            </div>
+            <div class="cell">
+                <input type="text" class="search-input" data-search="cropName" placeholder="Szukaj uprawy..." oninput="searchByColumn()" />
+            </div>
+            <div class="cell">
+                <input type="text" class="search-input" data-search="year" placeholder="Szukaj roku..." oninput="searchByColumn()" />
+            </div>
+            <div class="cell"></div>
+            <div class="cell"></div>
+        </div>
+
+        <div class="list" id="cropRotationList">
+            @if (Model.Any())
+            {
+                @foreach (var item in Model)
+                {
+                    <div class="row" data-field-id="@item.FieldId">
+                        <div class="cell fieldName" data-title="Nazwa pola">
+                            @item.FieldName
+                        </div>
+                        <div class="cell cropName" data-title="Uprawa">
+                            @item.CropName
+                        </div>
+                        <div class="cell year" data-title="Rok">
+                            @item.Year
+                        </div>
+                        <div class="cell description" data-title="Opis">
+                            @item.Description
+                        </div>
+                        <div class="cell" data-title="Akcje">
+                            <div class="action-buttons">
+                                <a asp-action="Edit" asp-route-id="@item.Id" class="edit-btn"><img src="~/images/edit.svg" />Edytuj</a>
+                                <a asp-action="Details" asp-route-id="@item.Id" class="cancel-btn"><img src="~/images/details.svg" />Szczegóły</a>
+                                <button type="button" class="delete-btn" data-bs-toggle="modal" data-bs-target="#deleteModal"
+                                        onclick="setDeleteUrl('@Url.Action("DeleteConfirmed", new { id = item.Id })')">
+                                    <img src="~/images/delete.svg" />Usuń
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                }
+            }
+            else
+            {
+                <div class="row no-data">
+                    <div class="cell" colspan="5">Brak danych dla wybranego pola</div>
+                </div>
+            }
+        </div>
+    </div>
+
+    <ul class="pagination"></ul>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/tom-select/dist/js/tom-select.complete.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/list.js/2.3.1/list.min.js"></script>
+<script src="~/js/listOperations.js"></script>
+<script src="~/js/deleteModal.js"></script>
+<script src="~/js/inputLabel.js"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        new TomSelect("#fieldDropdown", {
+            create: false,
+            sortField: { field: "text", direction: "asc" },
+            placeholder: "Wybierz pole"
+        });
+
+        document.getElementById("fieldDropdown").addEventListener("change", function () {
+            var selectedFieldId = this.value;
+            var rows = document.querySelectorAll("#cropRotationList .row");
+
+            var hasData = false;
+
+            rows.forEach(row => {
+                if (!selectedFieldId || row.getAttribute("data-field-id") === selectedFieldId) {
+                    row.style.display = "";
+                    hasData = true;
+                } else {
+                    row.style.display = "none";
+                }
+            });
+
+            var noDataRow = document.querySelector(".no-data");
+            if (noDataRow) {
+                noDataRow.style.display = hasData ? "none" : "";
+            }
+        });
+    });
+</script>

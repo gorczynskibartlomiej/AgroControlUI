@@ -1,7 +1,9 @@
 ﻿using AgroControlUI.Constants;
 using AgroControlUI.DTOs.FarmData;
+using AgroControlUI.DTOs.ReferenceData;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Newtonsoft.Json;
 using System.Net.Http.Headers;
 using System.Text;
@@ -38,17 +40,61 @@ namespace AgroControlUI.Controllers.FarmData
         // Create
         [Authorize(Policy = "OwnerOrCoOwner")]
         [HttpGet]
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
+            try
+            {
+                var token = HttpContext.Request.Cookies["token"];
+                _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
+                // Pobieranie typów gleby
+                 var soilResponse = await _client.GetAsync("/api/soiltypes");
+                soilResponse.EnsureSuccessStatusCode();
+                var soilContent = await soilResponse.Content.ReadAsStringAsync();
+                var soilTypes = JsonConvert.DeserializeObject<List<SoilTypeDto>>(soilContent);
+                ViewBag.SoilTypes = soilTypes?.Select(s => new SelectListItem
+                {
+                    Value = s.Id.ToString(),
+                    Text = s.Name
+                }).ToList() ?? new List<SelectListItem>();
+
+                // Pobieranie kodu pocztowego
+                var postalCodeResponse = await _client.GetAsync("/api/farms/postalCode");
+                postalCodeResponse.EnsureSuccessStatusCode();
+                var postalCode = await postalCodeResponse.Content.ReadAsStringAsync();
+
+                ViewBag.PostalCode = postalCode;
+            }
+            catch (Exception ex)
+            {
+                TempData["errorMessage"] = "Nie udało się załadować danych.";
+            }
+
             return View();
         }
 
         [Authorize(Policy = "OwnerOrCoOwner")]
         [HttpPost]
-        public async Task<IActionResult> Create(FieldDto fieldDto)
+        public async Task<IActionResult> Create(CreateFieldDto fieldDto)
         {
             if (!ModelState.IsValid)
             {
+                var soilResponse = await _client.GetAsync("/api/soiltypes");
+                soilResponse.EnsureSuccessStatusCode();
+                var soilContent = await soilResponse.Content.ReadAsStringAsync();
+                var soilTypes = JsonConvert.DeserializeObject<List<SoilTypeDto>>(soilContent);
+                ViewBag.SoilTypes = soilTypes?.Select(s => new SelectListItem
+                {
+                    Value = s.Id.ToString(),
+                    Text = s.Name
+                }).ToList() ?? new List<SelectListItem>();
+
+                // Pobieranie kodu pocztowego
+                var postalCodeResponse = await _client.GetAsync("/api/farms/postalCode");
+                postalCodeResponse.EnsureSuccessStatusCode();
+                var postalCode = await postalCodeResponse.Content.ReadAsStringAsync();
+
+                ViewBag.PostalCode = postalCode;
                 return View(fieldDto);
             }
 
@@ -138,19 +184,46 @@ namespace AgroControlUI.Controllers.FarmData
         [Authorize(Policy = "OwnerOrCoOwner")]
         [HttpGet]
         public async Task<IActionResult> Edit(int id)
-        {
+         {
             try
             {
                 var token = HttpContext.Request.Cookies["token"];
                 _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
+                var soilResponse = await _client.GetAsync("/api/soiltypes");
+                soilResponse.EnsureSuccessStatusCode();
+                var soilContent = await soilResponse.Content.ReadAsStringAsync();
+                var soilTypes = JsonConvert.DeserializeObject<List<SoilTypeDto>>(soilContent);
+                ViewBag.SoilTypes = soilTypes?.Select(s => new SelectListItem
+                {
+                    Value = s.Id.ToString(),
+                    Text = s.Name
+                }).ToList() ?? new List<SelectListItem>();
+
+                var postalCodeResponse = await _client.GetAsync("/api/farms/postalCode");
+                postalCodeResponse.EnsureSuccessStatusCode();
+                var postalCode = await postalCodeResponse.Content.ReadAsStringAsync();
+
+                ViewBag.PostalCode = postalCode;
+
                 var endpoint = $"/api/fields/{id}";
                 var response = await _client.GetAsync(endpoint);
                 response.EnsureSuccessStatusCode();
-
                 string content = await response.Content.ReadAsStringAsync();
-                var field = JsonConvert.DeserializeObject<FieldDto>(content);
-                return View(field);
+
+                var fieldDetails = JsonConvert.DeserializeObject<FieldDetailsDto>(content);
+
+                var createFieldDto = new CreateFieldDto
+                {
+                    Id = fieldDetails.Id,
+                    Name = fieldDetails.Name,
+                    Description = fieldDetails.Description,
+                    FieldBorder = fieldDetails.FieldBorder,
+                    Area = fieldDetails.Area,
+                    SoilTypesIds = fieldDetails.SoilTypes.Select(st => st.Id).ToList()
+                };
+
+                return View(createFieldDto);
             }
             catch (HttpRequestException ex)
             {
@@ -166,10 +239,25 @@ namespace AgroControlUI.Controllers.FarmData
 
         [Authorize(Policy = "OwnerOrCoOwner")]
         [HttpPost]
-        public async Task<IActionResult> Edit(FieldDto fieldDto)
+        public async Task<IActionResult> Edit(CreateFieldDto fieldDto)
         {
             if (!ModelState.IsValid)
             {
+                var soilResponse = await _client.GetAsync("/api/soiltypes");
+                soilResponse.EnsureSuccessStatusCode();
+                var soilContent = await soilResponse.Content.ReadAsStringAsync();
+                var soilTypes = JsonConvert.DeserializeObject<List<SoilTypeDto>>(soilContent);
+                ViewBag.SoilTypes = soilTypes?.Select(s => new SelectListItem
+                {
+                    Value = s.Id.ToString(),
+                    Text = s.Name
+                }).ToList() ?? new List<SelectListItem>();
+
+                var postalCodeResponse = await _client.GetAsync("/api/farms/postalCode");
+                postalCodeResponse.EnsureSuccessStatusCode();
+                var postalCode = await postalCodeResponse.Content.ReadAsStringAsync();
+
+                ViewBag.PostalCode = postalCode;
                 return View(fieldDto);
             }
 
@@ -198,7 +286,19 @@ namespace AgroControlUI.Controllers.FarmData
                 return View(fieldDto);
             }
         }
+        public async Task<IActionResult> Details(int id)
+        {
+            var token = HttpContext.Request.Cookies["token"];
+            _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
+            var endpoint = $"/api/fields/{id}";
+            var result = await _client.GetAsync(endpoint);
+            result.EnsureSuccessStatusCode();
+
+            var content = await result.Content.ReadAsStringAsync();
+            var field = JsonConvert.DeserializeObject<FieldDetailsDto>(content);
+            return View(field);
+        }
         protected override void Dispose(bool disposing)
         {
             if (disposing)

@@ -1,36 +1,77 @@
 ﻿@model IEnumerable<AgroControlUI.DTOs.FarmData.FieldDto>
 
-@{
-    ViewData["Title"] = "Lista Pól";
-}
+@await Html.PartialAsync("_DeleteConfirmationModal")
+<link rel="stylesheet" href="~/css/indexList.css">
+<link rel="stylesheet" href="~/css/listOperations.css">
 
-<h1>@ViewData["Title"]</h1>
+<h1 class="blue">Pola</h1>
 
-<table class="table">
-    <thead>
-        <tr>
-            <th>Nazwa</th>
-            <th>Opis</th>
-            <th>Rodzaj gleby</th>
-            <th>Powierzchnia</th>
-            <th>Opcje</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var field in Model)
-        {
-            <tr>
-                <td>@field.Name</td>
-                <td>@field.Description</td>
-                <td>@field.SoilType</td>
-                <td>@field.Area ha</td>
-                <td>
-                    <a asp-action="Edit" asp-route-id="@field.Id" class="btn btn-primary btn-sm">Edytuj</a>
-                    <a asp-action="Delete" asp-route-id="@field.Id" class="btn btn-danger btn-sm">Usuń</a>
-                </td>
-            </tr>
-        }
-    </tbody>
-</table>
+<div id="categories" class="wrapper">
+    <p>
+        <a asp-action="Create" class="add-btn"><img src="~/images/plus-solid.svg" />Dodaj nowege pole</a>
+    </p>
+    <div class="table">
+        <div class="row header blue" id="headerRow">
+            <div class="cell" data-sort="name" onclick="sortByColumn(this)">
+                <div class="sort-wrapper">
+                    <span class="sort-text">Nazwa</span>
+                    <span class="sort-arrow">▼</span>
+                </div>
+            </div>
+            <div class="cell" data-sort="area" onclick="sortByColumn(this)">
+                <div class="sort-wrapper">
+                    <span class="sort-text">Powierzchnia</span>
+                    <span class="sort-arrow">▼</span>
+                </div>
+            </div>
+            <div class="cell">
+                  Klasa gleby
+            </div>
+            <div class="cell">
+                Akcje
+            </div>
+        </div>
+        <div class="row">
+            <div class="cell">
+                <input type="text" class="search-input" data-search="name" placeholder="Szukaj..." oninput="searchByColumn()" />
+            </div>
+            <div class="cell">
+                <input type="text" class="search-input" data-search="area" placeholder="Szukaj..." oninput="searchByColumn()" />
+            </div>
+            <div class="cell">
+            </div>
+            <div class="cell">
+            </div>
+        </div>
+        <div class="list">
+            @foreach (var field in Model)
+            {
+                <div class="row">
+                    <div class="cell name" data-title="Nazwa">
+                        @field.Name
+                    </div>
+                    <div class="cell area" data-title="Powierzchnia">
+                        @field.Area
+                    </div>
+                    <div class="cell soilTpe" data-title="Klasa gleby">
+                        @string.Join(", ", field.SoilTypes)
+                    </div>
+                    <div class="cell" data-title="Akcje">
+                        <div class="action-buttons">
+                            <a asp-action="Edit" asp-route-id="@field.Id" class="edit-btn"><img src="~/images/edit.svg" />Edytuj</a>
+                            <a asp-action="Details" asp-route-id="@field.Id" class="cancel-btn"><img src="~/images/details.svg" />Szczegóły</a>
+                            <button type="button" class="delete-btn" data-bs-toggle="modal" data-bs-target="#deleteModal" onclick="setDeleteUrl('@Url.Action("DeleteConfirmed", new { id = field.Id })')">
+                                <img src="~/images/delete.svg" />Usuń
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            }
 
-<a asp-action="Create" class="btn btn-success">Dodaj Nowe Pole</a>
+        </div>
+    </div>
+    <ul class="pagination"></ul>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/list.js/2.3.1/list.min.js"></script>
+<script src="~/js/listOperations.js"></script>
+<script src="~/js/deleteModal.js"></script>

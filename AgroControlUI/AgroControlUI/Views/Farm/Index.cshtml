@@ -1,76 +1,69 @@
 ﻿@model AgroControlUI.DTOs.FarmData.FarmDto
 
-@{
-    ViewData["Title"] = "Szczegóły Farmy";
-}
-@if (TempData["errorMessage"] != null)
-{
-    <div class="alert alert-danger">
-        @TempData["errorMessage"]
-    </div>
-}
+@await Html.PartialAsync("_DeleteConfirmationModal")
+<link rel="stylesheet" href="~/css/Details.css" />
 
-@if (TempData["successMessage"] != null)
-{
-    <div class="alert alert-success">
-        @TempData["successMessage"]
-    </div>
-}
-<style>
-    .card-header {
-        background-color: #007bff;
-        color: white;
-        font-size: 1.5rem;
-    }
+<div class="details-container">
+    <h1>Szczegóły gospodarstwa</h1>
 
-    .card-body p {
-        font-size: 1.1rem;
-        line-height: 1.6;
-    }
-
-    .btn-info {
-        margin-top: 10px;
-    }
-
-    .btn-secondary, .btn-danger {
-        width: 48%;
-        margin-right: 4%;
-    }
-</style>
-<div class="container mt-5">
-    <h1>@ViewData["Title"]</h1>
-
-    <div class="card mb-4">
-        <div class="card-header">
-            <h2>Informacje o farmie</h2>
-        </div>
-        <div class="card-body">
-            <p><strong>Nazwa:</strong> @Model.Name</p>
-            <p><strong>Numer gospodarstwa:</strong> @Model.FarmNumber</p>
-            <p><strong>Opis:</strong> @Model.Description</p>
-            <p><strong>Adres:</strong> @Model.Adress, @Model.City, @Model.PostalCode</p>
-            <p><strong>Powierzchnia:</strong> @Model.TotalArea ha</p>
-            <p><strong>Rok założenia:</strong> @Model.YearEstablished</p>
-            <p><strong>Data utworzenia:</strong> @Model.CreatedOn.ToString("yyyy-MM-dd")</p>
-            <p><strong>Ostatnia aktualizacja:</strong> @Model.UpdatedOn.ToString("yyyy-MM-dd")</p>
-        </div>
+    <div class="info-section">
+        <p class="info-title">Nazwa gospodarstwa:</p>
+        <h2 class="info-name">@Model.Name</h2>
     </div>
 
-    <div class="d-flex justify-content-between">
-        <a class="btn btn-secondary" href="@Url.Action("Edit", "Farm", new { id = Model.Id })">Edytuj farmę</a>
-        <a class="btn btn-danger" href="@Url.Action("Delete", "Farm", new { id = Model.Id })">Usuń farmę</a>
+    <div class="info-section">
+        <p class="info-title">Numer gospodarstwa:</p>
+        <p>@(string.IsNullOrEmpty(Model.FarmNumber) ? "Brak danych" : Model.FarmNumber)</p>
     </div>
 
-    <!-- Linki do innych sekcji -->
-    <div class="mt-5">
-        <h3>Powiązane sekcje</h3>
-        <div class="row">
-            <div class="col-6">
-                <a class="btn btn-info w-100" href="@Url.Action("Index", "Field")">Zarządzaj Polami</a>
-            </div>
-            <div class="col-6">
-                <a class="btn btn-info w-100" href="@Url.Action("Index", "Employee")">Zarządzaj Pracownikami</a>
-            </div>
-        </div>
+    <div class="info-section">
+        <p class="info-title">Opis:</p>
+        <p>@(string.IsNullOrEmpty(Model.Description) ? "Brak" : Model.Description)</p>
+    </div>
+
+    <div class="info-section">
+        <p class="info-title">Całkowita powierzchnia:</p>
+        <p>@(Model.TotalArea > 0 ? $"{Model.TotalArea} ha" : "Brak danych")</p>
+    </div>
+
+    <div class="info-section">
+        <p class="info-title">Rok założenia:</p>
+        <p>@(Model.YearEstablished > 0 ? Model.YearEstablished.ToString() : "Brak danych")</p>
+    </div>
+
+    <div class="info-section">
+        <p class="info-title">Adres:</p>
+        <p>@Model.Adress</p>
+    </div>
+
+    <div class="info-section">
+        <p class="info-title">Kod pocztowy:</p>
+        <p>@Model.PostalCode</p>
+    </div>
+
+    <div class="info-section">
+        <p class="info-title">Miasto:</p>
+        <p>@Model.City</p>
+    </div>
+
+    <div class="info-section">
+        <p class="info-title">Utworzono:</p>
+        <p class="timestamp">@Model.CreatedOn.ToString("yyyy-MM-dd HH:mm") przez @Model.</p>
+    </div>
+
+    <div class="info-section">
+        <p class="info-title">Ostatnia aktualizacja:</p>
+        <p class="timestamp">@Model.UpdatedOn.ToString("yyyy-MM-dd HH:mm") przez @Model.UpdatedBy</p>
+    </div>
+
+    <div class="action-buttons">
+        <a asp-action="Edit" asp-route-id="@Model.Id" class="edit-btn">Edytuj</a>
+        <button type="button" class="delete-btn" data-bs-toggle="modal" data-bs-target="#deleteModal"
+                onclick="setDeleteUrl('@Url.Action("DeleteConfirmed", new { id = Model.Id })')">
+            Usuń
+        </button>
+        <a asp-controller="Home" asp-action="Index" class="cancel-btn">Powrót</a>
     </div>
 </div>
+
+<script src="~/js/deleteModal.js"></script>

@@ -1,7 +1,9 @@
 ﻿using AgroControlUI.Constants;
 using AgroControlUI.DTOs.FarmData;
+using AgroControlUI.DTOs.ReferenceData;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Newtonsoft.Json;
 using System.Net.Http.Headers;
 using System.Text;
@@ -38,17 +40,65 @@ namespace AgroControlUI.Controllers.FarmData
         // Create
         [Authorize(Policy = "OwnerOrCoOwner")]
         [HttpGet]
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
+            var token = HttpContext.Request.Cookies["token"];
+            _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
+            var fuelResponse = await _client.GetAsync("/api/fuels");
+            fuelResponse.EnsureSuccessStatusCode();
+            var fuelContent = await fuelResponse.Content.ReadAsStringAsync();
+            var fuels = JsonConvert.DeserializeObject<List<FuelDto>>(fuelContent);
+
+            ViewBag.Fuels = fuels?.Select(f => new SelectListItem
+            {
+                Value = f.Id.ToString(),  
+                Text = f.Name             
+            }).ToList() ?? new List<SelectListItem>();
+
+            var agriEqTypesResponse = await _client.GetAsync("/api/AgriculturalEquipmentTypes");
+            agriEqTypesResponse.EnsureSuccessStatusCode();
+            var agriEqTypesContent = await agriEqTypesResponse.Content.ReadAsStringAsync();
+            var agriEqTypes = JsonConvert.DeserializeObject<List<AgriculturalEquipmentTypeDto>>(agriEqTypesContent);
+
+            ViewBag.AgriculturalEquipmentTypes = agriEqTypes?.Select(f => new SelectListItem
+            {
+                Value = f.Id.ToString(),
+                Text = f.Name
+            }).ToList() ?? new List<SelectListItem>();
             return View();
         }
 
         [Authorize(Policy = "OwnerOrCoOwner")]
         [HttpPost]
-        public async Task<IActionResult> Create(AgriculturalEquipmentDto equipmentDto)
+        public async Task<IActionResult> Create(CreateAgriculturalEquipmentDto equipmentDto)
         {
             if (!ModelState.IsValid)
             {
+                var token = HttpContext.Request.Cookies["token"];
+                _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
+                var fuelResponse = await _client.GetAsync("/api/fuels");
+                fuelResponse.EnsureSuccessStatusCode();
+                var fuelContent = await fuelResponse.Content.ReadAsStringAsync();
+                var fuels = JsonConvert.DeserializeObject<List<FuelDto>>(fuelContent);
+
+                ViewBag.Fuels = fuels?.Select(f => new SelectListItem
+                {
+                    Value = f.Id.ToString(),
+                    Text = f.Name
+                }).ToList() ?? new List<SelectListItem>();
+
+                var agriEqTypesResponse = await _client.GetAsync("/api/agriculturalEquipmentTypes");
+                agriEqTypesResponse.EnsureSuccessStatusCode();
+                var agriEqTypesContent = await agriEqTypesResponse.Content.ReadAsStringAsync();
+                var agriEqTypes = JsonConvert.DeserializeObject<List<AgriculturalEquipmentTypeDto>>(agriEqTypesContent);
+
+                ViewBag.AgriculturalEquipmentTypes = agriEqTypes?.Select(f => new SelectListItem
+                {
+                    Value = f.Id.ToString(),
+                    Text = f.Name
+                }).ToList() ?? new List<SelectListItem>();
                 return View(equipmentDto);
             }
 
@@ -144,13 +194,56 @@ namespace AgroControlUI.Controllers.FarmData
                 var token = HttpContext.Request.Cookies["token"];
                 _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
+                var fuelResponse = await _client.GetAsync("/api/fuels");
+                fuelResponse.EnsureSuccessStatusCode();
+                var fuelContent = await fuelResponse.Content.ReadAsStringAsync();
+                var fuels = JsonConvert.DeserializeObject<List<FuelDto>>(fuelContent);
+
+                ViewBag.Fuels = fuels?.Select(f => new SelectListItem
+                {
+                    Value = f.Id.ToString(),
+                    Text = f.Name
+                }).ToList() ?? new List<SelectListItem>();
+
+                var agriEqTypesResponse = await _client.GetAsync("/api/AgriculturalEquipmentTypes");
+                agriEqTypesResponse.EnsureSuccessStatusCode();
+                var agriEqTypesContent = await agriEqTypesResponse.Content.ReadAsStringAsync();
+                var agriEqTypes = JsonConvert.DeserializeObject<List<AgriculturalEquipmentTypeDto>>(agriEqTypesContent);
+
+                ViewBag.AgriculturalEquipmentTypes = agriEqTypes?.Select(f => new SelectListItem
+                {
+                    Value = f.Id.ToString(),
+                    Text = f.Name
+                }).ToList() ?? new List<SelectListItem>();
+
                 var endpoint = $"/api/agriculturalEquipment/{id}";
                 var response = await _client.GetAsync(endpoint);
                 response.EnsureSuccessStatusCode();
 
                 string content = await response.Content.ReadAsStringAsync();
-                var equipment = JsonConvert.DeserializeObject<AgriculturalEquipmentDto>(content);
-                return View(equipment);
+                var equipment = JsonConvert.DeserializeObject<AgriculturalEquipmentDetailsDto>(content);
+
+                var createEquipment = new CreateAgriculturalEquipmentDto
+                {
+                    Name = equipment.Name,
+                    Brand = equipment.Brand,
+                    Description = equipment.Description,
+                    IsActive = equipment.IsActive,
+                    YearOfManufacture = equipment.YearOfManufacture,
+                    FuelId = equipment.Fuel != null ? equipment.Fuel.Id : (int?)null,
+                    FuelCapacity = equipment.FuelCapacity,
+                    EnginePower = equipment.EnginePower,
+                    Weight = equipment.Weight,
+                    Width = equipment.Width,
+                    Height = equipment.Height,
+                    WorkingSpeed = equipment.WorkingSpeed,
+                    TransportSpeed = equipment.TransportSpeed,
+                    WorkingWidth = equipment.WorkingWidth,
+                    LastServiceDate = equipment.LastServiceDate,
+                    NextServiceDate = equipment.NextServiceDate,
+                    AgriculturalEquipmentTypeId = equipment.AgriculturalEquipmentType.Id
+                };
+                return View(createEquipment);
             }
             catch (HttpRequestException ex)
             {
@@ -166,10 +259,35 @@ namespace AgroControlUI.Controllers.FarmData
 
         [Authorize(Policy = "OwnerOrCoOwner")]
         [HttpPost]
-        public async Task<IActionResult> Edit(AgriculturalEquipmentDto equipmentDto)
+        public async Task<IActionResult> Edit(CreateAgriculturalEquipmentDto equipmentDto)
         {
             if (!ModelState.IsValid)
             {
+                var token = HttpContext.Request.Cookies["token"];
+                _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
+                var fuelResponse = await _client.GetAsync("/api/fuels");
+                fuelResponse.EnsureSuccessStatusCode();
+                var fuelContent = await fuelResponse.Content.ReadAsStringAsync();
+                var fuels = JsonConvert.DeserializeObject<List<FuelDto>>(fuelContent);
+
+                ViewBag.Fuels = fuels?.Select(f => new SelectListItem
+                {
+                    Value = f.Id.ToString(),
+                    Text = f.Name
+                }).ToList() ?? new List<SelectListItem>();
+
+                var agriEqTypesResponse = await _client.GetAsync("/api/AgriculturalEquipmentTypes");
+                agriEqTypesResponse.EnsureSuccessStatusCode();
+                var agriEqTypesContent = await agriEqTypesResponse.Content.ReadAsStringAsync();
+                var agriEqTypes = JsonConvert.DeserializeObject<List<AgriculturalEquipmentTypeDto>>(agriEqTypesContent);
+
+                ViewBag.AgriculturalEquipmentTypes = agriEqTypes?.Select(f => new SelectListItem
+                {
+                    Value = f.Id.ToString(),
+                    Text = f.Name
+                }).ToList() ?? new List<SelectListItem>();
+
                 return View(equipmentDto);
             }
 
@@ -198,7 +316,19 @@ namespace AgroControlUI.Controllers.FarmData
                 return View(equipmentDto);
             }
         }
+        public async Task<IActionResult> Details(int id)
+        {
+            var token = HttpContext.Request.Cookies["token"];
+            _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
+            var endpoint = $"/api/agriculturalEquipment/{id}";
+            var result = await _client.GetAsync(endpoint);
+            result.EnsureSuccessStatusCode();
+
+            var content = await result.Content.ReadAsStringAsync();
+            var agriculturalEquipment = JsonConvert.DeserializeObject<AgriculturalEquipmentDetailsDto>(content);
+            return View(agriculturalEquipment);
+        }
         protected override void Dispose(bool disposing)
         {
             if (disposing)

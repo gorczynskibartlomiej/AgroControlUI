@@ -1,405 +1,124 @@
-﻿@model AgroControlUI.DTOs.CropProtectionProducts.CreateCropProtectionProductDto
-
-<link rel="stylesheet" href="~/css/add.css">
+﻿@model AgroControlUI.DTOs.FarmData.CreateAgriculturalEquipmentDto
 <link href="https://cdn.jsdelivr.net/npm/tom-select/dist/css/tom-select.css" rel="stylesheet">
-<link rel="stylesheet" href="~/css/colors.css"/>
-<style>
-    .ts-wrapper{
-        border: none;
-        border-bottom: 2px solid #757575;     
-        transition: border-color 0.3s ease, box-shadow 0.3s ease;
-    }
+<link rel="stylesheet" href="~/css/addWithSelects.css">
+<link rel="stylesheet" href="~/css/add.css">
+<link rel="stylesheet" href="~/css/colors.css" />
 
-        .ts-wrapper.input-active {
-            border-color: #4caf50 !important;
-            outline: none;
-        }
-    .ts-control {
-        border: none;
-        padding: 10px 10px 10px 5px !important;
-        font-size: 18px;
-        background-color: white;
-        position: relative;
-    }
-
-    .ts-dropdown {
-        border: 2px solid #4caf50;
-        background-color: white;
-        overflow: hidden;
-        z-index: 11;
-    }
-
-        .ts-dropdown .option {
-            padding: 10px;
-            font-size: 16px;
-            transition: background-color 0.3s ease;
-            
-        }
-
-    .ts-control::before {
-        content: attr(data-placeholder);
-        color: #757575;
-        position: absolute;
-        left: 10px;
-        pointer-events: none;
-        display: block;
-    }
-    .ts-control input {
-        opacity: 0;
-    }
-
-    .ts-wrapper.input-active .ts-control input{
-        opacity: 1;
-    }
-
-    .ts-wrapper.has-items .ts-control input {
-        opacity: 1;
-    }
-            .ts-dropdown .option:hover {
-                background-color: #4caf50;
-                color:white;              
-            }
-    .ts-control .item {
-        background-color: #4caf50!important;
-        border-radius:5px;
-        color: white !important;
-        margin: 8px;
-        display: flex;
-        align-items: center;
-        height: 24px;
-        font-size: 16px;
-        pointer-events: none;
-    }
-    .ts-control input
-    {
-        font-size:18px;
-    }
-        .ts-control .item .remove {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            width: 24px;
-            height: 24px; 
-            font-size: 22px;
-            margin-left: 0px;
-            cursor: pointer;
-            background-color: #4caf50 !important;
-            pointer-events: auto;
-            cursor: pointer;
-        }
-
-        .ts-control .item .remove:hover {
-            background-color: #4caf50 !important;
-            color:black;
-        }
-
-            .ts-control .item .remove::before {
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                width: 100%;
-                height: 100%;
-            }
-
-    .ts-wrapper.plugin-remove_button:not(.rtl) .item {
-         padding-right: 5px !important; 
-    }
-
-    /* Stylowanie dropdowna */
-    .ts-dropdown {
-        border: 2px solid #4caf50;
-        background-color: white;
-        overflow: hidden;
-        box-shadow: none;
-    }
-
-        /* Stylowanie opcji w dropdownie */
-        .ts-dropdown .option {
-            padding: 10px;
-            font-size: 16px;
-            transition: background-color 0.3s ease;
-        }
-
-            /* Kolorowanie opcji przy najechaniu */
-            .ts-dropdown .option:hover {
-                background-color: #4caf50;
-                color: white;
-            }
-
-    .single-dropdown {
-        position: relative;
-        margin-bottom: 60px;
-        margin-top: -10px;
-        min-height: 40px;
-        border: none;
-
-    }
-
-        .single-dropdown label {
-            display: block !important;
-            margin-bottom: 5px;
-            color: #999!important;
-            font-size: 18px;
-            font-weight: normal;
-            position: absolute;
-            pointer-events: none;
-            left: 5px;
-            top: 10px;
-            transition: 0.2s ease all;
-            z-index: 10;
-        }
-
-    .multi-dropdown {
-        position: relative;
-        margin-bottom: 60px;
-        margin-top: -10px;
-        min-height: 40px;
-        border: none;
-    }
-
-        .multi-dropdown label {
-            display: block !important;
-            margin-bottom: 5px;
-            color: #999 !important;
-            font-size: 18px;
-            font-weight: normal;
-            position: absolute;
-            pointer-events: none;
-            left: 5px;
-            top: 10px;
-            transition: 0.2s ease all;
-            z-index: 10;
-        }
-
-    .adding-dropdown {
-        position: relative;
-        margin-bottom: 60px;
-        margin-top: -10px;
-        min-height: 40px;
-        border: none;
-    }
-
-        .adding-dropdown label {
-            display: block !important;
-            margin-bottom: 5px;
-            color: #999 !important;
-            font-size: 18px;
-            font-weight: normal;
-            position: absolute;
-            pointer-events: none;
-            left: 5px;
-            top: 10px;
-            transition: 0.2s ease all;
-            z-index: 10;
-        }
-    .ts-wrapper.input-active ~label {
-        top: -20px;
-        font-size: 14px;
-        color: black!important;
-    }
-
-    .ts-wrapper.has-items ~ label {
-        top: -20px;
-        font-size: 14px;
-        color: black !important;
-    }
-
-    .single-dropdown .ts-wrapper .ts-control {
-        display: flex;
-        padding: 10px 10px 10px 5px;
-        min-height: 40px;
-        background-color: white;
-        border: none;
-        flex-wrap: nowrap;
-    }
-
-        .single-dropdown .ts-wrapper .ts-control .item {
-            background-color: transparent !important;
-            color: black !important;
-            pointer-events: none;
-            display: flex;
-            font-size: 18px;
-            padding: 0;
-            margin: 0;
-        }
-
-        .single-dropdown .ts-wrapper .ts-control .remove {
-            display: none;
-        }
-
-        .single-dropdown .ts-wrapper .ts-control input {
-            flex-grow: 1;
-            min-width: 100px;
-            border: none;
-            background: transparent;
-            font-size: 18px;
-            outline: none;
-            padding: 0px;
-        }
-
-    .ts-dropdown [data-selectable] .highlight {
-        background: none;
-        font-weight: bold;
-        font-size: 16px;
-        transition: background-color 0.3s ease;
-        opacity: 1;
-        display: inline;
-        position:unset !important;
-    }
-
-    .ts-dropdown-content::-webkit-scrollbar {
-        width: 12px;
-    }
-
-    .ts-dropdown-content::-webkit-scrollbar-track {
-        background-color: #e7e7e7;
-        border: 1px solid #cacaca;
-        box-shadow: inset 0 0 6px rgba(0, 0, 0, .3);
-    }
-
-    .ts-dropdown-content::-webkit-scrollbar-thumb {
-        background-color: #363636;
-    }
-
-    .ts-control::after {
-        content: '';
-        border: solid #757575;
-        border-width: 0 2px 2px 0;
-        display: inline-block;
-        padding: 5px;
-        margin-left: 10px;
-        transform: rotate(45deg);
-        transition: transform 0.3s ease;
-        position: absolute;
-        right: 10px;
-        bottom: 10px;
-        transform: translateY(-50%) rotate(45deg); 
-    }
-
-    .ts-wrapper.input-active .ts-control::after {
-        transform: rotate(-135deg);
-    }
-
-    .ts-wrapper.input-active ~ .bar:before, .ts-wrapper.input-active ~ .bar:after {
-        width: 50%;
-    }
-    .bar
-    {
-        z-index: 15;
-    }
-
-
-
-
-
-
-
-
-
-
-
-    .adding-wrapper{
-        display:flex;
-        justify-content: space-between;
-        margin-bottom:20px;
-    }
-    .adding-wrapper .ts-wrapper{
-        width:65%;
-    }
-
-    .adding-wrapper input {
-        width: 20%;  
-    }
-
-        .adding-wrapper.ts-wrapper.input-active ~ .bar:before, .adding-wrapper.ts-wrapper.input-active ~ .bar:after {
-        width: 50%;
-    }
-
-    .adding-wrapper .ts-wrapper .ts-control {
-        display: flex;
-        padding: 10px 10px 10px 5px;
-        min-height: 40px;
-        background-color: white;
-        border: none;
-        flex-wrap: nowrap;
-    }
-
-        .adding-wrapper .ts-wrapper .ts-control .item {
-            background-color: transparent !important;
-            color: black !important;
-            pointer-events: none;
-            display: flex;
-            font-size: 18px;
-            padding: 0;
-            margin: 0;
-        }
-
-        .adding-wrapper .ts-wrapper .ts-control .remove {
-            display: none;
-        }
-
-        .adding-wrapper .ts-wrapper .ts-control input {
-            flex-grow: 1;
-            min-width: 100px;
-            border: none;
-            background: transparent;
-            font-size: 18px;
-            outline: none;
-            padding: 0px;
-        }
-</style>
 <div class="form-container">
-    <div class="green-form">
+    <div class="blue-form">
         <form asp-action="Create" method="post">
-            <h1>Dodaj środek ochrony roślin</h1>
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <h1>Planowanie płodozmianu</h1>
 
             <div class="group">
-                <input asp-for="Name" required />
+                <input asp-for="Name" />
                 <span class="bar"></span>
-                <label asp-for="Name">Nazwa środka ochrony roślin</label>
+                <label asp-for="Name">Nazwa maszyny</label>
                 <span asp-validation-for="Name" class="text-danger"></span>
             </div>
-            
-            <div class="single-dropdown">
-                <select asp-for="ProducerId" asp-items="ViewBag.Producers" id="producerSelect">
-                    <option value=""></option>
-                </select>              
-                <span class="bar"></span>
-                <label asp-for="ProducerId">Producent</label>
-            </div>
-            
-            <div class="multi-dropdown">
-                <select asp-for="CategoryIds" asp-items="ViewBag.Categories" id="categorySelect" multiple></select>
-                <span class="bar"></span>
-                <label asp-for="CategoryIds">Kategorie</label>
-            </div>
-
-            <div class="multi-dropdown">              
-                <select asp-for="CropIds" asp-items="ViewBag.Crops" id="cropSelect" multiple></select>
-                <span class="bar"></span>
-                <label asp-for="CropIds">Rośliny</label>
-            </div>
-
-            <div class="adding-dropdown">
-                <div id="adding-container" class="adding-container">
-                    <div class="adding-wrapper">
-                        <select asp-for="ActiveIngredients[0].ActiveIngredientId" asp-items="ViewBag.Components" class="ingredient-select"></select>
-                        <input asp-for="ActiveIngredients[0].Concentration" type="number" class="ingredient-amount" placeholder="Ilość" min="0" step="1">
-                        <button type="button" class="remove-row">X</button>
-                    </div>
-                </div>
-                <label>Składniki aktywne</label>
-                <button type="button" id="add-ingredient">Dodaj kolejny</button>
-            </div>
-            
             <div class="group">
-                <textarea asp-for="Description" class="description-field" required></textarea>                
+                <input asp-for="Brand" required />
+                <span class="bar"></span>
+                <label asp-for="Brand">Marka</label>
+                <span asp-validation-for="Brand" class="text-danger"></span>
+            </div>
+            <div class="group">
+                <label class="switch">
+                    <input asp-for="IsActive" type="checkbox">
+                    <span class="slider"></span>
+                </label>
+                <span class="switch-label">Aktywność</span>
+            </div>
+
+            <div class="group">
+                <textarea asp-for="Description" class="description-field"></textarea>
                 <span class="bar"></span>
                 <label asp-for="Description">Opis</label>
                 <span asp-validation-for="Description" class="text-danger"></span>
             </div>
-            
+            <div class="single-dropdown">
+                <select asp-for="AgriculturalEquipmentTypeId" asp-items="ViewBag.AgriculturalEquipmentTypes" id="typeSelect" required>
+                    <option value=""></option>
+                </select>
+                <span class="bar"></span>
+                <label asp-for="AgriculturalEquipmentTypeId">Rodzaj maszyny</label>
+                <span asp-validation-for="AgriculturalEquipmentTypeId" class="text-danger"></span>
+            </div>
+            <div class="group">
+                <input asp-for="YearOfManufacture" type="number" data-val-number="Rok produkcji musi być liczbą." />
+                <span class="bar"></span>
+                <label asp-for="YearOfManufacture">Rok produkcji</label>
+                <span asp-validation-for="YearOfManufacture" class="text-danger"></span>
+            </div>
+            <div class="single-dropdown">
+                <select asp-for="FuelId" asp-items="ViewBag.Fuels" id="fuelSelect">
+                    <option value=""></option>
+                </select>
+                <span class="bar"></span>
+                <label asp-for="FuelId">Rodzaj paliwa</label>
+            </div>
+            <div class="group">
+                <input asp-for="FuelCapacity" data-val-number="Pojemność zbiornika musi być liczbą." />
+                <span class="bar"></span>
+                <label asp-for="FuelCapacity">Zbiornik paliwa (l)</label>
+                <span asp-validation-for="FuelCapacity" class="text-danger"></span>
+            </div>
+            <div class="group">
+                <input asp-for="EnginePower" data-val-number="Moc silnika musi być liczbą." />
+                <span class="bar"></span>
+                <label asp-for="EnginePower">Moc silnika (KM)</label>
+                <span asp-validation-for="EnginePower" class="text-danger"></span>
+            </div>
+            <div class="group">
+                <input asp-for="Weight" type="number" data-val-number="Powierzchnia musi być liczbą." />
+                <span class="bar"></span>
+                <label asp-for="Weight">Waga (kg)</label>
+                <span asp-validation-for="Weight" class="text-danger"></span>
+            </div>
+            <div class="group">
+                <input asp-for="Width" type="number" data-val-number="Szerokość musi być liczbą." />
+                <span class="bar"></span>
+                <label asp-for="Width">Szerokość (m)</label>
+                <span asp-validation-for="Width" class="text-danger"></span>
+            </div>
+            <div class="group">
+                <input asp-for="WorkingWidth" type="number"
+                       data-val-number="Szerkość robocza musi być liczbą." />
+                <span class="bar"></span>
+                <label asp-for="WorkingWidth">Szerokość robocza (m)</label>
+                <span asp-validation-for="WorkingWidth" class="text-danger"></span>
+            </div>
+            <div class="group">
+                <input asp-for="Height" type=" number" data-val-number="Wysokość musi być liczbą." />
+                <span class="bar"></span>
+                <label asp-for="Height">Wysokość (m)</label>
+                <span asp-validation-for="Height" class="text-danger"></span>
+            </div>
+            <div class="group">
+                <input asp-for="WorkingSpeed" type="number data-val-number="Prędkość robocza musi być liczbą." />
+                <span class="bar"></span>
+                <label asp-for="WorkingSpeed">Prędkość robocza (km/h)</label>
+                <span asp-validation-for="WorkingSpeed" class="text-danger"></span>
+            </div>
+            <div class="group">
+                <input asp-for="TransportSpeed" type="number data-val-number="Prędkość musi być liczbą." />
+                <span class="bar"></span>
+                <label asp-for="TransportSpeed">Prędkość transportowa (km/h)</label>
+                <span asp-validation-for="TransportSpeed" class="text-danger"></span>
+            </div>
+            <div class="group">
+                <input asp-for="LastServiceDate" type="date" />
+                <span class="bar"></span>
+                <label asp-for="LastServiceDate">Ostatni serwis</label>
+                <span asp-validation-for="LastServiceDate" class="text-danger"></span>
+            </div>
+            <div class="group">
+                <input asp-for="NextServiceDate" type="date" />
+                <span class="bar"></span>
+                <label asp-for="NextServiceDate">Następny serwis</label>
+                <span asp-validation-for="NextServiceDate" class="text-danger"></span>
+            </div>
+
+
             <div class="action-buttons">
                 <a asp-action="Index" class="cancel-btn btn">Anuluj</a>
                 <button type="submit" class="add-btn btn">Dodaj</button>
@@ -407,81 +126,26 @@
         </form>
     </div>
 </div>
-
+<script src="~/js/inputLabel.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/tom-select/dist/js/tom-select.complete.min.js"></script>
 <script>
     document.addEventListener("DOMContentLoaded", function () {
-        function initializeSelect(id, multiple = false) {
-            new TomSelect(id, {
-                create: false,
-                sortField: { field: "text", direction: "asc" },
-                searchField: "text",
-                placeholder: "Wyszukaj...",
-                maxItems: multiple ? null : 1,
-                removeItem: true,
-                plugins: ['remove_button'],
-                render: {
-                    no_results: function() {
-                        return '<div class="no-results">Nie znaleziono</div>';
-                    }
-                }
-            });
-        }
+        new TomSelect("#typeSelect", {
+            create: false,
+            sortField: {
+                field: "text",
+                direction: "asc"
+            },
+            placeholder: "Wybierz rodzaj maszyny"
+        });
 
-        initializeSelect("#producerSelect");
-        initializeSelect("#categorySelect", true);
-        initializeSelect("#cropSelect", true);
-        initializeSelect(".ingredient-select");
-
-        const container = document.getElementById("adding-container");
-        const addIngredientButton = document.getElementById("add-ingredient");
-
-        function updateIndexes() {
-            document.querySelectorAll(".adding-wrapper").forEach((row, index) => {
-                row.querySelector(".ingredient-select").name = `ActiveIngredients[${index}].ActiveIngredientId`;
-                row.querySelector(".ingredient-amount").name = `ActiveIngredients[${index}].Concentration`;
-            });
-        }
-
-        function createIngredientRow() {
-            const wrapper = document.createElement("div");
-            wrapper.classList.add("adding-wrapper");
-
-            const select = document.createElement("select");
-            select.classList.add("ingredient-select");
-            select.innerHTML = document.querySelector(".ingredient-select").innerHTML;
-
-            const input = document.createElement("input");
-            input.type = "number";
-            input.classList.add("ingredient-amount");
-            input.placeholder = "Ilość";
-            input.min = "0";
-            input.step = "1";
-
-            const removeButton = document.createElement("button");
-            removeButton.type = "button";
-            removeButton.classList.add("remove-row");
-            removeButton.innerHTML = "X";
-            removeButton.addEventListener("click", function () {
-                wrapper.remove();
-                updateIndexes();
-            });
-
-            wrapper.appendChild(select);
-            wrapper.appendChild(input);
-            wrapper.appendChild(removeButton);
-            container.appendChild(wrapper);
-
-            initializeSelect(select);
-            updateIndexes();
-        }
-
-        addIngredientButton.addEventListener("click", createIngredientRow);
-        document.querySelectorAll(".remove-row").forEach(button => {
-            button.addEventListener("click", function () {
-                this.closest(".adding-wrapper").remove();
-                updateIndexes();
-            });
+        new TomSelect("#fuelSelect", {
+            create: false,
+            sortField: {
+                field: "text",
+                direction: "asc"
+            },
+            placeholder: "Wybierz rodzaj paliwa"
         });
     });
 </script>

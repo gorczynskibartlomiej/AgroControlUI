@@ -1,56 +1,123 @@
-﻿@* @model AgroControlUI.DTOs.FarmData.AgriculturalEquipmentCreateDto
- 
+﻿@model AgroControlUI.DTOs.FarmData.CreateAgriculturalEquipmentDto
+<link href="https://cdn.jsdelivr.net/npm/tom-select/dist/css/tom-select.css" rel="stylesheet">
+<link rel="stylesheet" href="~/css/addWithSelects.css">
+<link rel="stylesheet" href="~/css/add.css">
+<link rel="stylesheet" href="~/css/colors.css" />
+
 <div class="form-container">
     <div class="blue-form">
         <form asp-action="Create" method="post">
             <h1>Dodaj maszynę rolniczą</h1>
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
             <div class="group">
-                <input asp-for="Name" required />
+                <input asp-for="Name"/>
                 <span class="bar"></span>
-                <label asp-for="Name">Nazwa środka ochrony roślin</label>
+                <label asp-for="Name">Nazwa maszyny</label>
                 <span asp-validation-for="Name" class="text-danger"></span>
             </div>
-
-            <div class="single-dropdown">
-                <select asp-for="ProducerId" asp-items="ViewBag.Producers" id="producerSelect">
-                    <option value=""></option>
-                </select>
+            <div class="group">
+                <input asp-for="Brand" required/>
                 <span class="bar"></span>
-                <label asp-for="ProducerId">Producent</label>
+                <label asp-for="Brand">Marka</label>
+                <span asp-validation-for="Brand" class="text-danger"></span>
             </div>
-
-            <div class="multi-dropdown">
-                <select asp-for="CategoryIds" asp-items="ViewBag.Categories" id="categorySelect" multiple></select>
-                <span class="bar"></span>
-                <label asp-for="CategoryIds">Kategorie</label>
-            </div>
-
-            <div class="multi-dropdown">
-                <select asp-for="CropIds" asp-items="ViewBag.Crops" id="cropSelect" multiple></select>
-                <span class="bar"></span>
-                <label asp-for="CropIds">Rośliny</label>
-            </div>
-
-            <div class="adding-dropdown">
-                <div id="adding-container" class="adding-container">
-                    <div class="adding-wrapper">
-                        <select asp-for="ActiveIngredients[0].ActiveIngredientId" asp-items="ViewBag.Components" class="ingredient-select"></select>
-                        <input asp-for="ActiveIngredients[0].Concentration" type="number" class="ingredient-amount" placeholder="Ilość" min="0" step="1">
-                        <button type="button" class="remove-row">X</button>
-                    </div>
-                </div>
-                <label>Składniki aktywne</label>
-                <button type="button" id="add-ingredient">Dodaj kolejny</button>
+            <div class="group">
+                <label class="switch">
+                    <input asp-for="IsActive" type="checkbox">
+                    <span class="slider"></span>
+                </label>
+                <span class="switch-label">Aktywność</span>
             </div>
 
             <div class="group">
-                <textarea asp-for="Description" class="description-field" required></textarea>
+                <textarea asp-for="Description" class="description-field"></textarea>
                 <span class="bar"></span>
                 <label asp-for="Description">Opis</label>
                 <span asp-validation-for="Description" class="text-danger"></span>
             </div>
+            <div class="single-dropdown">
+                <select asp-for="AgriculturalEquipmentTypeId" asp-items="ViewBag.AgriculturalEquipmentTypes" id="typeSelect" required>
+                    <option value=""></option>
+                </select>
+                <span class="bar"></span>
+                <label asp-for="AgriculturalEquipmentTypeId">Rodzaj maszyny</label>
+                <span asp-validation-for="AgriculturalEquipmentTypeId" class="text-danger"></span>
+            </div>
+            <div class="group">
+                <input asp-for="YearOfManufacture" type="number" data-val-number="Rok produkcji musi być liczbą." />
+                <span class="bar"></span>
+                <label asp-for="YearOfManufacture">Rok produkcji</label>
+                <span asp-validation-for="YearOfManufacture" class="text-danger"></span>
+            </div>
+            <div class="single-dropdown">
+                <select asp-for="FuelId" asp-items="ViewBag.Fuels" id="fuelSelect">
+                    <option value=""></option>
+                </select>
+                <span class="bar"></span>
+                <label asp-for="FuelId">Rodzaj paliwa</label>
+            </div>
+            <div class="group">
+                <input asp-for="FuelCapacity" data-val-number="Pojemność zbiornika musi być liczbą." />
+                <span class="bar"></span>
+                <label asp-for="FuelCapacity">Zbiornik paliwa (l)</label>
+                <span asp-validation-for="FuelCapacity" class="text-danger"></span>
+            </div>
+            <div class="group">
+                <input asp-for="EnginePower" data-val-number="Moc silnika musi być liczbą." />
+                <span class="bar"></span>
+                <label asp-for="EnginePower">Moc silnika (KM)</label>
+                <span asp-validation-for="EnginePower" class="text-danger"></span>
+            </div>
+            <div class="group">
+                <input asp-for="Weight" type="number" data-val-number="Powierzchnia musi być liczbą."  />
+                <span class="bar"></span>
+                <label asp-for="Weight">Waga (kg)</label>
+                <span asp-validation-for="Weight" class="text-danger"></span>
+            </div>
+            <div class="group">
+                <input asp-for="Width" type="number" data-val-number="Szerokość musi być liczbą." />
+                <span class="bar"></span>
+                <label asp-for="Width">Szerokość (m)</label>
+                <span asp-validation-for="Width" class="text-danger"></span>
+            </div>
+            <div class="group">
+                <input asp-for="WorkingWidth" type="number"
+                data-val-number="Szerkość robocza musi być liczbą."/>
+                <span class="bar"></span>
+                <label asp-for="WorkingWidth">Szerokość robocza (m)</label>
+                <span asp-validation-for="WorkingWidth" class="text-danger"></span>
+            </div>
+            <div class="group">
+                <input asp-for="Height" type=" number" data-val-number="Wysokość musi być liczbą." />
+                <span class="bar"></span>
+                <label asp-for="Height">Wysokość (m)</label>
+                <span asp-validation-for="Height" class="text-danger"></span>
+            </div>
+            <div class="group">
+                <input asp-for="WorkingSpeed" type="number data-val-number="Prędkość robocza musi być liczbą." />
+                <span class="bar"></span>
+                <label asp-for="WorkingSpeed">Prędkość robocza (km/h)</label>
+                <span asp-validation-for="WorkingSpeed" class="text-danger"></span>
+            </div>
+            <div class="group">
+                <input asp-for="TransportSpeed" type="number data-val-number="Prędkość musi być liczbą." />
+                <span class="bar"></span>
+                <label asp-for="TransportSpeed">Prędkość transportowa (km/h)</label>
+                <span asp-validation-for="TransportSpeed" class="text-danger"></span>
+            </div>
+            <div class="group">
+                <input asp-for="LastServiceDate" type="date" />
+                <span class="bar"></span>
+                <label asp-for="LastServiceDate">Ostatni serwis</label>
+                <span asp-validation-for="LastServiceDate" class="text-danger"></span>
+            </div>
+            <div class="group">
+                <input asp-for="NextServiceDate" type="date" />
+                <span class="bar"></span>
+                <label asp-for="NextServiceDate">Następny serwis</label>
+                <span asp-validation-for="NextServiceDate" class="text-danger"></span>
+            </div>
+
 
             <div class="action-buttons">
                 <a asp-action="Index" class="cancel-btn btn">Anuluj</a>
@@ -58,4 +125,27 @@
             </div>
         </form>
     </div>
-</div> *@
+</div> 
+<script src="~/js/inputLabel.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/tom-select/dist/js/tom-select.complete.min.js"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        new TomSelect("#typeSelect", {
+            create: false,
+            sortField: {
+                field: "text",
+                direction: "asc"
+            },
+            placeholder: "Wybierz rodzaj maszyny"
+        });
+
+        new TomSelect("#fuelSelect", {
+            create: false,
+            sortField: {
+                field: "text",
+                direction: "asc"
+            },
+            placeholder: "Wybierz rodzaj paliwa"
+        });
+    });
+</script>

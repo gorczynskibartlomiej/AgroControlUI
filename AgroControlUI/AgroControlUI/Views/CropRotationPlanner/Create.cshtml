@@ -1,21 +1,40 @@
-﻿@model AgroControlUI.DTOs.FarmData.CropRotationPlannerDto
+﻿@* @model AgroControlUI.DTOs.FarmData.CreateCropRotationDto
 
-@{
-    ViewData["Title"] = "Dodaj nowy plan rotacji";
-}
-
-<h1>Dodaj nowy plan rotacji</h1>
+<h1 class="blue">Dodaj nowy płodozmian</h1>
 
 <form asp-action="Create" method="post">
     <div class="form-group">
-        <label for="CropName">Uprawa</label>
-        <input type="text" class="form-control" id="CropName" name="CropName" value="@Model.CropName" required />
-    </div>
-    <div class="form-group">
-        <label for="Year">Rok</label>
-        <input type="number" class="form-control" id="Year" name="Year" value="@Model.Year" required />
+        <label for="FieldId">Pole:</label>
+        <select asp-for="FieldId" class="form-control" required>
+            <option value="">-- Wybierz pole --</option>
+            @foreach (var field in ViewBag.Fields)
+            {
+                <option value="@field.Id">@field.Name (@field.Area ha)</option>
+            }
+        </select>
     </div>
 
-    <button type="submit" class="btn btn-primary">Zapisz</button>
-    <a href="@Url.Action("Index")" class="btn btn-secondary">Anuluj</a>
+    <div class="form-group">
+        <label for="Year">Rok:</label>
+        <input asp-for="Year" type="number" class="form-control" required min="2000" max="@DateTime.Now.Year" />
+    </div>
+
+    <div class="form-group">
+        <label for="CropId">Uprawa:</label>
+        <select asp-for="CropId" class="form-control" required>
+            <option value="">-- Wybierz uprawę --</option>
+            @foreach (var crop in ViewBag.Crops)
+            {
+                <option value="@crop.Id">@crop.Name</option>
+            }
+        </select>
+    </div>
+
+    <div class="form-group">
+        <label for="Notes">Uwagi:</label>
+        <textarea asp-for="Notes" class="form-control"></textarea>
+    </div>
+
+    <button type="submit" class="btn add-btn">Dodaj</button>
 </form>
+ *@

@@ -6,23 +6,25 @@
 
         <form id="calculatorForm">
             <div class="group">
-                <input type="number" id="initialWeight" min="0" step="1" required oninput="validateAndCalculate()">
+                <input type="number" is="decimal-input" id="initialWeight" min="0" step="1" required>
                 <span class="bar"></span>
                 <label for="initialWeight">Masa początkowa (kg)</label>
             </div>
 
             <div class="group">
-                <input type="number" id="initialMoisture" min="0" max="99" step="0.1" required oninput="validateAndCalculate()">
+                <input type="number" is="decimal-input" id="initialMoisture" min="0" max="99" step="0.1" required>
                 <span class="bar"></span>
                 <label for="initialMoisture">Wilgotność początkowa (%)</label>
             </div>
 
             <div class="group">
-                <input type="number" id="finalMoisture" min="0" max="99" step="0.1" required oninput="validateAndCalculate()">
+                <input type="number" is="decimal-input" id="finalMoisture" min="0" max="99" step="0.1" required>
                 <span class="bar"></span>
                 <label for="finalMoisture">Wilgotność końcowa (%)</label>
             </div>
-
+            <div class="group">
+                <button type="button" class="add-btn" style="width:100%" onclick="validateAndCalculate()">Oblicz</button>
+            </div>
             <div class="result-group">
                 <h3><strong>Masa po suszeniu:</strong> <span id="finalWeightResult">---</span> kg</h3>
                 <h3><strong>Zmiana masy:</strong> <span id="weightChangeResult">---</span> kg</h3>
@@ -36,7 +38,32 @@
     </div>
 </div>
 
+
 <script>
+            class DecimalInput extends HTMLInputElement {
+        constructor() {
+            super();
+            this.addEventListener('change', (e) => {
+                const val = parseFloat(this.value.replace(',', '.')) || 0,
+                      min = this.hasAttribute("min") ? parseFloat(this.min) : -Infinity,
+                      max = this.hasAttribute("max") ? parseFloat(this.max) : Infinity,
+                      step = parseFloat(this.step) || 1;
+
+                let roundedVal = Math.round(val / step) * step;
+
+    
+                this.value = (step === 1) ? Math.round(roundedVal) : roundedVal.toFixed(2);
+      
+                if (!isNaN(max) && val > max) this.value = max;
+                if (!isNaN(min) && val < min) this.value = min;
+
+                validateAndCalculate();
+            });
+        }
+    }
+
+    // Rejestracja niestandardowego elementu
+    customElements.define('decimal-input', DecimalInput, { extends: 'input' });
     function validateAndCalculate() {
         let initialWeight = parseFloat(document.getElementById("initialWeight").value);
         let initialMoisture = parseFloat(document.getElementById("initialMoisture").value);

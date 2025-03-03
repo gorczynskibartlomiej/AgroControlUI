@@ -21,10 +21,6 @@
                 <span class="bar"></span>
                 <label asp-for="Password">Hasło</label>
                 <span asp-validation-for="Password" class="text-danger"></span>
-                @if (TempData.ContainsKey("errorMessage"))
-                {
-                    <span class="text-danger">Błędne dane logowania</span>
-                }
             </div>
             
             <button type="submit" class="btn-log">Zaloguj</button>
