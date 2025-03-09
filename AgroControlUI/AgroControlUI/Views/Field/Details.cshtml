@@ -3,6 +3,7 @@
 @await Html.PartialAsync("_DeleteConfirmationModal")
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/leaflet.css" />
 <link rel="stylesheet" href="~/css/Details.css" />
+<link rel="stylesheet" href="~/css/colors.css">
 
 <div class="details-container">
     <h1>Szczegóły pola</h1>
@@ -52,7 +53,7 @@
         <a asp-action="Edit" asp-route-id="@Model.Id" class="edit-btn">Edytuj</a>
         <button type="button" class="delete-btn" data-bs-toggle="modal" data-bs-target="#deleteModal" onclick="setDeleteUrl('@Url.Action("DeleteConfirmed", new { id = Model.Id })')">Usuń
         </button>
-        <a asp-action="Edit" asp-route-id="@Model.Id" class="add-btn">Historia upraw</a>
+        <a asp-controller="CropRotationPlanner" asp-action="Index" asp-route-fieldId="@Model.Id" class="add-btn">Historia upraw</a>
         <a asp-action="Edit" asp-route-id="@Model.Id" class="add-btn">Prace polowe</a>
         <a asp-action="Index" class="cancel-btn">Powrót do listy</a>
     </div>

@@ -1,0 +1,125 @@
+﻿<style>
+    /* Nagłówek */
+    .header-title {
+        font-size: 2.5rem;
+        font-weight: 700;
+        color: #6576E0;
+        text-align: center;
+        margin-bottom: 2rem;
+    }
+
+    /* Styl kafelków */
+    .card {
+        border-radius: 20px;
+        height: 250px;
+        transition: transform 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease;
+        text-decoration: none;
+        overflow: hidden;
+        box-shadow: 0px 4px 6px rgba(0, 0, 0.1, 0.2);
+        cursor: pointer;
+    }
+
+        .card:hover {
+            box-shadow: 0 0 30px #6576E0;
+            transform: translateY(-10px);
+            background-color: #f4f6fa;
+        }
+
+    /* Górna część kafelka */
+    .card-header {
+        background-color: #6576E0;
+        color: white;
+        text-align: center;
+        font-size: 1.5rem;
+        font-weight: 700;
+        padding: 1rem;
+        border-radius: 20px 20px 0 0;
+    }
+
+    /* Ikona */
+    .icon-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100px;
+    }
+
+        .icon-container i {
+            font-size: 3rem;
+            color: #6576E0;
+            transition: color 0.3s ease;
+        }
+
+    .card:hover .icon-container i {
+        color: #6675c3;
+    }
+
+    /* Treści w dolnej części kafelka */
+    .card-body {
+        text-align: center;
+        display: flex;
+        flex-wrap: wrap;
+        flex-direction: column;
+        justify-content: center;
+    }
+
+        .card-body p {
+            margin: 0.5rem 0;
+            font-size: 1rem;
+            color: #6c757d;
+        }
+
+    .info-text {
+        font-size: 0.9rem;
+        color: #6c757d;
+    }
+
+    @@media (max-width: 768px) {
+        .card {
+            height: auto;
+        }
+
+        .card-header {
+            font-size: 1.3rem;
+        }
+
+        .card-body p {
+            font-size: 0.9rem;
+        }
+    }
+</style>
+
+<div class="container mt-5">
+    <h1 class="header-title">Zarządzanie członkami gospodarstwa</h1>
+    <div class="row justify-content-center">
+        <!-- Pracownicy -->
+        <div class="col-lg-4 col-md-6 mb-4">
+            <a asp-controller="Employee" asp-action="Index" class="card text-decoration-none">
+                <div class="card-header">
+                    <h3>Pracownicy</h3>
+                </div>
+                <div class="card-body">
+                    <div class="icon-container">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    <p class="info-text">Zarządzaj pracownikami</p>
+                </div>
+            </a>
+        </div>
+
+        <!-- Użytkownicy -->
+        <div class="col-lg-4 col-md-6 mb-4">
+            <a asp-controller="User" asp-action="Index" class="card text-decoration-none">
+                <div class="card-header">
+                    <h3>Użytkownicy z kontami</h3>
+                </div>
+                <div class="card-body">
+                    <div class="icon-container">
+                        <i class="fas fa-user-shield"></i>
+                    </div>
+                    <p class="info-text">Zarządzaj użytkownikami systemu</p>
+                </div>
+            </a>
+        </div>
+    </div>
+</div>

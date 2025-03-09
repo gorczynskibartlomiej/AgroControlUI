@@ -32,26 +32,10 @@ namespace AgroControlUI.Controllers.RefereneceData
             result.EnsureSuccessStatusCode();
 
             var content = await result.Content.ReadAsStringAsync();
-            var producers = JsonConvert.DeserializeObject<List<ProducerDto>>(content);
+            var producers = JsonConvert.DeserializeObject<List<ProducerDto>>(content); 
             return View(producers);
         }
 
-        // Get Producer Details
-        [Authorize(Policy = "AdminOnly")]
-        [HttpGet]
-        public async Task<IActionResult> Details(int id)
-        {
-            var token = HttpContext.Request.Cookies["token"];
-            _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
-
-            var endpoint = $"/api/producers/{id}";
-            var result = await _client.GetAsync(endpoint);
-            result.EnsureSuccessStatusCode();
-
-            var content = await result.Content.ReadAsStringAsync();
-            var producer = JsonConvert.DeserializeObject<ProducerDto>(content);
-            return View(producer);
-        }
 
         // Create Producer
         [Authorize(Policy = "AdminOnly")]
@@ -80,7 +64,7 @@ namespace AgroControlUI.Controllers.RefereneceData
             var result = await _client.PostAsync(endpoint, stringContent);
             result.EnsureSuccessStatusCode();
 
-            TempData["successMessage"] = "Producent został dodany.";
+            TempData["successMessage"] = "Nowy producent został pomyślnie dodany!";
             return RedirectToAction("Index");
         }
 
@@ -120,27 +104,11 @@ namespace AgroControlUI.Controllers.RefereneceData
             var result = await _client.PutAsync(endpoint, stringContent);
             result.EnsureSuccessStatusCode();
 
-            TempData["successMessage"] = "Producent został zaktualizowany.";
+            TempData["successMessage"] = "Producent został pomyślnie zaaktualizowany!";
             return RedirectToAction("Index");
         }
 
         // Delete Producer
-        [Authorize(Policy = "AdminOnly")]
-        [HttpGet]
-        public async Task<IActionResult> Delete(int id)
-        {
-            var token = HttpContext.Request.Cookies["token"];
-            _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
-
-            var endpoint = $"/api/producers/{id}";
-            var result = await _client.GetAsync(endpoint);
-            result.EnsureSuccessStatusCode();
-
-            var content = await result.Content.ReadAsStringAsync();
-            var producer = JsonConvert.DeserializeObject<ProducerDto>(content);
-            return View(producer);
-        }
-
         [Authorize(Policy = "AdminOnly")]
         [HttpPost]
         public async Task<IActionResult> DeleteConfirmed(int id)
@@ -152,7 +120,7 @@ namespace AgroControlUI.Controllers.RefereneceData
             var result = await _client.DeleteAsync(endpoint);
             result.EnsureSuccessStatusCode();
 
-            TempData["successMessage"] = "Producent został usunięty.";
+            TempData["successMessage"] = "Producent został pomyślnie usunięty!";
             return RedirectToAction("Index");
         }
 

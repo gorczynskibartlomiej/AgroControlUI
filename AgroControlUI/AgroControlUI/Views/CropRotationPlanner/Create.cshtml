@@ -1,40 +1,68 @@
-﻿@* @model AgroControlUI.DTOs.FarmData.CreateCropRotationDto
+﻿@model AgroControlUI.DTOs.FarmData.CreateCropRotationPlannerDto
+<link href="https://cdn.jsdelivr.net/npm/tom-select/dist/css/tom-select.css" rel="stylesheet">
+<link rel="stylesheet" href="~/css/addWithSelects.css">
+<link rel="stylesheet" href="~/css/add.css">
+<link rel="stylesheet" href="~/css/colors.css" />
 
-<h1 class="blue">Dodaj nowy płodozmian</h1>
 
-<form asp-action="Create" method="post">
-    <div class="form-group">
-        <label for="FieldId">Pole:</label>
-        <select asp-for="FieldId" class="form-control" required>
-            <option value="">-- Wybierz pole --</option>
-            @foreach (var field in ViewBag.Fields)
-            {
-                <option value="@field.Id">@field.Name (@field.Area ha)</option>
-            }
-        </select>
+<div class="form-container">
+    <div class="green-form">
+        <form asp-action="Create" method="post">
+            <h1>Dodaj plan zmianowania upraw</h1>
+
+            <!-- Pole wybrane w indexie – nieedytowalne -->
+            <div class="group" style="display:none">
+                <!-- Ukryty input, który przesyła FieldId -->
+                <input asp-for="FieldId" type="hidden"/>
+                <!-- Wyświetlenie nazwy pola (przekazanej w ViewBag.SelectedFieldName) -->
+                <input type="text" value="@ViewBag.SelectedFieldName" disabled />
+                <span class="bar"></span>
+                <label>Pole</label>
+            </div>
+
+            <!-- Wybór nowej uprawy (lista upraw przekazana w ViewBag.Crops) -->
+            <div class="single-dropdown">
+                <select asp-for="CropId" asp-items="ViewBag.Crops" id="cropSelect" required>
+                    <option value=""></option>
+                </select>
+                <span class="bar"></span>
+                <label asp-for="CropId">Uprawa</label>
+                <span asp-validation-for="CropId" class="text-danger"></span>
+            </div>
+            <!-- Rok -->
+            <div class="group">
+                <input asp-for="Year" type="number" required />
+                <span class="bar"></span>
+                <label asp-for="Year">Rok</label>
+                <span asp-validation-for="Year" class="text-danger"></span>
+            </div>
+
+          @*   <!-- Opis -->
+            <div class="group">
+                <textarea asp-for="Description" class="description-field"></textarea>
+                <span class="bar"></span>
+                <label asp-for="Description">Opis</label>
+                <span asp-validation-for="Description" class="text-danger"></span>
+            </div> *@
+
+            <div class="action-buttons">
+                <a asp-action="Index" asp-route-fieldId="@Model.FieldId" class="cancel-btn">Anuluj</a>
+                <button type="submit" class="add-btn">Dodaj</button>
+            </div>
+        </form>
     </div>
-
-    <div class="form-group">
-        <label for="Year">Rok:</label>
-        <input asp-for="Year" type="number" class="form-control" required min="2000" max="@DateTime.Now.Year" />
-    </div>
-
-    <div class="form-group">
-        <label for="CropId">Uprawa:</label>
-        <select asp-for="CropId" class="form-control" required>
-            <option value="">-- Wybierz uprawę --</option>
-            @foreach (var crop in ViewBag.Crops)
-            {
-                <option value="@crop.Id">@crop.Name</option>
-            }
-        </select>
-    </div>
-
-    <div class="form-group">
-        <label for="Notes">Uwagi:</label>
-        <textarea asp-for="Notes" class="form-control"></textarea>
-    </div>
-
-    <button type="submit" class="btn add-btn">Dodaj</button>
-</form>
- *@
+</div>
+<script src="~/js/inputLabel.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/tom-select/dist/js/tom-select.complete.min.js"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        new TomSelect("#cropSelect", {
+            create: false,
+            sortField: {
+                field: "text",
+                direction: "asc"
+            },
+            placeholder: "Wybierz uprawę"
+        });
+    });
+</script>

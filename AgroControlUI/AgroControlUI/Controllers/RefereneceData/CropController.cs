@@ -66,44 +66,16 @@ namespace AgroControlUI.Controllers.Crop
             }
             catch (HttpRequestException ex)
             {
-                TempData["errorMessage"] = "Błąd żądania HTTP: " + ex.Message;
+                TempData["errorMessage"] = "Błąd serwera, spróbuj ponownie później.";
                 return View(cropDto);
             }
             catch (Exception ex)
             {
-                TempData["errorMessage"] = "Wystąpił nieoczekiwany błąd: " + ex.Message;
+                TempData["errorMessage"] = "Wystąpił nieoczekiwany błąd. Spróbuj ponownie później. ";
                 return View(cropDto);
             }
         }
 
-        //Delete
-        [Authorize(Policy = "AdminOnly")]
-        [HttpGet]
-        public IActionResult Delete(int id)
-        {
-            try
-            {
-                var token = HttpContext.Request.Cookies["token"];
-                _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
-
-                var endpoint = $"/api/crops/{id}";
-                var response = _client.GetAsync(endpoint).Result;
-                response.EnsureSuccessStatusCode();
-                string content = response.Content.ReadAsStringAsync().Result;
-                var crop = JsonConvert.DeserializeObject<CropDto>(content);
-                return View(crop);
-            }
-            catch (HttpRequestException ex)
-            {
-                TempData["errorMessage"] = "Błąd żądania HTTP: " + ex.Message;
-                return View();
-            }
-            catch (Exception ex)
-            {
-                TempData["errorMessage"] = "Wystąpił nieoczekiwany błąd: " + ex.Message;
-                return View();
-            }
-        }
         [Authorize(Policy = "AdminOnly")]
         [HttpPost]
         public async Task<IActionResult> DeleteConfirmed(int id)
@@ -122,13 +94,13 @@ namespace AgroControlUI.Controllers.Crop
             }
             catch (HttpRequestException ex)
             {
-                TempData["errorMessage"] = "Błąd żądania HTTP: " + ex.Message;
-                return View();
+                TempData["errorMessage"] = "Błąd serwera, spróbuj ponownie później.";
+                return RedirectToAction("Index");
             }
             catch (Exception ex)
             {
-                TempData["errorMessage"] = "Wystąpił nieoczekiwany błąd: " + ex.Message;
-                return View();
+                TempData["errorMessage"] = "Wystąpił nieoczekiwany błąd. Spróbuj ponownie później. ";
+                return RedirectToAction("Index");
             }
         }
 
@@ -151,12 +123,12 @@ namespace AgroControlUI.Controllers.Crop
             }
             catch (HttpRequestException ex)
             {
-                TempData["errorMessage"] = "Błąd żądania HTTP: " + ex.Message;
+                TempData["errorMessage"] = "Błąd serwera, spróbuj ponownie później.";
                 return View();
             }
             catch (Exception ex)
             {
-                TempData["errorMessage"] = "Wystąpił nieoczekiwany błąd: " + ex.Message;
+                TempData["errorMessage"] = "Wystąpił nieoczekiwany błąd. Spróbuj ponownie później. ";
                 return View();
             }
         }
@@ -178,17 +150,17 @@ namespace AgroControlUI.Controllers.Crop
                 var stringContent = new StringContent(content, Encoding.UTF8, "application/json");
                 var response = _client.PutAsync(endpoint, stringContent).Result;
                 response.EnsureSuccessStatusCode();
-                TempData["successMessage"] = "Zmodyfikowano pomyślnie";
+                TempData["successMessage"] = "Rodzaj uprawy został pomyślnie zaaktualizowany!";
                 return RedirectToAction("Index");
             }
             catch (HttpRequestException ex)
             {
-                TempData["errorMessage"] = "Błąd żądania HTTP: " + ex.Message;
+                TempData["errorMessage"] = "Błąd serwera, spróbuj ponownie później.";
                 return View(cropDto);
             }
             catch (Exception ex)
             {
-                TempData["errorMessage"] = "Wystąpił nieoczekiwany błąd: " + ex.Message;
+                TempData["errorMessage"] = "Wystąpił nieoczekiwany błąd. Spróbuj ponownie później. ";
                 return View(cropDto);
             }
         }

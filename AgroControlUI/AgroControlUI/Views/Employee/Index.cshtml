@@ -4,12 +4,14 @@
 <link rel="stylesheet" href="~/css/indexList.css">
 <link rel="stylesheet" href="~/css/listOperations.css">
 
-<h1 class="blue">Pracownicy</h1>
+<h1 class="blue">Pracownicy lokalni</h1>
 
 <div id="categories" class="wrapper">
     <p>
         <a asp-action="Create" class="add-btn btn"><img src="~/images/plus-solid.svg" />Dodaj nowego pracownika</a>
     </p>
+
+    <!-- Tabela Pracowników -->
     <div class="table">
         <div class="row header blue" id="headerRow">
             <div class="cell" data-sort="isActive" onclick="sortByColumn(this)">
@@ -29,13 +31,11 @@
             </div>
         </div>
         <div class="row">
-            <div class="cell">
-            </div>
+            <div class="cell"></div>
             <div class="cell">
                 <input type="text" class="search-input" data-search="name" placeholder="Szukaj..." oninput="searchByColumn()" />
             </div>
-            <div class="cell">
-            </div>
+            <div class="cell"></div>
         </div>
         <div class="list">
             @foreach (var employee in Model)
@@ -44,12 +44,14 @@
                     <div class="cell isActive" data-title="Aktywność">
                         @employee.IsActive
                     </div>
-                    <div class="cell name" data-title="Nazwa maszyny">
+                    <div class="cell name" data-title="Imię i nazwisko">
                         @employee.FirstName @employee.LastName
                     </div>
                     <div class="cell" data-title="Akcje">
                         <div class="action-buttons">
-                            <a asp-action="Edit" asp-route-id="@employee.Id" class="btn edit-btn"><img src="~/images/edit.svg" />Edytuj</a>
+                            <a asp-action="Edit" asp-route-id="@employee.Id" class="btn edit-btn">
+                                <img src="~/images/edit.svg" />Edytuj
+                            </a>
                             <button type="button" class="delete-btn" data-bs-toggle="modal" data-bs-target="#deleteModal" onclick="setDeleteUrl('@Url.Action("DeleteConfirmed", new { id = employee.Id })')">
                                 <img src="~/images/delete.svg" />Usuń
                             </button>
@@ -57,7 +59,6 @@
                     </div>
                 </div>
             }
-
         </div>
     </div>
     <ul class="pagination"></ul>

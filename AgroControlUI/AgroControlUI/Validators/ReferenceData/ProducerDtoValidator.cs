@@ -8,9 +8,9 @@ namespace AgroControlUI.Validators.ReferenceData
         public ProducerDtoValidator()
         {
             RuleFor(agriculturalEquipmentType => agriculturalEquipmentType.Name)
-               .NotEmpty().WithMessage("Nazwa rodzaju maszyn jest wymagana.")
-               .MaximumLength(50).WithMessage("Nazwa rodzaju maszyn nie może przekraczać 50 znaków.")
-               .MinimumLength(2).WithMessage("Nazwa rodzaju maszyn musi zawierać co najmniej 2 znaki.");
+               .NotEmpty().WithMessage("Nazwa producenta jest wymagana.")
+               .MaximumLength(50).WithMessage("Nazwa producenta nie może przekraczać 50 znaków.")
+               .MinimumLength(2).WithMessage("Nazwa producenta musi zawierać co najmniej 2 znaki.");
         }
     }
 }

@@ -58,50 +58,24 @@ namespace AgroControlUI.Controllers.Fuel
                 var stringContent = new StringContent(content, Encoding.UTF8, "application/json");
                 var response = _client.PostAsync(endpoint, stringContent).Result;
                 response.EnsureSuccessStatusCode();
-                //TempData["successMessage"] = "Etat został dodany";
+                TempData["successMessage"] = "Nowy rodzaj paliwa został pomyślnie dodany!";
                 return RedirectToAction("Index");
 
             }
             catch (HttpRequestException ex)
             {
-                TempData["errorMessage"] = "Błąd żądania HTTP: " + ex.Message;
+                TempData["errorMessage"] = "Błąd serwera, spróbuj ponownie później.";
                 return View(fuelDto);
             }
             catch (Exception ex)
             {
-                TempData["errorMessage"] = "Wystąpił nieoczekiwany błąd: " + ex.Message;
+                TempData["errorMessage"] = "Wystąpił nieoczekiwany błąd. Spróbuj ponownie później. ";
                 return View(fuelDto);
             }
         }
 
         //Delete
-        [Authorize(Policy = "AdminOnly")]
-        [HttpGet]
-        public IActionResult Delete(int id)
-        {
-            try
-            {
-                var token = HttpContext.Request.Cookies["token"];
-                _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
-
-                var endpoint = $"/api/fuels/{id}";
-                var response = _client.GetAsync(endpoint).Result;
-                response.EnsureSuccessStatusCode();
-                string content = response.Content.ReadAsStringAsync().Result;
-                var fuel = JsonConvert.DeserializeObject<FuelDto>(content);
-                return View(fuel);
-            }
-            catch (HttpRequestException ex)
-            {
-                TempData["errorMessage"] = "Błąd żądania HTTP: " + ex.Message;
-                return View();
-            }
-            catch (Exception ex)
-            {
-                TempData["errorMessage"] = "Wystąpił nieoczekiwany błąd: " + ex.Message;
-                return View();
-            }
-        }
+        
         [Authorize(Policy = "AdminOnly")]
         [HttpPost]
         public IActionResult DeleteConfirmed(int id)
@@ -114,17 +88,18 @@ namespace AgroControlUI.Controllers.Fuel
                 var endpoint = $"/api/fuels/{id}";
                 var result = _client.DeleteAsync(endpoint).Result;
                 result.EnsureSuccessStatusCode();
+                TempData["successMessage"] = "Rodzaj paliwa został pomyślnie usunięty!";
                 return RedirectToAction("Index");
             }
             catch (HttpRequestException ex)
             {
-                TempData["errorMessage"] = "Błąd żądania HTTP: " + ex.Message;
-                return View();
+                TempData["errorMessage"] = "Błąd serwera, spróbuj ponownie później.";
+                return RedirectToAction("Index");
             }
             catch (Exception ex)
             {
-                TempData["errorMessage"] = "Wystąpił nieoczekiwany błąd: " + ex.Message;
-                return View();
+                TempData["errorMessage"] = "Wystąpił nieoczekiwany błąd. Spróbuj ponownie później. ";
+                return RedirectToAction("Index");
             }
         }
 
@@ -147,12 +122,12 @@ namespace AgroControlUI.Controllers.Fuel
             }
             catch (HttpRequestException ex)
             {
-                TempData["errorMessage"] = "Błąd żądania HTTP: " + ex.Message;
+                TempData["errorMessage"] = "Błąd serwera, spróbuj ponownie później.";
                 return View();
             }
             catch (Exception ex)
             {
-                TempData["errorMessage"] = "Wystąpił nieoczekiwany błąd: " + ex.Message;
+                TempData["errorMessage"] = "Wystąpił nieoczekiwany błąd. Spróbuj ponownie później. ";
                 return View();
             }
         }
@@ -174,17 +149,17 @@ namespace AgroControlUI.Controllers.Fuel
                 var stringContent = new StringContent(content, Encoding.UTF8, "application/json");
                 var response = _client.PutAsync(endpoint, stringContent).Result;
                 response.EnsureSuccessStatusCode();
-                TempData["successMessage"] = "Zmodyfikowano pomyślnie";
+                TempData["successMessage"] = "Rodzaj paliwa został pomyślnie zaaktualizowany!";
                 return RedirectToAction("Index");
             }
             catch (HttpRequestException ex)
             {
-                TempData["errorMessage"] = "Błąd żądania HTTP: " + ex.Message;
+                TempData["errorMessage"] = "Błąd serwera, spróbuj ponownie później.";
                 return View(fuelDto);
             }
             catch (Exception ex)
             {
-                TempData["errorMessage"] = "Wystąpił nieoczekiwany błąd: " + ex.Message;
+                TempData["errorMessage"] = "Wystąpił nieoczekiwany błąd. Spróbuj ponownie później. ";
                 return View(fuelDto);
             }
         }

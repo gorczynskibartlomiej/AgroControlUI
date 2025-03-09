@@ -1,102 +1,136 @@
-﻿<link rel="stylesheet" href="~/css/add.css">
+﻿<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kalkulator obsady roślin</title>
+    <link rel="stylesheet" href="~/css/add.css">
+    <style>
+        .error {
+            color: red;
+            font-size: 14px;
+            margin-top: 5px;
+            display: none; /* Ukrywamy błędy na starcie */
+        }
 
-<div class="form-container">
-    <div class="green-form">
-        <h1>Kalkulator obsady roślin</h1>
+        .group input:focus + .bar + label,
+        .group input:not(:placeholder-shown) + .bar + label {
+            top: -20px;
+            font-size: 14px;
+            color: black;
+        }
+    </style>
+</head>
+<body>
 
-        <form id="calculatorForm">
-            <div class="group">
-                <input type="number" is="decimal-input" id="plantsPerRow" min="0" step="1" required>
-                <span class="bar"></span>
-                <label for="plantsPerRow">Ilość roślin na długość pomiaru (szt.)</label>
-            </div>
+    <div class="form-container">
+        <div class="green-form">
+            <h1>Kalkulator obsady roślin</h1>
 
-            <div class="group">
-                <input type="number" is="decimal-input" id="measurementLength" min="0" step="0.01" required>
-                <span class="bar"></span>
-                <label for="measurementLength">Długość pomiaru (m)</label>
-            </div>
+            <form id="calculatorForm">
+                <div class="group">
+                    <input type="number" id="plantsPerRow" min="0" step="1" required placeholder=" ">
+                    <span class="bar"></span>
+                    <label for="plantsPerRow">Ilość roślin na długość pomiaru (szt.)</label>
+                    <span class="error" id="errorPlantsPerRow"></span>
+                </div>
 
-            <div class="group">
-                <input type="number" is="decimal-input" id="rowSpacing" min="0" step="1" required>
-                <span class="bar"></span>
-                <label for="rowSpacing">Szerokość międzyrzędzi (cm)</label>
-            </div>
-            <div class="group">
-                <button type="button" class="add-btn" style="width:100%" onclick="validateAndCalculate()">Oblicz</button>
-            </div>
-            <div class="result-group">
-                <h3><strong>Obsada roślin:</strong> <span id="plantDensityResult">---</span> szt./m²</h3>
-            </div>
+                <div class="group">
+                    <input type="number" id="measurementLength" min="0" step="0.01" required placeholder=" ">
+                    <span class="bar"></span>
+                    <label for="measurementLength">Długość pomiaru (m)</label>
+                    <span class="error" id="errorMeasurementLength"></span>
+                </div>
 
-            <div class="action-buttons">
-                <a href="javascript:history.back()" class="cancel-btn btn">Wróć</a>
-                <button type="reset" class="add-btn btn" onclick="resetCalculator()">Reset</button>
-            </div>
-        </form>
+                <div class="group">
+                    <input type="number" id="rowSpacing" min="0" step="1" required placeholder=" ">
+                    <span class="bar"></span>
+                    <label for="rowSpacing">Szerokość międzyrzędzi (cm)</label>
+                    <span class="error" id="errorRowSpacing"></span>
+                </div>
+
+                <div class="result-group">
+                    <h3><strong>Obsada roślin:</strong> <span id="plantDensityResult">---</span> szt./m²</h3>
+                </div>
+
+                <div class="action-buttons">
+                    <a asp-action="Index" asp-controller="Home" class="cancel-btn">Strona główna</a>
+                    <button type="reset" class="add-btn" onclick="resetCalculator()">Reset</button>
+                </div>
+            </form>
+        </div>
     </div>
-</div>
 
-<script>
-    class DecimalInput extends HTMLInputElement {
-        constructor() {
-            super();
-            this.addEventListener('change', (e) => {
-                const val = parseFloat(this.value.replace(',', '.')) || 0,
-                      min = parseFloat(this.min),
-                      max = parseFloat(this.max),
-                      step = parseFloat(this.step);
-
-                // Zaokrąglanie wartości na podstawie kroku
-                let roundedVal = Math.round(val / step) * step;
-
-                // Jeśli step jest 1 → pełna liczba, jeśli nie → 2 miejsca po przecinku
-                this.value = (step === 1) ? Math.round(roundedVal) : roundedVal.toFixed(2);
-
-                // Sprawdzamy zakres wartości
-                if (val > max) this.value = max;
-                if (val < min) this.value = min;
-
-                // Uruchamiamy obliczenia
-                validateAndCalculate();
-            });
-        }
-    }
-
-    // Rejestrujemy niestandardowy element
-    customElements.define('decimal-input', DecimalInput, { extends: 'input' });
-
-    function validateAndCalculate() {
-        let plantsPerRow = parseFloat(document.getElementById("plantsPerRow").value) || 0;
-        let measurementLength = parseFloat(document.getElementById("measurementLength").value) || 0;
-        let rowSpacing = parseFloat(document.getElementById("rowSpacing").value) || 0;
-
-        if (plantsPerRow < 0) {
-            document.getElementById("plantsPerRow").value = 0;
-            plantsPerRow = 0;
-        }
-        if (measurementLength < 0) {
-            document.getElementById("measurementLength").value = 0;
-            measurementLength = 0;
-        }
-        if (rowSpacing < 0) {
-            document.getElementById("rowSpacing").value = 0;
-            rowSpacing = 0;
+    <script>
+        function showError(element, message) {
+            let errorElement = document.getElementById(element);
+            if (message) {
+                errorElement.textContent = message;
+                errorElement.style.display = "block"; // Pokazujemy błąd
+            } else {
+                errorElement.textContent = "";
+                errorElement.style.display = "none"; // Ukrywamy błąd
+            }
         }
 
-        let resultElement = document.getElementById("plantDensityResult");
+        function calculate() {
+            let plantsPerRow = parseFloat(document.getElementById("plantsPerRow").value);
+            let measurementLength = parseFloat(document.getElementById("measurementLength").value);
+            let rowSpacing = parseFloat(document.getElementById("rowSpacing").value);
 
-        if (!isNaN(plantsPerRow) && !isNaN(measurementLength) && !isNaN(rowSpacing) && rowSpacing > 0) {
-            // Obliczenie obsady roślin (szt./m²)
+            let hasError = false;
+
+            if (!isNaN(plantsPerRow) && plantsPerRow >= 0) {
+                showError("errorPlantsPerRow", "");
+            } else if (document.getElementById("plantsPerRow").value !== "") {
+                showError("errorPlantsPerRow", "Podaj poprawną ilość roślin.");
+                hasError = true;
+            }
+
+            if (!isNaN(measurementLength) && measurementLength > 0) {
+                showError("errorMeasurementLength", "");
+            } else if (document.getElementById("measurementLength").value !== "") {
+                showError("errorMeasurementLength", "Długość pomiaru musi być większa niż 0.");
+                hasError = true;
+            }
+
+            if (!isNaN(rowSpacing) && rowSpacing > 0) {
+                showError("errorRowSpacing", "");
+            } else if (document.getElementById("rowSpacing").value !== "") {
+                showError("errorRowSpacing", "Szerokość międzyrzędzi musi być większa niż 0.");
+                hasError = true;
+            }
+
+            if (hasError) {
+                document.getElementById("plantDensityResult").textContent = "---";
+                return;
+            }
+
             let plantDensity = (plantsPerRow * 100) / (measurementLength * rowSpacing);
-            resultElement.textContent = plantDensity.toFixed(2);
-        } else {
-            resultElement.textContent = "---";
+            document.getElementById("plantDensityResult").textContent = isNaN(plantDensity) ? "---" : plantDensity.toFixed(2);
         }
-    }
 
-    function resetCalculator() {
-        document.getElementById("calculatorForm").reset();
-        document.getElementById("plantDensityResult").textContent = "---";
-    }
-</script>
+        function resetCalculator() {
+            document.getElementById("calculatorForm").reset();
+            document.getElementById("plantDensityResult").textContent = "---";
+            showError("errorPlantsPerRow", "");
+            showError("errorMeasurementLength", "");
+            showError("errorRowSpacing", "");
+        }
+
+        // Nasłuchiwanie na zmiany w polach, ale błędy pojawią się dopiero po wpisaniu wartości
+        document.getElementById("plantsPerRow").addEventListener("input", calculate);
+        document.getElementById("measurementLength").addEventListener("input", calculate);
+        document.getElementById("rowSpacing").addEventListener("input", calculate);
+
+        // Usuwanie błędów, jeśli użytkownik poprawia wartość
+        document.getElementById("plantsPerRow").addEventListener("blur", calculate);
+        document.getElementById("measurementLength").addEventListener("blur", calculate);
+        document.getElementById("rowSpacing").addEventListener("blur", calculate);
+
+        // Uruchomienie obliczeń po załadowaniu strony (dla autouzupełniania)
+        document.addEventListener("DOMContentLoaded", calculate);
+    </script>
+
+</body>
+</html>

@@ -21,13 +21,29 @@ public class AccountController : Controller
         _client = httpClientFactory.CreateClient();
         _client.BaseAddress = new Uri(Options.ApiUrl);
     }
-
-    public IActionResult Login()
+    private IActionResult RedirectToLocal(string returnUrl)
     {
+        if (!string.IsNullOrEmpty(returnUrl))
+        {
+            // Jeśli ReturnUrl wskazuje na zaproszenie do farmy, przekieruj użytkownika do akcji dołączenia do farmy
+            if (returnUrl.Contains("Invitation"))
+            {
+                var decodedReturnUrl = Uri.UnescapeDataString(returnUrl);
+                var invitationId = decodedReturnUrl.Split('/').Last();
+                return RedirectToAction("Accept", "Invitation", new { invitationId });
+            }
+        }
+        return RedirectToAction("Select", "Farm"); // Domyślnie przekierowuje na stronę główną
+    }
+    [HttpGet]
+    public IActionResult Login(string returnUrl = null)
+    {
+        // Sprawdzamy, czy mamy ReturnUrl, jeśli nie, ustawiamy domyślną stronę
+        ViewData["ReturnUrl"] = returnUrl ?? Url.Content("~/"); // Default to home page if ReturnUrl is null
         return View();
     }
     [HttpPost]
-    public async Task<IActionResult> LoginAsync(LoginModelDto login)
+    public async Task<IActionResult> LoginAsync(LoginModelDto login, string returnUrl)
     {
         if (!ModelState.IsValid)
         {
@@ -47,10 +63,20 @@ public class AccountController : Controller
             var refreshToken = (string)json.refreshToken;
             var expiresIn = (int)json.expiresIn;
 
-            var claims = new[]
+            _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+            var isAdminResponse = await _client.GetAsync("/api/Account/isAdmin");
+            var isAdminJson = JsonConvert.DeserializeObject<dynamic>(await isAdminResponse.Content.ReadAsStringAsync());
+            bool isAdmin = (bool)isAdminJson.isAdmin;
+
+            var claims = new List<Claim>();
             {
-                  new Claim(ClaimTypes.Name, login.Email)
+                new Claim(ClaimTypes.Name, login.Email);
             };
+
+            if (isAdmin)
+            {
+                claims.Add(new Claim(ClaimTypes.Role, "Admin"));
+            }
 
             var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
             HttpContext.SignInAsync(
@@ -62,13 +88,18 @@ public class AccountController : Controller
                 HttpOnly = true,
                 Secure = true,
                 SameSite = SameSiteMode.None,
-                Expires = DateTimeOffset.UtcNow.AddSeconds(expiresIn)
+                Expires = DateTimeOffset.Now.AddSeconds(expiresIn)
             };
+
             HttpContext.Response.Cookies.Append("token", token, cookieOptions);
-            cookieOptions.Expires = DateTimeOffset.UtcNow.AddSeconds(expiresIn);
+            cookieOptions.Expires = DateTimeOffset.Now.AddSeconds(expiresIn*20);
             HttpContext.Response.Cookies.Append("refreshToken", refreshToken, cookieOptions);
             TempData["successMessage"] = "Zalogowano pomyślnie.";
-            return RedirectToAction("Select", "Farm");
+            if (isAdmin)
+            {
+                return RedirectToAction("Index", "Home");
+            }
+                return RedirectToLocal(returnUrl);
         }
         catch (HttpRequestException ex)
         {
@@ -107,7 +138,7 @@ public class AccountController : Controller
             if (response.IsSuccessStatusCode)
             {
                 var loginModel = new LoginModelDto { Email = register.Email, Password = register.Password};
-                LoginAsync(loginModel);
+                LoginAsync(loginModel,null);
                 return RedirectToAction("Select", "Farm");
             }
 
@@ -124,7 +155,7 @@ public class AccountController : Controller
     public IActionResult AccessDenied()
     {
         TempData["errorMessage"] = "Nie masz uprawnień do tej strony. Zaloguj się na odpowiednie konto.";
-        return RedirectToAction("Index", "Home");
+        return View();
     }
     [HttpGet]
     public async Task<IActionResult> Logout()

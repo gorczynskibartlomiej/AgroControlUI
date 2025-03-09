@@ -109,6 +109,7 @@ namespace AgroControlUI.Controllers.FarmData
                 var response = await _client.PostAsync(endpoint, stringContent);
                 response.EnsureSuccessStatusCode();
 
+                TempData["successMessage"] = "Nowe pole zostało pomyślnie dodane!";
                 return RedirectToAction("Index");
             }
             catch (HttpRequestException ex)
@@ -124,34 +125,6 @@ namespace AgroControlUI.Controllers.FarmData
         }
 
         // Delete
-        [Authorize(Policy = "OwnerOrCoOwner")]
-        [HttpGet]
-        public async Task<IActionResult> Delete(int id)
-        {
-            try
-            {
-                var token = HttpContext.Request.Cookies["token"];
-                _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
-
-                var endpoint = $"/api/fields/{id}";
-                var response = await _client.GetAsync(endpoint);
-                response.EnsureSuccessStatusCode();
-
-                string content = await response.Content.ReadAsStringAsync();
-                var field = JsonConvert.DeserializeObject<FieldDto>(content);
-                return View(field);
-            }
-            catch (HttpRequestException ex)
-            {
-                TempData["errorMessage"] = "Błąd żądania HTTP: " + ex.Message;
-                return View();
-            }
-            catch (Exception ex)
-            {
-                TempData["errorMessage"] = "Wystąpił nieoczekiwany błąd: " + ex.Message;
-                return View();
-            }
-        }
 
         [Authorize(Policy = "OwnerOrCoOwner")]
         [HttpPost]
@@ -166,6 +139,7 @@ namespace AgroControlUI.Controllers.FarmData
                 var response = await _client.DeleteAsync(endpoint);
                 response.EnsureSuccessStatusCode();
 
+                TempData["successMessage"] = "Pole zostało pomyślnie usunięte!";
                 return RedirectToAction("Index");
             }
             catch (HttpRequestException ex)
@@ -272,7 +246,7 @@ namespace AgroControlUI.Controllers.FarmData
                 var response = await _client.PutAsync(endpoint, stringContent);
                 response.EnsureSuccessStatusCode();
 
-                TempData["successMessage"] = "Zmodyfikowano pomyślnie";
+                TempData["successMessage"] = "Pole zostało pomyślnie zaaktualizowane!";
                 return RedirectToAction("Index");
             }
             catch (HttpRequestException ex)

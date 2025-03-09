@@ -1,0 +1,209 @@
+﻿@model AgroControlUI.DTOs.CropProtectionProducts.CreateCropProtectionProductDto
+
+<link rel="stylesheet" href="~/css/add.css" />
+<link href="https://cdn.jsdelivr.net/npm/tom-select/dist/css/tom-select.css" rel="stylesheet" />
+<link rel="stylesheet" href="~/css/addWithSelects.css" />
+<link rel="stylesheet" href="~/css/colors.css" />
+
+<style>
+    .adding-wrapper {
+        display: flex;
+        position: relative;
+        align-items: center;
+        gap: 10px;
+        padding-bottom: 10px;
+    }
+
+        /* Styl dla selecta */
+        .adding-wrapper .ts-wrapper {
+            position: relative;
+            width: 100%;
+            border: none;
+            border-bottom: 2px #757575 solid;
+        }
+
+        /* Styl dla inputa */
+        .adding-wrapper .input-wrapper {
+            position: relative;
+            width: 30%;
+        }
+
+        .adding-wrapper .ts-wrapper .ts-control {
+            border: none !important;
+        }
+
+        .adding-wrapper .input-wrapper input {
+            width: 100%;
+            border: none;
+            background: transparent;
+            font-size: 18px;
+            outline: none;
+            padding: 10px 10px 5px 5px;
+            border-bottom: 2px solid #757575;
+        }
+
+        .adding-wrapper .input-wrapper .input-bar {
+            bottom: -2px;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background-color: var(--main-app-color);
+            transform: scaleX(0);
+            transition: transform 0.3s ease-in-out;
+        }
+</style>
+
+<div class="form-container">
+    <div class="green-form">
+        <form asp-action="Create" method="post">
+            <h1>Dodaj środek ochrony roślin</h1>
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+            <!-- Nazwa środka -->
+            <div class="group">
+                <input asp-for="Name" required />
+                <span class="bar"></span>
+                <label asp-for="Name">Nazwa środka ochrony roślin</label>
+                <span asp-validation-for="Name" class="text-danger"></span>
+            </div>
+
+            <!-- Producent -->
+            <div class="single-dropdown">
+                <select asp-for="ProducerId" asp-items="ViewBag.Producers" id="producerSelect">
+                    <option value="">Wybierz producenta</option>
+                </select>
+                <span class="bar"></span>
+                <label asp-for="ProducerId">Producent</label>
+            </div>
+
+            <!-- Kategorie -->
+            <div class="multi-dropdown">
+                <select asp-for="CategoryIds" asp-items="ViewBag.Categories" id="categorySelect" multiple></select>
+                <span class="bar"></span>
+                <label asp-for="CategoryIds">Kategorie</label>
+            </div>
+
+            <!-- Rośliny -->
+            <div class="multi-dropdown">
+                <select asp-for="CropIds" asp-items="ViewBag.Crops" id="cropSelect" multiple></select>
+                <span class="bar"></span>
+                <label asp-for="CropIds">Rośliny</label>
+            </div>
+
+            <!-- Składniki aktywne -->
+            <div class="single-dropdown">
+                <div id="adding-container" class="adding-container"></div>
+                <button type="button" id="add-ingredient">Dodaj kolejny</button>
+            </div>
+
+            <!-- Opis -->
+            <div class="group">
+                <textarea asp-for="Description" class="description-field" required></textarea>
+                <span class="bar"></span>
+                <label asp-for="Description">Opis</label>
+                <span asp-validation-for="Description" class="text-danger"></span>
+            </div>
+
+            <div class="action-buttons">
+                <a asp-action="Index" class="cancel-btn btn">Anuluj</a>
+                <button type="submit" class="add-btn btn">Dodaj</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Ukryta lista składników aktywnych -->
+<select id="componentOptions" style="display:none">
+    @foreach (var option in ViewBag.Components)
+    {
+        <option value="@option.Value">@option.Text</option>
+    }
+</select>
+
+<script src="~/js/inputLabel.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/tom-select/dist/js/tom-select.complete.min.js"></script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        new TomSelect("#producerSelect", { create: false, sortField: "text", placeholder: "Wybierz producenta" });
+        new TomSelect("#categorySelect", { create: false, sortField: "text", placeholder: "Wyszukaj...", plugins: ['remove_button'] });
+        new TomSelect("#cropSelect", { create: false, sortField: "text", placeholder: "Wyszukaj...", plugins: ['remove_button'] });
+
+        const addIngredientButton = document.getElementById("add-ingredient");
+        const container = document.getElementById("adding-container");
+        let selectedIngredients = new Set();
+        let ingredientSelects = [];
+
+        function createIngredientRow() {
+            const wrapper = document.createElement("div");
+            wrapper.classList.add("adding-wrapper");
+
+            // Select składnika
+            const selectWrapper = document.createElement("div");
+            selectWrapper.classList.add("ts-wrapper");
+
+            const select = document.createElement("select");
+            select.classList.add("ingredient-select");
+            select.innerHTML = document.getElementById("componentOptions").innerHTML;
+
+            const selectBar = document.createElement("span");
+            selectBar.classList.add("bar");
+
+            selectWrapper.appendChild(select);
+            selectWrapper.appendChild(selectBar);
+
+            // Input ilości
+            const inputWrapper = document.createElement("div");
+            inputWrapper.classList.add("input-wrapper");
+
+            const input = document.createElement("input");
+            input.type = "number";
+            input.placeholder = "Ilość";
+            input.min = "0";
+            input.step = "1";
+
+            const inputBar = document.createElement("span");
+            inputBar.classList.add("bar");
+
+            inputWrapper.appendChild(input);
+            inputWrapper.appendChild(inputBar);
+
+            // Przycisk usuwania
+            const removeButton = document.createElement("button");
+            removeButton.type = "button";
+            removeButton.classList.add("remove-row");
+            removeButton.textContent = "X";
+
+            removeButton.addEventListener("click", function () {
+                selectedIngredients.delete(select.tomselect.getValue());
+                ingredientSelects = ingredientSelects.filter(s => s !== select.tomselect);
+                wrapper.remove();
+                updateDropdownOptions();
+            });
+
+            // Dodanie do wrappera
+            wrapper.appendChild(selectWrapper);
+            wrapper.appendChild(inputWrapper);
+            wrapper.appendChild(removeButton);
+            container.appendChild(wrapper);
+
+            // Inicjalizacja TomSelect
+            const ts = new TomSelect(select, {
+                create: false,
+                sortField: "text",
+                placeholder: "Wybierz składnik...",
+                plugins: ['remove_button'],
+                onChange: function (value) {
+                    selectedIngredients.add(value);
+                    updateDropdownOptions();
+                }
+            });
+
+            ingredientSelects.push(ts);
+            updateDropdownOptions();
+        }
+
+        addIngredientButton.addEventListener("click", createIngredientRow);
+        createIngredientRow();
+    });
+</script>

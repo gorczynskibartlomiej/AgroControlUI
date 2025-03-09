@@ -77,33 +77,6 @@ namespace AgroControlUI.Controllers.RefereneceData
 
         //Delete
         [Authorize(Policy = "AdminOnly")]
-        [HttpGet]
-        public IActionResult Delete(int id)
-        {
-            try
-            {
-                var token = HttpContext.Request.Cookies["token"];
-                _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
-
-                var endpoint = $"/api/costUnits/{id}";
-                var response = _client.GetAsync(endpoint).Result;
-                response.EnsureSuccessStatusCode();
-                string content = response.Content.ReadAsStringAsync().Result;
-                var costUnit = JsonConvert.DeserializeObject<CostUnitDto>(content);
-                return View(costUnit);
-            }
-            catch (HttpRequestException ex)
-            {
-                TempData["errorMessage"] = "Błąd żądania HTTP: " + ex.Message;
-                return View();
-            }
-            catch (Exception ex)
-            {
-                TempData["errorMessage"] = "Wystąpił nieoczekiwany błąd: " + ex.Message;
-                return View();
-            }
-        }
-        [Authorize(Policy = "AdminOnly")]
         [HttpPost]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {

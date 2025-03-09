@@ -21,19 +21,17 @@
                 <span asp-validation-for="LastName" class="text-danger"></span>
             </div>
             <div class="group">
-                <input asp-for="Cost" required />
-                <span class="bar"></span>
-                <label asp-for="Cost">Koszt</label>
-                <span asp-validation-for="Cost" class="text-danger"></span>
-            </div>
-            <div class="group">
-                <input asp-for="IsActive" type="checkbox" />
-                <label asp-for="IsActive">Aktywny</label>
+                <label class="switch">
+                    <input asp-for="IsActive" type="checkbox">
+                    <span class="slider"></span>
+                </label>
+                <span class="switch-label">Aktywność</span>
             </div>
             <div class="action-buttons">
-                <a asp-action="Index" class="cancel-btn btn">Anuluj</a>
-                <button type="submit" class="add-btn btn">Dodaj</button>
+                <a asp-action="Index" class="cancel-btn">Anuluj</a>
+                <button type="submit" class="add-btn">Dodaj</button>
             </div>
         </form>
     </div>
 </div>
+<script src="~/js/inputLabel.js"></script>

@@ -1,123 +1,141 @@
-﻿@model AgroControlUI.DTOs.FarmData.CreateAgriculturalEquipmentDto
-<link href="https://cdn.jsdelivr.net/npm/tom-select/dist/css/tom-select.css" rel="stylesheet">
-<link rel="stylesheet" href="~/css/addWithSelects.css">
-<link rel="stylesheet" href="~/css/add.css">
+﻿@model AgroControlUI.DTOs.CropProtectionProducts.CreateCropProtectionProductDto
+
+<link rel="stylesheet" href="~/css/add.css" />
+<link href="https://cdn.jsdelivr.net/npm/tom-select/dist/css/tom-select.css" rel="stylesheet" />
+<link rel="stylesheet" href="~/css/addWithSelects.css" />
 <link rel="stylesheet" href="~/css/colors.css" />
+<style>
 
+
+    .adding-dropdown {
+        position: relative;
+        margin-bottom: 60px;
+        margin-top: -10px;
+        min-height: 40px;
+        border: none;
+    }
+
+        .adding-dropdown label {
+            display: block !important;
+            margin-bottom: 5px;
+            color: #999 !important;
+            font-size: 18px;
+            font-weight: normal;
+            position: absolute;
+            pointer-events: none;
+            left: 5px;
+            top: 10px;
+            transition: 0.2s ease all;
+            z-index: 10;
+        }
+
+
+
+
+
+
+    .adding-wrapper {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 20px;
+    }
+
+        .adding-wrapper .ts-wrapper {
+            width: 65%;
+        }
+
+        .adding-wrapper input {
+            width: 20%;
+        }
+
+        .adding-wrapper.ts-wrapper.input-active ~ .bar:before, .adding-wrapper.ts-wrapper.input-active ~ .bar:after {
+            width: 50%;
+        }
+
+        .adding-wrapper .ts-wrapper .ts-control {
+            display: flex;
+            padding: 10px 10px 10px 5px;
+            min-height: 40px;
+            background-color: white;
+            border: none;
+            flex-wrap: nowrap;
+        }
+
+            .adding-wrapper .ts-wrapper .ts-control .item {
+                background-color: transparent !important;
+                color: black !important;
+                pointer-events: none;
+                display: flex;
+                font-size: 18px;
+                padding: 0;
+                margin: 0;
+            }
+
+            .adding-wrapper .ts-wrapper .ts-control .remove {
+                display: none;
+            }
+
+            .adding-wrapper .ts-wrapper .ts-control input {
+                flex-grow: 1;
+                min-width: 100px;
+                border: none;
+                background: transparent;
+                font-size: 18px;
+                outline: none;
+                padding: 0px;
+            }
+</style>
 <div class="form-container">
-    <div class="blue-form">
+    <div class="green-form">
         <form asp-action="Create" method="post">
-            <h1>Planowanie płodozmianu</h1>
+            <h1>Dodaj środek ochrony roślin</h1>
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
+            <!-- Nazwa środka -->
             <div class="group">
-                <input asp-for="Name" />
+                <input asp-for="Name" required />
                 <span class="bar"></span>
-                <label asp-for="Name">Nazwa maszyny</label>
+                <label asp-for="Name">Nazwa środka ochrony roślin</label>
                 <span asp-validation-for="Name" class="text-danger"></span>
             </div>
-            <div class="group">
-                <input asp-for="Brand" required />
+
+            <!-- Producent -->
+            <div class="single-dropdown">
+                <select asp-for="ProducerId" asp-items="ViewBag.Producers" id="producerSelect">
+                    <option value="">Wybierz producenta</option>
+                </select>
                 <span class="bar"></span>
-                <label asp-for="Brand">Marka</label>
-                <span asp-validation-for="Brand" class="text-danger"></span>
-            </div>
-            <div class="group">
-                <label class="switch">
-                    <input asp-for="IsActive" type="checkbox">
-                    <span class="slider"></span>
-                </label>
-                <span class="switch-label">Aktywność</span>
+                <label asp-for="ProducerId">Producent</label>
             </div>
 
+            <!-- Kategorie -->
+            <div class="multi-dropdown">
+                <select asp-for="CategoryIds" asp-items="ViewBag.Categories" id="categorySelect" multiple></select>
+                <span class="bar"></span>
+                <label asp-for="CategoryIds">Kategorie</label>
+            </div>
+
+            <!-- Rośliny -->
+            <div class="multi-dropdown">
+                <select asp-for="CropIds" asp-items="ViewBag.Crops" id="cropSelect" multiple></select>
+                <span class="bar"></span>
+                <label asp-for="CropIds">Rośliny</label>
+            </div>
+
+            <!-- Składniki aktywne -->
+            <div class="adding-dropdown">
+                <div id="adding-container" class="adding-container"></div>
+                <label>Składniki aktywne</label>
+                <button type="button" id="add-ingredient">Dodaj kolejny</button>
+            </div>
+
+            <!-- Opis -->
             <div class="group">
-                <textarea asp-for="Description" class="description-field"></textarea>
+                <textarea asp-for="Description" class="description-field" required></textarea>
                 <span class="bar"></span>
                 <label asp-for="Description">Opis</label>
                 <span asp-validation-for="Description" class="text-danger"></span>
             </div>
-            <div class="single-dropdown">
-                <select asp-for="AgriculturalEquipmentTypeId" asp-items="ViewBag.AgriculturalEquipmentTypes" id="typeSelect" required>
-                    <option value=""></option>
-                </select>
-                <span class="bar"></span>
-                <label asp-for="AgriculturalEquipmentTypeId">Rodzaj maszyny</label>
-                <span asp-validation-for="AgriculturalEquipmentTypeId" class="text-danger"></span>
-            </div>
-            <div class="group">
-                <input asp-for="YearOfManufacture" type="number" data-val-number="Rok produkcji musi być liczbą." />
-                <span class="bar"></span>
-                <label asp-for="YearOfManufacture">Rok produkcji</label>
-                <span asp-validation-for="YearOfManufacture" class="text-danger"></span>
-            </div>
-            <div class="single-dropdown">
-                <select asp-for="FuelId" asp-items="ViewBag.Fuels" id="fuelSelect">
-                    <option value=""></option>
-                </select>
-                <span class="bar"></span>
-                <label asp-for="FuelId">Rodzaj paliwa</label>
-            </div>
-            <div class="group">
-                <input asp-for="FuelCapacity" data-val-number="Pojemność zbiornika musi być liczbą." />
-                <span class="bar"></span>
-                <label asp-for="FuelCapacity">Zbiornik paliwa (l)</label>
-                <span asp-validation-for="FuelCapacity" class="text-danger"></span>
-            </div>
-            <div class="group">
-                <input asp-for="EnginePower" data-val-number="Moc silnika musi być liczbą." />
-                <span class="bar"></span>
-                <label asp-for="EnginePower">Moc silnika (KM)</label>
-                <span asp-validation-for="EnginePower" class="text-danger"></span>
-            </div>
-            <div class="group">
-                <input asp-for="Weight" type="number" data-val-number="Powierzchnia musi być liczbą." />
-                <span class="bar"></span>
-                <label asp-for="Weight">Waga (kg)</label>
-                <span asp-validation-for="Weight" class="text-danger"></span>
-            </div>
-            <div class="group">
-                <input asp-for="Width" type="number" data-val-number="Szerokość musi być liczbą." />
-                <span class="bar"></span>
-                <label asp-for="Width">Szerokość (m)</label>
-                <span asp-validation-for="Width" class="text-danger"></span>
-            </div>
-            <div class="group">
-                <input asp-for="WorkingWidth" type="number"
-                       data-val-number="Szerkość robocza musi być liczbą." />
-                <span class="bar"></span>
-                <label asp-for="WorkingWidth">Szerokość robocza (m)</label>
-                <span asp-validation-for="WorkingWidth" class="text-danger"></span>
-            </div>
-            <div class="group">
-                <input asp-for="Height" type=" number" data-val-number="Wysokość musi być liczbą." />
-                <span class="bar"></span>
-                <label asp-for="Height">Wysokość (m)</label>
-                <span asp-validation-for="Height" class="text-danger"></span>
-            </div>
-            <div class="group">
-                <input asp-for="WorkingSpeed" type="number data-val-number="Prędkość robocza musi być liczbą." />
-                <span class="bar"></span>
-                <label asp-for="WorkingSpeed">Prędkość robocza (km/h)</label>
-                <span asp-validation-for="WorkingSpeed" class="text-danger"></span>
-            </div>
-            <div class="group">
-                <input asp-for="TransportSpeed" type="number data-val-number="Prędkość musi być liczbą." />
-                <span class="bar"></span>
-                <label asp-for="TransportSpeed">Prędkość transportowa (km/h)</label>
-                <span asp-validation-for="TransportSpeed" class="text-danger"></span>
-            </div>
-            <div class="group">
-                <input asp-for="LastServiceDate" type="date" />
-                <span class="bar"></span>
-                <label asp-for="LastServiceDate">Ostatni serwis</label>
-                <span asp-validation-for="LastServiceDate" class="text-danger"></span>
-            </div>
-            <div class="group">
-                <input asp-for="NextServiceDate" type="date" />
-                <span class="bar"></span>
-                <label asp-for="NextServiceDate">Następny serwis</label>
-                <span asp-validation-for="NextServiceDate" class="text-danger"></span>
-            </div>
-
 
             <div class="action-buttons">
                 <a asp-action="Index" class="cancel-btn btn">Anuluj</a>
@@ -126,26 +144,104 @@
         </form>
     </div>
 </div>
+
+<!-- Ukryta lista składników aktywnych -->
+<select id="componentOptions" style="display:none">
+    @foreach (var option in ViewBag.Components)
+    {
+        <option value="@option.Value">@option.Text</option>
+    }
+</select>
+
 <script src="~/js/inputLabel.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/tom-select/dist/js/tom-select.complete.min.js"></script>
+
 <script>
     document.addEventListener("DOMContentLoaded", function () {
-        new TomSelect("#typeSelect", {
-            create: false,
-            sortField: {
-                field: "text",
-                direction: "asc"
-            },
-            placeholder: "Wybierz rodzaj maszyny"
-        });
+        new TomSelect("#producerSelect", { create: false, sortField: "text", placeholder: "Wybierz producenta" });
+        new TomSelect("#categorySelect", { create: false, sortField: "text", placeholder: "Wyszukaj...", plugins: ['remove_button'] });
+        new TomSelect("#cropSelect", { create: false, sortField: "text", placeholder: "Wyszukaj...", plugins: ['remove_button'] });
 
-        new TomSelect("#fuelSelect", {
-            create: false,
-            sortField: {
-                field: "text",
-                direction: "asc"
-            },
-            placeholder: "Wybierz rodzaj paliwa"
-        });
+        const addIngredientButton = document.getElementById("add-ingredient");
+        const container = document.getElementById("adding-container");
+        let selectedIngredients = new Set();
+        let ingredientSelects = [];
+
+        function updateDropdownOptions() {
+            ingredientSelects.forEach(select => {
+                const currentValue = select.getValue();
+                select.clear();
+                select.clearOptions();
+
+                document.querySelectorAll("#componentOptions option").forEach(option => {
+                    if (!selectedIngredients.has(option.value) || option.value === currentValue) {
+                        select.addOption({ value: option.value, text: option.textContent });
+                    }
+                });
+
+                if (currentValue) select.setValue(currentValue, true);
+            });
+        }
+
+        function updateIngredientIndices() {
+            const wrappers = container.querySelectorAll(".adding-wrapper");
+            wrappers.forEach((wrapper, index) => {
+                const select = wrapper.querySelector("select");
+                const input = wrapper.querySelector("input[type='number']");
+                select.name = ActiveIngredients[${index}].ActiveIngredientId;
+                input.name = ActiveIngredients[${index}].Concentration;
+            });
+        }
+
+        function createIngredientRow() {
+            const wrapper = document.createElement("div");
+            wrapper.classList.add("adding-wrapper");
+
+            const select = document.createElement("select");
+            select.classList.add("ingredient-select");
+            select.innerHTML = document.getElementById("componentOptions").innerHTML;
+
+            const input = document.createElement("input");
+            input.type = "number";
+            input.placeholder = "Ilość";
+            input.min = "0";
+            input.step = "1";
+
+            const removeButton = document.createElement("button");
+            removeButton.type = "button";
+            removeButton.classList.add("remove-row");
+            removeButton.textContent = "X";
+
+            removeButton.addEventListener("click", function () {
+                selectedIngredients.delete(select.tomselect.getValue());
+                ingredientSelects = ingredientSelects.filter(s => s !== select.tomselect);
+                wrapper.remove();
+                updateDropdownOptions();
+                updateIngredientIndices();
+            });
+
+            wrapper.appendChild(select);
+            wrapper.appendChild(input);
+            wrapper.appendChild(removeButton);
+            container.appendChild(wrapper);
+
+            const ts = new TomSelect(select, {
+                create: false,
+                sortField: "text",
+                placeholder: "Wybierz składnik...",
+                plugins: ['remove_button'],
+                onChange: function (value) {
+                    selectedIngredients.add(value);
+                    updateDropdownOptions();
+                }
+            });
+
+            ingredientSelects.push(ts);
+            updateDropdownOptions();
+            updateIngredientIndices();
+        }
+
+        addIngredientButton.addEventListener("click", createIngredientRow);
+        createIngredientRow();
     });
 </script>

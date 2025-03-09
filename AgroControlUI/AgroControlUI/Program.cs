@@ -89,7 +89,7 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 
 app.UseRouting();
-
+app.UseMiddleware<TokenManagementMiddleware>();
 app.UseAuthentication();
 app.UseAuthorization();
 

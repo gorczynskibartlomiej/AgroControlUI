@@ -1,5 +1,6 @@
 ﻿using AgroControlUI.Constants;
 using AgroControlUI.DTOs.FarmData;
+using AgroControlUI.DTOs.UserManagement;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
@@ -32,6 +33,15 @@ namespace AgroControlUI.Controllers.FarmData
 
             var content = await result.Content.ReadAsStringAsync();
             var employees = JsonConvert.DeserializeObject<List<EmployeeDto>>(content);
+
+            endpoint = "/api/farms/users";
+            result = await _client.GetAsync(endpoint);
+            result.EnsureSuccessStatusCode();
+            var usersContent = await result.Content.ReadAsStringAsync();
+            var usersWithAccounts = JsonConvert.DeserializeObject<List<AgroControlUserDto>>(usersContent);
+
+            ViewBag.UsersWithAccounts = usersWithAccounts;
+
             return View(employees);
         }
 
@@ -62,7 +72,7 @@ namespace AgroControlUI.Controllers.FarmData
                 var stringContent = new StringContent(content, Encoding.UTF8, "application/json");
                 var response = await _client.PostAsync(endpoint, stringContent);
                 response.EnsureSuccessStatusCode();
-
+                TempData["successMessage"] = "Nowy pracownik został pomyślnie dodany!";
                 return RedirectToAction("Index");
             }
             catch (HttpRequestException ex)
@@ -79,35 +89,6 @@ namespace AgroControlUI.Controllers.FarmData
 
         // Delete
         [Authorize(Policy = "OwnerOrCoOwner")]
-        [HttpGet]
-        public async Task<IActionResult> Delete(int id)
-        {
-            try
-            {
-                var token = HttpContext.Request.Cookies["token"];
-                _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
-
-                var endpoint = $"/api/employees/{id}";
-                var response = await _client.GetAsync(endpoint);
-                response.EnsureSuccessStatusCode();
-
-                string content = await response.Content.ReadAsStringAsync();
-                var employee = JsonConvert.DeserializeObject<EmployeeDto>(content);
-                return View(employee);
-            }
-            catch (HttpRequestException ex)
-            {
-                TempData["errorMessage"] = "Błąd żądania HTTP: " + ex.Message;
-                return View();
-            }
-            catch (Exception ex)
-            {
-                TempData["errorMessage"] = "Wystąpił nieoczekiwany błąd: " + ex.Message;
-                return View();
-            }
-        }
-
-        [Authorize(Policy = "OwnerOrCoOwner")]
         [HttpPost]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
@@ -119,7 +100,7 @@ namespace AgroControlUI.Controllers.FarmData
                 var endpoint = $"/api/employees/{id}";
                 var response = await _client.DeleteAsync(endpoint);
                 response.EnsureSuccessStatusCode();
-
+                TempData["successMessage"] = "Pracownik został pomyślnie usunięty!";
                 return RedirectToAction("Index");
             }
             catch (HttpRequestException ex)
@@ -184,7 +165,7 @@ namespace AgroControlUI.Controllers.FarmData
                 var response = await _client.PutAsync(endpoint, stringContent);
                 response.EnsureSuccessStatusCode();
 
-                TempData["successMessage"] = "Zmodyfikowano pomyślnie";
+                TempData["successMessage"] = "Pracownik został pomyślnie zaaktualizowany!";
                 return RedirectToAction("Index");
             }
             catch (HttpRequestException ex)

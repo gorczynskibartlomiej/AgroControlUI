@@ -22,7 +22,7 @@
                 <label asp-for="Password">Hasło</label>
                 <span asp-validation-for="Password" class="text-danger"></span>
             </div>
-            
+            <input type="hidden" name="ReturnUrl" value="@ViewData["ReturnUrl"]" />
             <button type="submit" class="btn-log">Zaloguj</button>
         </form>
     </div>

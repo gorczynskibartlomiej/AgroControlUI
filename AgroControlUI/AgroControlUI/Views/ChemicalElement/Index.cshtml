@@ -1,5 +1,6 @@
 ﻿@model List<AgroControlUI.DTOs.Fertilizers.ChemicalElementDto>
 @await Html.PartialAsync("_DeleteConfirmationModal")
+
 <link rel="stylesheet" href="~/css/indexList.css">
 <link rel="stylesheet" href="~/css/listOperations.css">
 
@@ -7,7 +8,7 @@
 
 <div id ="categories" class="wrapper">
     <p>
-        <a asp-action="Create" class="add-btn btn"><img src="~/images/plus-solid.svg" />Dodaj składnik chemiczny</a>
+        <a asp-action="Create" class="add-btn"><img src="~/images/plus-solid.svg" />Dodaj składnik chemiczny</a>
     </p>
     <div class="table">
         <div class="row header green" id="headerRow">
@@ -49,7 +50,7 @@
                 </div>
                 <div class="cell" data-title="Akcje">
                     <div class="action-buttons">
-                        <a asp-action="Edit" asp-route-id="@chemicalElement.Id" class="btn edit-btn"><img src="~/images/edit.svg" />Edytuj</a>
+                        <a asp-action="Edit" asp-route-id="@chemicalElement.Id" class="edit-btn"><img src="~/images/edit.svg" />Edytuj</a>
                         <button type="button" class="delete-btn" data-bs-toggle="modal" data-bs-target="#deleteModal" onclick="setDeleteUrl('@Url.Action("DeleteConfirmed", new { id = chemicalElement.Id })')">
                             <img src="~/images/delete.svg" />Usuń
                         </button>

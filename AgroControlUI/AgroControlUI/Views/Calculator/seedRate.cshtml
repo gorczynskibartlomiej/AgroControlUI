@@ -1,138 +1,154 @@
-﻿<link rel="stylesheet" href="~/css/add.css">
+﻿<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kalkulator normy wysiewu</title>
+    <link rel="stylesheet" href="~/css/add.css">
+    <style>
+        .error {
+            color: red;
+            font-size: 14px;
+            margin-top: 5px;
+            display: none; /* Ukrywamy błędy na starcie */
+        }
 
-<div class="form-container">
-    <div class="green-form">
-        <h1>Kalkulator normy wysiewu</h1>
+        .group input:focus + .bar + label,
+        .group input:not(:placeholder-shown) + .bar + label {
+            top: -20px;
+            font-size: 14px;
+            color: black;
+        }
+    </style>
+</head>
+<body>
 
-        <form id="calculatorForm">
-            <div class="group">
-                <input type="number" is="decimal-input" id="mtz" min="0" required step="0.01" />
-                <span class="bar"></span>
-                <label for="mtz">MTZ (masa tysiąca nasion w g)</label>
-            </div>
+    <div class="form-container">
+        <div class="green-form">
+            <h1>Kalkulator normy wysiewu</h1>
 
-            <div class="group">
-                <input type="number" is="decimal-input" id="plantDensity" min="0" required step="1" />
-                <span class="bar"></span>
-                <label for="plantDensity">Obsada (szt/m²)</label>
-            </div>
+            <form id="calculatorForm">
+                <div class="group">
+                    <input type="number" id="mtz" min="0" step="0.01" required placeholder=" ">
+                    <span class="bar"></span>
+                    <label for="mtz">MTZ (masa tysiąca nasion w g)</label>
+                    <span class="error" id="errorMtz"></span>
+                </div>
 
-            <div class="group">
-                <input type="number" is="decimal-input" id="germinationRate" min="1" max="100" step="0.1" required />
-                <span class="bar"></span>
-                <label for="germinationRate">Siła kiełkowania (%)</label>
-            </div>
+                <div class="group">
+                    <input type="number" id="plantDensity" min="0" step="1" required placeholder=" ">
+                    <span class="bar"></span>
+                    <label for="plantDensity">Obsada (szt./m²)</label>
+                    <span class="error" id="errorPlantDensity"></span>
+                </div>
 
-            <div class="group">
-                <input type="number" is="decimal-input" id="seedPurity" min="1" max="100" step="0.1" required />
-                <span class="bar"></span>
-                <label for="seedPurity">Czystość nasion (%)</label>
-            </div>
-            <div class="group">
-                <button type="button" class="add-btn" style="width:100%" onclick="validateAndCalculate()">Oblicz</button>
-            </div>
-            <div class="result-group">
-                <h3><strong>Norma wysiewu:</strong> <span id="seedRateResult">---</span> kg/ha</h3>
-            </div>
+                <div class="group">
+                    <input type="number" id="germinationRate" min="1" max="100" step="0.1" required placeholder=" ">
+                    <span class="bar"></span>
+                    <label for="germinationRate">Siła kiełkowania (%)</label>
+                    <span class="error" id="errorGerminationRate"></span>
+                </div>
 
-            <div class="action-buttons">
-                <a href="javascript:history.back()" class="cancel-btn ">Wróć</a>
-                <button type="reset" class="add-btn" onclick="resetCalculator()">Reset</button>
-            </div>
-        </form>
+                <div class="group">
+                    <input type="number" id="seedPurity" min="1" max="100" step="0.1" required placeholder=" ">
+                    <span class="bar"></span>
+                    <label for="seedPurity">Czystość nasion (%)</label>
+                    <span class="error" id="errorSeedPurity"></span>
+                </div>
+
+                <div class="result-group">
+                    <h3><strong>Norma wysiewu:</strong> <span id="seedRateResult">---</span> kg/ha</h3>
+                </div>
+
+                <div class="action-buttons">
+                    <a asp-action="Index" asp-controller="Home" class="cancel-btn">Strona główna</a>
+                    <button type="reset" class="add-btn" onclick="resetCalculator()">Reset</button>
+                </div>
+            </form>
+        </div>
     </div>
-</div>
 
-<script>
-    // Klasa DecimalInput z poprawionym zaokrąglaniem
-    class DecimalInput extends HTMLInputElement {
-        constructor() {
-            super();
-            this.addEventListener('change', (e) => {
-                const val = parseFloat(this.value),
-                      min = parseFloat(this.min),
-                      max = parseFloat(this.max),
-                      step = parseFloat(this.step);
-
-                // Zaokrąglanie wartości na 2 miejsca po przecinku (jeśli krok nie jest równy 1)
-                let roundedVal = (Math.round(val / step) * step);
-
-                // Jeśli step jest równy 1, usuwamy miejsca po przecinku
-                if (step === 1) {
-                    this.value = Math.round(roundedVal); // Zaokrąglamy do liczby całkowitej
-                } else {
-                    this.value = roundedVal.toFixed(2); // Zaokrąglamy na 2 miejsca po przecinku
-                }
-
-                // Sprawdzamy, czy wartość mieści się w dozwolonym zakresie
-                if (val > max) {
-                    this.value = max;
-                }
-                if (val < min) {
-                    this.value = min;
-                }
-
-                // Uruchamiamy obliczenia po każdej zmianie
-                validateAndCalculate();
-            });
-        }
-    }
-
-    // Definicja niestandardowego elementu
-    customElements.define('decimal-input', DecimalInput, { extends: 'input' });
-
-    // Funkcja walidacji i obliczania wyniku
-    function validateAndCalculate() {
-        let mtz = parseFloat(document.getElementById("mtz").value);
-        let plantDensity = parseFloat(document.getElementById("plantDensity").value);
-        let germinationRate = parseFloat(document.getElementById("germinationRate").value);
-        let seedPurity = parseFloat(document.getElementById("seedPurity").value);
-
-        // Walidacja danych wejściowych
-        if (germinationRate > 100) {
-            document.getElementById("germinationRate").value = 100;
-            germinationRate = 100;
-        } else if (germinationRate < 1 && !isNaN(germinationRate)) {
-            document.getElementById("germinationRate").value = 1;
-            germinationRate = 1;
-        }
-
-        if (seedPurity > 100) {
-            document.getElementById("seedPurity").value = 100;
-            seedPurity = 100;
-        } else if (seedPurity < 1 && !isNaN(seedPurity)) {
-            document.getElementById("seedPurity").value = 1;
-            seedPurity = 1;
-        }
-
-        if (mtz < 0) {
-            document.getElementById("mtz").value = 0;
-            mtz = 0;
-        }
-        if (plantDensity < 0) {
-            document.getElementById("plantDensity").value = 0;
-            plantDensity = 0;
-        }
-
-        let resultElement = document.getElementById("seedRateResult");
-
-        if (!isNaN(mtz) && !isNaN(plantDensity) && !isNaN(germinationRate) && !isNaN(seedPurity) && germinationRate > 0 && seedPurity > 0) {
-            let seedRate = (mtz * plantDensity * 100) / (germinationRate * seedPurity);
-
-            // Sprawdzamy, czy zaokrąglamy do pełnej liczby, czy z miejscami po przecinku
-            if (plantDensity % 1 === 0) {
-                resultElement.textContent = Math.round(seedRate); // Bez miejsc po przecinku
+    <script>
+        function showError(element, message) {
+            let errorElement = document.getElementById(element);
+            if (message) {
+                errorElement.textContent = message;
+                errorElement.style.display = "block"; // Pokazujemy błąd
             } else {
-                resultElement.textContent = seedRate.toFixed(2); // Z dwoma miejscami po przecinku
+                errorElement.textContent = "";
+                errorElement.style.display = "none"; // Ukrywamy błąd
             }
-        } else {
-            resultElement.textContent = "---";
         }
-    }
 
-    // Funkcja resetująca formularz
-    function resetCalculator() {
-        document.getElementById("calculatorForm").reset();
-        document.getElementById("seedRateResult").textContent = "---";
-    }
-</script>
+        function calculate() {
+            let mtz = parseFloat(document.getElementById("mtz").value);
+            let plantDensity = parseFloat(document.getElementById("plantDensity").value);
+            let germinationRate = parseFloat(document.getElementById("germinationRate").value);
+            let seedPurity = parseFloat(document.getElementById("seedPurity").value);
+
+            let hasError = false;
+
+            if (!isNaN(mtz) && mtz >= 0) {
+                showError("errorMtz", "");
+            } else if (document.getElementById("mtz").value !== "") {
+                showError("errorMtz", "Podaj poprawną wartość MTZ.");
+                hasError = true;
+            }
+
+            if (!isNaN(plantDensity) && plantDensity > 0) {
+                showError("errorPlantDensity", "");
+            } else if (document.getElementById("plantDensity").value !== "") {
+                showError("errorPlantDensity", "Podaj poprawną obsadę.");
+                hasError = true;
+            }
+
+            if (!isNaN(germinationRate) && germinationRate >= 1 && germinationRate <= 100) {
+                showError("errorGerminationRate", "");
+            } else if (document.getElementById("germinationRate").value !== "") {
+                showError("errorGerminationRate", "Siła kiełkowania musi być w zakresie 1-100.");
+                hasError = true;
+            }
+
+            if (!isNaN(seedPurity) && seedPurity >= 1 && seedPurity <= 100) {
+                showError("errorSeedPurity", "");
+            } else if (document.getElementById("seedPurity").value !== "") {
+                showError("errorSeedPurity", "Czystość nasion musi być w zakresie 1-100.");
+                hasError = true;
+            }
+
+            if (hasError) {
+                document.getElementById("seedRateResult").textContent = "---";
+                return;
+            }
+
+            let seedRate = (mtz * plantDensity * 100) / (germinationRate * seedPurity);
+            document.getElementById("seedRateResult").textContent = isNaN(seedRate) ? "---" : seedRate.toFixed(2);
+        }
+
+        function resetCalculator() {
+            document.getElementById("calculatorForm").reset();
+            document.getElementById("seedRateResult").textContent = "---";
+            showError("errorMtz", "");
+            showError("errorPlantDensity", "");
+            showError("errorGerminationRate", "");
+            showError("errorSeedPurity", "");
+        }
+
+        // Nasłuchiwanie na zmiany w polach, ale błędy pojawią się dopiero po wpisaniu wartości
+        document.getElementById("mtz").addEventListener("input", calculate);
+        document.getElementById("plantDensity").addEventListener("input", calculate);
+        document.getElementById("germinationRate").addEventListener("input", calculate);
+        document.getElementById("seedPurity").addEventListener("input", calculate);
+
+        // Usuwanie błędów, jeśli użytkownik poprawia wartość
+        document.getElementById("mtz").addEventListener("blur", calculate);
+        document.getElementById("plantDensity").addEventListener("blur", calculate);
+        document.getElementById("germinationRate").addEventListener("blur", calculate);
+        document.getElementById("seedPurity").addEventListener("blur", calculate);
+
+        // Uruchomienie obliczeń po załadowaniu strony (dla autouzupełniania)
+        document.addEventListener("DOMContentLoaded", calculate);
+    </script>
+
+</body>
+</html>

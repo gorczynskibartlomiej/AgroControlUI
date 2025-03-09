@@ -1,113 +1,142 @@
-﻿<link rel="stylesheet" href="~/css/add.css">
+﻿<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kalkulator suszenia kukurydzy</title>
+    <link rel="stylesheet" href="~/css/add.css">
+    <style>
+        .error {
+            color: red;
+            font-size: 14px;
+            margin-top: 5px;
+            display: none; /* Ukrywamy błędy na start */
+        }
 
-<div class="form-container">
-    <div class="green-form">
-        <h1>Kalkulator suszenia kukurydzy</h1>
+        .group input:focus + .bar + label,
+        .group input:not(:placeholder-shown) + .bar + label {
+            top: -20px;
+            font-size: 14px;
+            color: black;
+        }
+    </style>
+</head>
+<body>
 
-        <form id="calculatorForm">
-            <div class="group">
-                <input type="number" is="decimal-input" id="initialWeight" min="0" step="1" required>
-                <span class="bar"></span>
-                <label for="initialWeight">Masa początkowa (kg)</label>
-            </div>
+    <div class="form-container">
+        <div class="green-form">
+            <h1>Kalkulator suszenia kukurydzy</h1>
 
-            <div class="group">
-                <input type="number" is="decimal-input" id="initialMoisture" min="0" max="99" step="0.1" required>
-                <span class="bar"></span>
-                <label for="initialMoisture">Wilgotność początkowa (%)</label>
-            </div>
+            <form id="calculatorForm">
+                <div class="group">
+                    <input type="number" id="initialWeight" min="0" step="1" required placeholder=" ">
+                    <span class="bar"></span>
+                    <label for="initialWeight">Masa początkowa (kg)</label>
+                    <span class="error" id="errorInitialWeight"></span>
+                </div>
 
-            <div class="group">
-                <input type="number" is="decimal-input" id="finalMoisture" min="0" max="99" step="0.1" required>
-                <span class="bar"></span>
-                <label for="finalMoisture">Wilgotność końcowa (%)</label>
-            </div>
-            <div class="group">
-                <button type="button" class="add-btn" style="width:100%" onclick="validateAndCalculate()">Oblicz</button>
-            </div>
-            <div class="result-group">
-                <h3><strong>Masa po suszeniu:</strong> <span id="finalWeightResult">---</span> kg</h3>
-                <h3><strong>Zmiana masy:</strong> <span id="weightChangeResult">---</span> kg</h3>
-            </div>
+                <div class="group">
+                    <input type="number" id="initialMoisture" min="0" max="99" step="0.1" required placeholder=" ">
+                    <span class="bar"></span>
+                    <label for="initialMoisture">Wilgotność początkowa (%)</label>
+                    <span class="error" id="errorInitialMoisture"></span>
+                </div>
 
-            <div class="action-buttons">
-                <a href="javascript:history.back()" class="cancel-btn btn">Wróć</a>
-                <button type="reset" class="add-btn btn" onclick="resetCalculator()">Reset</button>
-            </div>
-        </form>
+                <div class="group">
+                    <input type="number" id="finalMoisture" min="0" max="99" step="0.1" required placeholder=" ">
+                    <span class="bar"></span>
+                    <label for="finalMoisture">Wilgotność końcowa (%)</label>
+                    <span class="error" id="errorFinalMoisture"></span>
+                </div>
+
+                <div class="result-group">
+                    <h3><strong>Masa po suszeniu:</strong> <span id="finalWeightResult">---</span> kg</h3>
+                    <h3><strong>Zmiana masy:</strong> <span id="weightChangeResult">---</span> kg</h3>
+                </div>
+
+                <div class="action-buttons">
+                    <a asp-action="Index" asp-controller="Home" class="cancel-btn">Strona główna</a>
+                    <button type="reset" class="add-btn " onclick="resetCalculator()">Reset</button>
+                </div>
+            </form>
+        </div>
     </div>
-</div>
 
-
-<script>
-            class DecimalInput extends HTMLInputElement {
-        constructor() {
-            super();
-            this.addEventListener('change', (e) => {
-                const val = parseFloat(this.value.replace(',', '.')) || 0,
-                      min = this.hasAttribute("min") ? parseFloat(this.min) : -Infinity,
-                      max = this.hasAttribute("max") ? parseFloat(this.max) : Infinity,
-                      step = parseFloat(this.step) || 1;
-
-                let roundedVal = Math.round(val / step) * step;
-
-    
-                this.value = (step === 1) ? Math.round(roundedVal) : roundedVal.toFixed(2);
-      
-                if (!isNaN(max) && val > max) this.value = max;
-                if (!isNaN(min) && val < min) this.value = min;
-
-                validateAndCalculate();
-            });
+    <script>
+        function showError(element, message) {
+            let errorElement = document.getElementById(element);
+            if (message) {
+                errorElement.textContent = message;
+                errorElement.style.display = "block"; // Pokazujemy błąd
+            } else {
+                errorElement.textContent = "";
+                errorElement.style.display = "none"; // Ukrywamy błąd, jeśli brak treści
+            }
         }
-    }
 
-    // Rejestracja niestandardowego elementu
-    customElements.define('decimal-input', DecimalInput, { extends: 'input' });
-    function validateAndCalculate() {
-        let initialWeight = parseFloat(document.getElementById("initialWeight").value);
-        let initialMoisture = parseFloat(document.getElementById("initialMoisture").value);
-        let finalMoisture = parseFloat(document.getElementById("finalMoisture").value);
+        function calculate() {
+            let initialWeight = parseFloat(document.getElementById("initialWeight").value);
+            let initialMoisture = parseFloat(document.getElementById("initialMoisture").value);
+            let finalMoisture = parseFloat(document.getElementById("finalMoisture").value);
 
-        if (initialWeight < 0) {
-            document.getElementById("initialWeight").value = 0;
-            initialWeight = 0;
-        }
-        if (initialMoisture < 0) {
-            document.getElementById("initialMoisture").value = 0;
-            initialMoisture = 0;
-        }
-        if (finalMoisture < 0) {
-            document.getElementById("finalMoisture").value = 0;
-            finalMoisture = 0;
-        }
-        if (initialMoisture > 99) {
-        document.getElementById("initialMoisture").value = 99;
-        initialMoisture = 99;
-    }
-    if (finalMoisture > 99) {
-        document.getElementById("finalMoisture").value = 99;
-        finalMoisture = 99;
-    }
-        let finalWeightResult = document.getElementById("finalWeightResult");
-        let weightChangeResult = document.getElementById("weightChangeResult");
+            let hasError = false;
 
-        if (!isNaN(initialWeight) && !isNaN(initialMoisture) && !isNaN(finalMoisture) && initialMoisture > finalMoisture && initialMoisture > 0 && finalMoisture >= 0) {
-            // Obliczenie masy po suszeniu
-            let finalWeight = initialWeight * ((100 - finalMoisture) / (100 - initialMoisture));
+            if (!isNaN(initialWeight) && initialWeight > 0) {
+                showError("errorInitialWeight", "");
+            } else if (document.getElementById("initialWeight").value !== "") {
+                showError("errorInitialWeight", "Podaj poprawną masę większą od 0.");
+                hasError = true;
+            }
+
+            if (!isNaN(initialMoisture) && initialMoisture > 0 && initialMoisture <= 99) {
+                showError("errorInitialMoisture", "");
+            } else if (document.getElementById("initialMoisture").value !== "") {
+                showError("errorInitialMoisture", "Podaj wilgotność między 1 a 99%.");
+                hasError = true;
+            }
+
+            if (!isNaN(finalMoisture) && finalMoisture >= 0 && finalMoisture < initialMoisture) {
+                showError("errorFinalMoisture", "");
+            } else if (document.getElementById("finalMoisture").value !== "") {
+                showError("errorFinalMoisture", "Wilgotność końcowa musi być mniejsza niż początkowa.");
+                hasError = true;
+            }
+
+            if (hasError) {
+                document.getElementById("finalWeightResult").textContent = "---";
+                document.getElementById("weightChangeResult").textContent = "---";
+                return;
+            }
+
+            let finalWeight = initialWeight * ((100 - initialMoisture) / (100 - finalMoisture));
             let weightChange = initialWeight - finalWeight;
+                    document.getElementById("finalWeightResult").textContent = isNaN(finalWeight) ? "---" : finalWeight.toFixed(2);
+        document.getElementById("weightChangeResult").textContent = isNaN(weightChange) ? "---" : weightChange.toFixed(2);
 
-            finalWeightResult.textContent = finalWeight.toFixed(2);
-            weightChangeResult.textContent = weightChange.toFixed(2);
-        } else {
-            finalWeightResult.textContent = "---";
-            weightChangeResult.textContent = "---";
         }
-    }
 
-    function resetCalculator() {
-        document.getElementById("calculatorForm").reset();
-        document.getElementById("finalWeightResult").textContent = "---";
-        document.getElementById("weightChangeResult").textContent = "---";
-    }
-</script>
+        function resetCalculator() {
+            document.getElementById("calculatorForm").reset();
+            document.getElementById("finalWeightResult").textContent = "---";
+            document.getElementById("weightChangeResult").textContent = "---";
+            showError("errorInitialWeight", "");
+            showError("errorInitialMoisture", "");
+            showError("errorFinalMoisture", "");
+        }
+
+        // Nasłuchiwanie na zmiany w polach, ale błędy pojawią się dopiero po wpisaniu wartości
+        document.getElementById("initialWeight").addEventListener("input", calculate);
+        document.getElementById("initialMoisture").addEventListener("input", calculate);
+        document.getElementById("finalMoisture").addEventListener("input", calculate);
+
+        // Usuwanie błędów, jeśli użytkownik poprawia wartość
+        document.getElementById("initialWeight").addEventListener("blur", calculate);
+        document.getElementById("initialMoisture").addEventListener("blur", calculate);
+        document.getElementById("finalMoisture").addEventListener("blur", calculate);
+
+        // Uruchomienie obliczeń po załadowaniu strony (dla autouzupełniania)
+        document.addEventListener("DOMContentLoaded", calculate);
+    </script>
+
+</body>
+</html>

@@ -7,12 +7,12 @@
 
 <h1 class="yellow">Rodzaje paliw</h1>
 
-<div class="wrapper">
+<div id="categories" class="wrapper">
     <p>
-        <a asp-action="Create" class="add-btn btn"><img src="~/images/plus-solid.svg" />Dodaj rodzaj paliwa</a>
+        <a asp-action="Create" class="add-btn"><img src="~/images/plus-solid.svg" />Dodaj rodzaj paliwa</a>
     </p>
     <div class="table">
-        <div class="row header yellow">
+        <div class="row header yellow" id="headerRow">
             <div class="cell" data-sort="name" onclick="sortByColumn(this)">
                 <div class="sort-wrapper">
                     <span class="sort-text">Nazwa paliwa</span>

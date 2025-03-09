@@ -66,14 +66,14 @@ namespace AgroControlUI.Controllers.Fertilizers
                 TempData["successMessage"] = "Nowa kategoria nawozów została pomyślnie dodana!";
                 return RedirectToAction("Index");
             }
-            catch (HttpRequestException ex)
+            catch(HttpRequestException ex)
             {
-                TempData["errorMessage"] = "Błąd żądania HTTP: " + ex.Message;
+                TempData["errorMessage"] = "Błąd serwera, spróbuj ponownie później.";
                 return View(fertilizerCategoryDto);
             }
             catch (Exception ex)
             {
-                TempData["errorMessage"] = "Wystąpił nieoczekiwany błąd: " + ex.Message;
+                TempData["errorMessage"] = "Wystąpił nieoczekiwany błąd. Spróbuj ponownie później. ";
                 return View(fertilizerCategoryDto);
             }
         }
@@ -96,14 +96,14 @@ namespace AgroControlUI.Controllers.Fertilizers
                 var fertilizerCategory = JsonConvert.DeserializeObject<FertilizerCategoryDto>(content);
                 return View(fertilizerCategory);
             }
-            catch (HttpRequestException ex)
+            catch(HttpRequestException ex)
             {
-                TempData["errorMessage"] = "Błąd żądania HTTP: " + ex.Message;
+                TempData["errorMessage"] = "Błąd serwera, spróbuj ponownie później.";
                 return View();
             }
             catch (Exception ex)
             {
-                TempData["errorMessage"] = "Wystąpił nieoczekiwany błąd: " + ex.Message;
+                TempData["errorMessage"] = "Wystąpił nieoczekiwany błąd. Spróbuj ponownie później. ";
                 return View();
             }
         }
@@ -124,15 +124,15 @@ namespace AgroControlUI.Controllers.Fertilizers
                 TempData["successMessage"] = "Kategoria nawozów została pomyślnie usunięta.";
                 return RedirectToAction("Index");
             }
-            catch (HttpRequestException ex)
+            catch(HttpRequestException ex)
             {
-                TempData["errorMessage"] = "Błąd żądania HTTP: " + ex.Message;
-                return View();
+                TempData["errorMessage"] = "Błąd serwera, spróbuj ponownie później.";
+                return RedirectToAction("Index");
             }
             catch (Exception ex)
             {
-                TempData["errorMessage"] = "Wystąpił nieoczekiwany błąd: " + ex.Message;
-                return View();
+                TempData["errorMessage"] = "Wystąpił nieoczekiwany błąd. Spróbuj ponownie później. ";
+                return RedirectToAction("Index");
             }
         }
 
@@ -156,12 +156,12 @@ namespace AgroControlUI.Controllers.Fertilizers
             }
             catch (HttpRequestException ex)
             {
-                TempData["errorMessage"] = "Błąd żądania HTTP: " + ex.Message;
+                TempData["errorMessage"] = "Błąd serwera, spróbuj ponownie później.";
                 return View();
             }
             catch (Exception ex)
             {
-                TempData["errorMessage"] = "Wystąpił nieoczekiwany błąd: " + ex.Message;
+                TempData["errorMessage"] = "Wystąpił nieoczekiwany błąd. Spróbuj ponownie później. ";
                 return View();
             }
         }
@@ -191,12 +191,12 @@ namespace AgroControlUI.Controllers.Fertilizers
             }
             catch (HttpRequestException ex)
             {
-                TempData["errorMessage"] = "Błąd żądania HTTP: " + ex.Message;
+                TempData["errorMessage"] = "Błąd serwera, spróbuj ponownie później.";
                 return View(fertilizerCategoryDto);
             }
             catch (Exception ex)
             {
-                TempData["errorMessage"] = "Wystąpił nieoczekiwany błąd: " + ex.Message;
+                TempData["errorMessage"] = "Wystąpił nieoczekiwany błąd. Spróbuj ponownie później. ";
                 return View(fertilizerCategoryDto);
             }
         }
