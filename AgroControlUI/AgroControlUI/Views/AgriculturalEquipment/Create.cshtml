@@ -57,13 +57,13 @@
                 <label asp-for="FuelId">Rodzaj paliwa</label>
             </div>
             <div class="group">
-                <input asp-for="FuelCapacity" data-val-number="Pojemność zbiornika musi być liczbą." />
+                <input asp-for="FuelCapacity" type="number" data-val-number="Pojemność zbiornika musi być liczbą." />
                 <span class="bar"></span>
                 <label asp-for="FuelCapacity">Zbiornik paliwa (l)</label>
                 <span asp-validation-for="FuelCapacity" class="text-danger"></span>
             </div>
             <div class="group">
-                <input asp-for="EnginePower" data-val-number="Moc silnika musi być liczbą." />
+                <input asp-for="EnginePower" type="number" data-val-number="Moc silnika musi być liczbą." />
                 <span class="bar"></span>
                 <label asp-for="EnginePower">Moc silnika (KM)</label>
                 <span asp-validation-for="EnginePower" class="text-danger"></span>
@@ -88,19 +88,19 @@
                 <span asp-validation-for="WorkingWidth" class="text-danger"></span>
             </div>
             <div class="group">
-                <input asp-for="Height" type=" number" data-val-number="Wysokość musi być liczbą." />
+                <input asp-for="Height" type="number" data-val-number="Wysokość musi być liczbą." />
                 <span class="bar"></span>
                 <label asp-for="Height">Wysokość (m)</label>
                 <span asp-validation-for="Height" class="text-danger"></span>
             </div>
             <div class="group">
-                <input asp-for="WorkingSpeed" type="number data-val-number="Prędkość robocza musi być liczbą." />
+                <input asp-for="WorkingSpeed" type="number" data-val-number="Prędkość robocza musi być liczbą." />
                 <span class="bar"></span>
                 <label asp-for="WorkingSpeed">Prędkość robocza (km/h)</label>
                 <span asp-validation-for="WorkingSpeed" class="text-danger"></span>
             </div>
             <div class="group">
-                <input asp-for="TransportSpeed" type="number data-val-number="Prędkość musi być liczbą." />
+                <input asp-for="TransportSpeed" type="number" data-val-number="Prędkość musi być liczbą." />
                 <span class="bar"></span>
                 <label asp-for="TransportSpeed">Prędkość transportowa (km/h)</label>
                 <span asp-validation-for="TransportSpeed" class="text-danger"></span>

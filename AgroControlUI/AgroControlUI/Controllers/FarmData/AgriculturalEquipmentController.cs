@@ -1,4 +1,5 @@
 ﻿using AgroControlUI.Constants;
+using AgroControlUI.DTOs.CropProtectionProducts;
 using AgroControlUI.DTOs.FarmData;
 using AgroControlUI.DTOs.ReferenceData;
 using Microsoft.AspNetCore.Authorization;
@@ -25,7 +26,7 @@ namespace AgroControlUI.Controllers.FarmData
         [HttpGet]
         public async Task<IActionResult> Index()
         {
-            var token = HttpContext.Request.Cookies["token"];
+            var token = HttpContext.Request.Cookies["token"];if(token==null){token = Request.Headers["Authorization"];}
             _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
             var endpoint = "/api/agriculturalEquipment";
@@ -42,7 +43,7 @@ namespace AgroControlUI.Controllers.FarmData
         [HttpGet]
         public async Task<IActionResult> Create()
         {
-            var token = HttpContext.Request.Cookies["token"];
+            var token = HttpContext.Request.Cookies["token"];if(token==null){token = Request.Headers["Authorization"];}
             _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
             var fuelResponse = await _client.GetAsync("/api/fuels");
@@ -75,7 +76,7 @@ namespace AgroControlUI.Controllers.FarmData
         {
             if (!ModelState.IsValid)
             {
-                var token = HttpContext.Request.Cookies["token"];
+                var token = HttpContext.Request.Cookies["token"];if(token==null){token = Request.Headers["Authorization"];}
                 _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
                 var fuelResponse = await _client.GetAsync("/api/fuels");
@@ -104,7 +105,7 @@ namespace AgroControlUI.Controllers.FarmData
 
             try
             {
-                var token = HttpContext.Request.Cookies["token"];
+                var token = HttpContext.Request.Cookies["token"];if(token==null){token = Request.Headers["Authorization"];}
                 _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
                 var endpoint = "/api/agriculturalEquipment";
@@ -117,12 +118,19 @@ namespace AgroControlUI.Controllers.FarmData
             }
             catch (HttpRequestException ex)
             {
-                TempData["errorMessage"] = "Błąd żądania HTTP: " + ex.Message;
+                if (ex.StatusCode == System.Net.HttpStatusCode.Conflict)
+                {
+                    TempData["errorMessage"] = "Maszyna o tej nazwie już istnieje!";
+                }
+                else
+                {
+                    TempData["errorMessage"] = "Błąd serwera, spróbuj ponownie później.";
+                }
                 return View(equipmentDto);
             }
             catch (Exception ex)
             {
-                TempData["errorMessage"] = "Wystąpił nieoczekiwany błąd: " + ex.Message;
+                TempData["errorMessage"] = "Wystąpił nieoczekiwany błąd. Spróbuj ponownie później. ";
                 return View(equipmentDto);
             }
         }
@@ -135,7 +143,7 @@ namespace AgroControlUI.Controllers.FarmData
         {
             try
             {
-                var token = HttpContext.Request.Cookies["token"];
+                var token = HttpContext.Request.Cookies["token"];if(token==null){token = Request.Headers["Authorization"];}
                 _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
                 var endpoint = $"/api/agriculturalEquipment/{id}";
@@ -146,13 +154,13 @@ namespace AgroControlUI.Controllers.FarmData
             }
             catch (HttpRequestException ex)
             {
-                TempData["errorMessage"] = "Błąd żądania HTTP: " + ex.Message;
-                return View();
+                TempData["errorMessage"] = "Błąd serwera, spróbuj ponownie później.";
+                return RedirectToAction();
             }
             catch (Exception ex)
             {
-                TempData["errorMessage"] = "Wystąpił nieoczekiwany błąd: " + ex.Message;
-                return View();
+                TempData["errorMessage"] = "Wystąpił nieoczekiwany błąd. Spróbuj ponownie później. ";
+                return RedirectToAction();
             }
         }
 
@@ -163,7 +171,7 @@ namespace AgroControlUI.Controllers.FarmData
         {
             try
             {
-                var token = HttpContext.Request.Cookies["token"];
+                var token = HttpContext.Request.Cookies["token"];if(token==null){token = Request.Headers["Authorization"];}
                 _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
                 var fuelResponse = await _client.GetAsync("/api/fuels");
@@ -219,13 +227,13 @@ namespace AgroControlUI.Controllers.FarmData
             }
             catch (HttpRequestException ex)
             {
-                TempData["errorMessage"] = "Błąd żądania HTTP: " + ex.Message;
-                return View();
+                TempData["errorMessage"] = "Błąd serwera, spróbuj ponownie później.";
+                return RedirectToAction();
             }
             catch (Exception ex)
             {
-                TempData["errorMessage"] = "Wystąpił nieoczekiwany błąd: " + ex.Message;
-                return View();
+                TempData["errorMessage"] = "Wystąpił nieoczekiwany błąd. Spróbuj ponownie później. ";
+                return RedirectToAction();
             }
         }
 
@@ -235,7 +243,7 @@ namespace AgroControlUI.Controllers.FarmData
         {
             if (!ModelState.IsValid)
             {
-                var token = HttpContext.Request.Cookies["token"];
+                var token = HttpContext.Request.Cookies["token"];if(token==null){token = Request.Headers["Authorization"];}
                 _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
                 var fuelResponse = await _client.GetAsync("/api/fuels");
@@ -265,7 +273,7 @@ namespace AgroControlUI.Controllers.FarmData
 
             try
             {
-                var token = HttpContext.Request.Cookies["token"];
+                var token = HttpContext.Request.Cookies["token"];if(token==null){token = Request.Headers["Authorization"];}
                 _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
                 var endpoint = $"/api/agriculturalEquipment/{equipmentDto.Id}";
@@ -279,18 +287,25 @@ namespace AgroControlUI.Controllers.FarmData
             }
             catch (HttpRequestException ex)
             {
-                TempData["errorMessage"] = "Błąd żądania HTTP: " + ex.Message;
+                if (ex.StatusCode == System.Net.HttpStatusCode.Conflict)
+                {
+                    TempData["errorMessage"] = "Maszyna o tej nazwie już istnieje!";
+                }
+                else
+                {
+                    TempData["errorMessage"] = "Błąd serwera, spróbuj ponownie później.";
+                }
                 return View(equipmentDto);
             }
             catch (Exception ex)
             {
-                TempData["errorMessage"] = "Wystąpił nieoczekiwany błąd: " + ex.Message;
+                TempData["errorMessage"] = "Wystąpił nieoczekiwany błąd. Spróbuj ponownie później. ";
                 return View(equipmentDto);
             }
         }
         public async Task<IActionResult> Details(int id)
         {
-            var token = HttpContext.Request.Cookies["token"];
+            var token = HttpContext.Request.Cookies["token"];if(token==null){token = Request.Headers["Authorization"];}
             _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
             var endpoint = $"/api/agriculturalEquipment/{id}";
@@ -300,6 +315,43 @@ namespace AgroControlUI.Controllers.FarmData
             var content = await result.Content.ReadAsStringAsync();
             var agriculturalEquipment = JsonConvert.DeserializeObject<AgriculturalEquipmentDetailsDto>(content);
             return View(agriculturalEquipment);
+        }
+        [Authorize(Policy = "OwnerOrCoOwner")]
+        [HttpPost]
+        public async Task<IActionResult> UpdateIsActive(int id, bool isActive)
+        {
+            try
+            {
+                var token = HttpContext.Request.Cookies["token"];
+                if (token == null)
+                {
+                    token = Request.Headers["Authorization"];
+                }
+                _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
+                var endpoint = $"/api/agriculturalEquipment/{id}/updateIsActive";
+ 
+                var content = JsonConvert.SerializeObject(isActive);
+                var stringContent = new StringContent(content, Encoding.UTF8, "application/json");
+
+                var response = await _client.PatchAsync(endpoint, stringContent);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    TempData["successMessage"] = "Stan aktywności maszyny został zaktualizowany!";
+                }
+                else
+                {
+                    TempData["errorMessage"] = "Wystąpił problem z aktualizacją stanu maszyny.";
+                }
+            }
+            catch (Exception ex)
+            {
+                TempData["errorMessage"] = "Wystąpił nieoczekiwany błąd. Spróbuj ponownie później.";
+            }
+
+            // Po zakończeniu aktualizacji, przekierowanie z powrotem na stronę indeksu
+            return RedirectToAction("Index");
         }
         protected override void Dispose(bool disposing)
         {

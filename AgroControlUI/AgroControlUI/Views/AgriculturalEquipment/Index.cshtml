@@ -3,7 +3,99 @@
 @await Html.PartialAsync("_DeleteConfirmationModal")
 <link rel="stylesheet" href="~/css/indexList.css">
 <link rel="stylesheet" href="~/css/listOperations.css">
+<style>
+    .switch {
+        font-size: 17px;
+        position: relative;
+        display: inline-block;
+        width: 2.5em;
+        height: 1.5em;
+        z-index: 2;
+        pointer-events: auto;
+    }
+        /* Hide default HTML checkbox */
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
 
+    /* The slider */
+    .slider {
+        position: absolute;
+        cursor: pointer;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: #fff;
+        border: 1px solid #adb5bd;
+        transition: .4s;
+        border-radius: 30px;
+    }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 1.4em;
+            width: 1.4em;
+            border-radius: 20px;
+            left: 0.27em;
+            bottom: 0.25em;
+            background-color: #adb5bd;
+            transition: .4s;
+        }
+
+    input:checked + .slider {
+        background-color: var(--main-app-color);
+        border: 1px solid var(--main-app-color);
+    }
+
+    input:focus + .slider {
+        box-shadow: 0 0 1px var(--main-app-color);
+    }
+
+    input:checked + .slider:before {
+        transform: translateX(1.4em);
+        background-color: #fff;
+    }
+
+    .switch input {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        z-index: 2;
+        cursor: pointer;
+    }
+
+    .switch-label {
+        font-size: 18px;
+        padding: 10px 10px 10px 15px;
+    }
+
+    .cell.isActive {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    /* Dostosowanie slidera */
+    .slider {
+        border-radius: 1em;
+    }
+
+        .slider:before {
+            height: 1em; /* mniejsza kulka */
+            width: 1em;
+            left: 0.15em; /* zmniejszony margines */
+            bottom: 0.15em;
+            border-radius: 50%;
+        }
+
+    input:checked + .slider:before {
+        transform: translateX(1em);
+    }
+</style>
 <h1 class="blue">Moje maszyny</h1>
 
 <div id="categories" class="wrapper">
@@ -12,6 +104,12 @@
     </p>
     <div class="table">
         <div class="row header blue" id="headerRow">
+            <div class="cell" data-sort="isActive" onclick="sortByColumn(this)">
+                <div class="sort-wrapper">
+                    <span class="sort-text">Aktywność</span>
+                    <span class="sort-arrow">▼</span>
+                </div>
+            </div>
             <div class="cell" data-sort="name" onclick="sortByColumn(this)">
                 <div class="sort-wrapper">
                     <span class="sort-text">Nazwa maszyny</span>
@@ -30,17 +128,13 @@
                     <span class="sort-arrow">▼</span>
                 </div>
             </div>
-            <div class="cell" data-sort="isActive" onclick="sortByColumn(this)">
-                <div class="sort-wrapper">
-                    <span class="sort-text">Aktywność</span>
-                    <span class="sort-arrow">▼</span>
-                </div>
-            </div>
             <div class="cell">
                 Akcje
             </div>
         </div>
         <div class="row">
+            <div class="cell">
+            </div>
             <div class="cell">
                 <input type="text" class="search-input" data-search="name" placeholder="Szukaj..." oninput="searchByColumn()" />
             </div>
@@ -50,8 +144,7 @@
             <div class="cell">
                 <input type="text" class="search-input" data-search="type" placeholder="Szukaj..." oninput="searchByColumn()" />
             </div>
-            <div class="cell">
-            </div>
+            
             <div class="cell">
             </div>
         </div>
@@ -59,6 +152,14 @@
         @foreach (var equipment in Model)
         {
             <div class="row">
+                        <form action="@Url.Action("UpdateIsActive", "AgriculturalEquipment", new { id = equipment.Id })" method="post" class="equipment-form">
+                        <div class="cell isActive" data-title="Aktywność">
+                            <label class="switch">
+                                <input type="checkbox" name="isActive" value="true" @(equipment.IsActive ? "checked" : "") onclick="submitForm(this)" />
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                        </form>
                 <div class="cell name" data-title="Nazwa maszyny">
                     @equipment.Name
                 </div>
@@ -67,9 +168,6 @@
                 </div>
                 <div class="cell type" data-title="Typ">
                     @equipment.AgriculturalEquipmentTypeName
-                </div>
-                <div class="cell isActive" data-title="Aktywność">
-                    @equipment.IsActive
                 </div>
                 <div class="cell" data-title="Akcje">
                     <div class="action-buttons">
@@ -91,3 +189,9 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/list.js/2.3.1/list.min.js"></script>
 <script src="~/js/listOperations.js"></script>
 <script src="~/js/deleteModal.js"></script>
+<script>
+    function submitForm(checkbox) {
+        let form = checkbox.closest("form");
+        form.submit();
+    }
+</script>

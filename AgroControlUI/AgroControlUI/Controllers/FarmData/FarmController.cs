@@ -30,7 +30,7 @@
         public async Task<IActionResult> Select()
         {
             var endpoint = "/api/farms/userFarms/";
-            var token = HttpContext.Request.Cookies["token"];
+            var token = HttpContext.Request.Cookies["token"];if(token==null){token = Request.Headers["Authorization"];}
             _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
             var result = await _client.GetAsync(endpoint);
             result.EnsureSuccessStatusCode();
@@ -44,7 +44,7 @@
         public async Task<IActionResult> SetCurrentFarm(int farmId)
         {
             var endpoint = "/api/farms/setCurrentFarm";
-            var token = HttpContext.Request.Cookies["token"];
+            var token = HttpContext.Request.Cookies["token"];if(token==null){token = Request.Headers["Authorization"];}
             _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
             var content = JsonConvert.SerializeObject(farmId);
             var stringContent = new StringContent(content, Encoding.UTF8, "application/json");
@@ -82,7 +82,7 @@
                     HttpOnly = true,
                     Secure = true,
                     SameSite = SameSiteMode.None,
-                    Expires = DateTimeOffset.UtcNow.AddSeconds(1000)
+                    Expires = DateTimeOffset.Now.AddSeconds(1000)
                 };
             }
             return RedirectToAction("Index", "Home");
@@ -92,7 +92,7 @@
         [HttpGet]
         public async Task<IActionResult> Index()
         {
-            var token = HttpContext.Request.Cookies["token"];
+            var token = HttpContext.Request.Cookies["token"];if(token==null){token = Request.Headers["Authorization"];}
             _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
             var endpoint = "/api/farms";
@@ -122,7 +122,7 @@
 
             try
             {
-                var token = HttpContext.Request.Cookies["token"];
+                var token = HttpContext.Request.Cookies["token"];if(token==null){token = Request.Headers["Authorization"];}
                 _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
                 var endpoint = "/api/farms";
@@ -130,8 +130,8 @@
                 var stringContent = new StringContent(content, Encoding.UTF8, "application/json");
                 var response = await _client.PostAsync(endpoint, stringContent);
                 response.EnsureSuccessStatusCode();
-
-                return RedirectToAction("Index");
+                TempData["successMessage"] = "Nowe gospodarstwo zostało pomyślnie dodane!";
+                return RedirectToAction("select");
             }
             catch (HttpRequestException ex)
             {
@@ -146,34 +146,6 @@
         }
 
         // Delete
-        [Authorize(Policy = "Owner")]
-        [HttpGet]
-        public async Task<IActionResult> Delete(int id)
-        {
-            try
-            {
-                var token = HttpContext.Request.Cookies["token"];
-                _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
-
-                var endpoint = $"/api/farms/{id}";
-                var response = await _client.GetAsync(endpoint);
-                response.EnsureSuccessStatusCode();
-
-                string content = await response.Content.ReadAsStringAsync();
-                var farm = JsonConvert.DeserializeObject<FarmDto>(content);
-                return View(farm);
-            }
-            catch (HttpRequestException ex)
-            {
-                TempData["errorMessage"] = "Błąd żądania HTTP: " + ex.Message;
-                return View();
-            }
-            catch (Exception ex)
-            {
-                TempData["errorMessage"] = "Wystąpił nieoczekiwany błąd: " + ex.Message;
-                return View();
-            }
-        }
 
         [Authorize(Policy = "Owner")]
         [HttpPost]
@@ -181,27 +153,54 @@
         {
             try
             {
-                var token = HttpContext.Request.Cookies["token"];
+                var token = HttpContext.Request.Cookies["token"];if(token==null){token = Request.Headers["Authorization"];}
                 _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
                 var endpoint = $"/api/farms/{id}";
                 var response = await _client.DeleteAsync(endpoint);
                 response.EnsureSuccessStatusCode();
+                TempData["successMessage"] = "Gospodarstwo zostało pomyślnie usunięte!";
 
-                return RedirectToAction("Index");
+                return RedirectToAction("select", "Farm");
             }
             catch (HttpRequestException ex)
             {
                 TempData["errorMessage"] = "Błąd żądania HTTP: " + ex.Message;
-                return View();
+                return RedirectToAction("index", "Farm");
             }
             catch (Exception ex)
             {
                 TempData["errorMessage"] = "Wystąpił nieoczekiwany błąd: " + ex.Message;
-                return View();
+                return RedirectToAction("index", "Farm");
             }
         }
+        [Authorize(Policy = "OwnerOrWorker")]
+        [HttpPost]
+        public async Task<IActionResult> LeaveFarm()
+        {
+            try
+            {
+                var token = HttpContext.Request.Cookies["token"]; if (token == null) { token = Request.Headers["Authorization"]; }
+                _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
+                var endpoint = $"/api/farms/leaveFarm";
+                var response = await _client.DeleteAsync(endpoint);
+                response.EnsureSuccessStatusCode();
+                TempData["successMessage"] = "Pomyślnie opuszczono gospodarstwo!";
+
+                return RedirectToAction("select", "Farm");
+            }
+            catch (HttpRequestException ex)
+            {
+                TempData["errorMessage"] = "Błąd żądania HTTP: " + ex.Message;
+                return RedirectToAction("index", "Farm");
+            }
+            catch (Exception ex)
+            {
+                TempData["errorMessage"] = "Wystąpił nieoczekiwany błąd: " + ex.Message;
+                return RedirectToAction("index", "Farm");
+            }
+        }
         // Edit
         [Authorize(Policy = "OwnerOrCoOwner")]
         [HttpGet]
@@ -209,7 +208,7 @@
         {
             try
             {
-                var token = HttpContext.Request.Cookies["token"];
+                var token = HttpContext.Request.Cookies["token"];if(token==null){token = Request.Headers["Authorization"];}
                 _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
                 var endpoint = $"/api/farms";
@@ -243,7 +242,7 @@
 
             try
             {
-                var token = HttpContext.Request.Cookies["token"];
+                var token = HttpContext.Request.Cookies["token"];if(token==null){token = Request.Headers["Authorization"];}
                 _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
                 var endpoint = $"/api/farms/{farmDto.Id}";
@@ -252,7 +251,7 @@
                 var response = await _client.PutAsync(endpoint, stringContent);
                 response.EnsureSuccessStatusCode();
 
-                TempData["successMessage"] = "Zmodyfikowano pomyślnie";
+                TempData["successMessage"] = "Gospodarswto zostało pomyślnie zaaktualizowane!";
                 return RedirectToAction("Index");
             }
             catch (HttpRequestException ex)

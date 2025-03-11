@@ -26,7 +26,7 @@ namespace AgroControlUI.Controllers.FarmData
         [HttpGet]
         public async Task<IActionResult> Index(int? fieldId)
         {
-            var token = HttpContext.Request.Cookies["token"];
+            var token = HttpContext.Request.Cookies["token"];if(token==null){token = Request.Headers["Authorization"];}
             _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
             // Fetching fields for the dropdown list
@@ -63,7 +63,7 @@ namespace AgroControlUI.Controllers.FarmData
         {
             try
             {
-                var token = HttpContext.Request.Cookies["token"];
+                var token = HttpContext.Request.Cookies["token"];if(token==null){token = Request.Headers["Authorization"];}
                 _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
                 // Fetch list of crops
@@ -99,7 +99,7 @@ namespace AgroControlUI.Controllers.FarmData
         {
             if (!ModelState.IsValid)
             {
-                var token = HttpContext.Request.Cookies["token"];
+                var token = HttpContext.Request.Cookies["token"];if(token==null){token = Request.Headers["Authorization"];}
                 _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
                 var cropsResponse = await _client.GetAsync("/api/crops");
                 cropsResponse.EnsureSuccessStatusCode();
@@ -129,7 +129,7 @@ namespace AgroControlUI.Controllers.FarmData
 
             try
             {
-                var token = HttpContext.Request.Cookies["token"];
+                var token = HttpContext.Request.Cookies["token"];if(token==null){token = Request.Headers["Authorization"];}
                 _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
                 var endpoint = "/api/cropRotationPlanners";
@@ -162,7 +162,7 @@ namespace AgroControlUI.Controllers.FarmData
         {
             try
             {
-                var token = HttpContext.Request.Cookies["token"];
+                var token = HttpContext.Request.Cookies["token"];if(token==null){token = Request.Headers["Authorization"];}
                 _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
                 var endpoint = $"/api/cropRotationPlanners/{id}";
@@ -191,7 +191,7 @@ namespace AgroControlUI.Controllers.FarmData
         {
             try
             {
-                var token = HttpContext.Request.Cookies["token"];
+                var token = HttpContext.Request.Cookies["token"];if(token==null){token = Request.Headers["Authorization"];}
                 _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
                 // Pobranie szczegółów istniejącego planu
@@ -244,7 +244,7 @@ namespace AgroControlUI.Controllers.FarmData
             {
                 try
                 {
-                    var token = HttpContext.Request.Cookies["token"];
+                    var token = HttpContext.Request.Cookies["token"];if(token==null){token = Request.Headers["Authorization"];}
                     _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
                     var cropsResponse = await _client.GetAsync("/api/crops");
                     cropsResponse.EnsureSuccessStatusCode();
@@ -266,7 +266,7 @@ namespace AgroControlUI.Controllers.FarmData
 
             try
             {
-                var token = HttpContext.Request.Cookies["token"];
+                var token = HttpContext.Request.Cookies["token"];if(token==null){token = Request.Headers["Authorization"];}
                 _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
                 var endpoint = $"/api/cropRotationPlanners/{planDto.Id}";

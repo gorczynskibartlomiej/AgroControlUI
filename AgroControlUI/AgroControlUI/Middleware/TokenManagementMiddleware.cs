@@ -7,6 +7,8 @@ using System.Text;
 using System.Net.Http.Headers;
 using System.IdentityModel.Tokens.Jwt;
 using Microsoft.AspNetCore.Http;
+using System.Security.Claims;
+using AgroControlUI.Models.FarmData;
 
 namespace AgroControlUI.Middleware
 {
@@ -22,12 +24,14 @@ namespace AgroControlUI.Middleware
         }
 
         public async Task InvokeAsync(HttpContext context)
-        {
+        
+         {
             string accessToken = context.Request.Cookies["token"];
             string refreshToken = context.Request.Cookies["refreshToken"];
 
             if (refreshToken != null && accessToken == null)
             {
+                var existingClaims = context.User.Claims.ToList();
                 var newTokens = await RefreshTokens(refreshToken);
                 if(newTokens.newAccessToken == null)
                 {
@@ -37,24 +41,6 @@ namespace AgroControlUI.Middleware
                     await context.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
                     context.Response.Redirect("/Account/Login");
                     return;
-                }
-                if (!string.IsNullOrEmpty(accessToken))
-                {
-                    var tokenHandler = new JwtSecurityTokenHandler();
-                    try
-                    {
-                        var jwtToken = tokenHandler.ReadJwtToken(accessToken);
-                        // Jeżeli token wygasł, traktuj go jako nieważny
-                        if (jwtToken.ValidTo < DateTime.UtcNow)
-                        {
-                            accessToken = null;
-                        }
-                    }
-                    catch
-                    {
-                        // Jeżeli token nie da się sparsować, traktuj go jako nieważny
-                        accessToken = null;
-                    }
                 }
                 ///1
                 //var cookieOptions = new CookieOptions
@@ -88,7 +74,13 @@ namespace AgroControlUI.Middleware
 
                 //_client.DefaultRequestHeaders.Authorization = null;
                 //_client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", newTokens.newAccessToken);
-                //await Task.Delay(5000);
+                //await Task.Delay(5000);           
+                //var claimsIdentity = new ClaimsIdentity(existingClaims, CookieAuthenticationDefaults.AuthenticationScheme);
+                //var claimsPrincipal = new ClaimsPrincipal(claimsIdentity);
+
+                //// Podmieniamy w kontekście użytkownika
+                //await context.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, claimsPrincipal);
+
                 var cookieOptions = new CookieOptions
                 {
                     HttpOnly = true,
@@ -101,15 +93,13 @@ namespace AgroControlUI.Middleware
                 context.Response.Cookies.Append("refreshToken", newTokens.newRefreshToken, cookieOptions);
 
                 // Ustawienie nagłówka Authorization z nowym tokenem
-                context.Response.Headers["token"] = newTokens.newAccessToken;
                 context.Request.Headers["Authorization"] = $"{newTokens.newAccessToken}";
 
-                _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", newTokens.newAccessToken);
-
                 // Opcjonalnie: Wymuś zapisanie nowego tokena w przeglądarkach
-                context.Response.Headers.Append("Set-Cookie",
-                    $"token={newTokens.newAccessToken}; HttpOnly; Secure; SameSite=None; Path=/; Expires={DateTime.UtcNow.AddSeconds(newTokens.expiresIn):R}");
-
+                //context.Response.Headers.Append("Set-Cookie",
+                //    $"token={newTokens.newAccessToken}; HttpOnly; Secure; SameSite=None; Path=/; Expires={DateTime.Now.AddSeconds(newTokens.expiresIn):R}");
+                //context.Response.Headers.Append("Set-Cookie",
+                //    $"refreshToken={newTokens.newRefreshToken}; HttpOnly; Secure; SameSite=None; Path=/; Expires={DateTime.Now.AddSeconds(newTokens.expiresIn * 20):R}");
                 await Task.Delay(500);
             }
 

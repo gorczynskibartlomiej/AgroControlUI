@@ -23,7 +23,7 @@ namespace AgroControlUI.Controllers.Fertilizers
         [HttpGet]
         public async Task<IActionResult> Index()
         {
-            var token = HttpContext.Request.Cookies["token"];
+            var token = HttpContext.Request.Cookies["token"];if(token==null){token = Request.Headers["Authorization"];}
             _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
             var endpoint = "/api/fertilizers";
@@ -54,7 +54,7 @@ namespace AgroControlUI.Controllers.Fertilizers
 
             try
             {
-                var token = HttpContext.Request.Cookies["token"];
+                var token = HttpContext.Request.Cookies["token"];if(token==null){token = Request.Headers["Authorization"];}
                 _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
                 var endpoint = "/api/fertilizers";
@@ -84,7 +84,7 @@ namespace AgroControlUI.Controllers.Fertilizers
         {
             try
             {
-                var token = HttpContext.Request.Cookies["token"];
+                var token = HttpContext.Request.Cookies["token"];if(token==null){token = Request.Headers["Authorization"];}
                 _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
                 var endpoint = $"/api/fertilizers/{id}";
@@ -113,7 +113,7 @@ namespace AgroControlUI.Controllers.Fertilizers
         {
             try
             {
-                var token = HttpContext.Request.Cookies["token"];
+                var token = HttpContext.Request.Cookies["token"];if(token==null){token = Request.Headers["Authorization"];}
                 _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
                 var endpoint = $"/api/fertilizers/{id}";
@@ -141,7 +141,7 @@ namespace AgroControlUI.Controllers.Fertilizers
         {
             try
             {
-                var token = HttpContext.Request.Cookies["token"];
+                var token = HttpContext.Request.Cookies["token"];if(token==null){token = Request.Headers["Authorization"];}
                 _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
                 var endpoint = $"/api/fertilizers/{id}";
@@ -175,7 +175,7 @@ namespace AgroControlUI.Controllers.Fertilizers
 
             try
             {
-                var token = HttpContext.Request.Cookies["token"];
+                var token = HttpContext.Request.Cookies["token"];if(token==null){token = Request.Headers["Authorization"];}
                 _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
                 var endpoint = $"/api/fertilizers/{fertilizerDto.Id}";

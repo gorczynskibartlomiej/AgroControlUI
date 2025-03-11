@@ -43,7 +43,7 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
 {
     options.LoginPath = "/Account/Login";
     options.AccessDeniedPath = "/Account/AccessDenied";
-    options.Cookie.HttpOnly = true;
+    options.Cookie.HttpOnly = false;
     options.ExpireTimeSpan = TimeSpan.FromMinutes(15);
     options.SlidingExpiration = true;
     options.Cookie.SameSite = SameSiteMode.Lax;
@@ -82,16 +82,17 @@ if (!app.Environment.IsDevelopment())
     // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
-//Middleware
-app.UseMiddleware<ErrorHandlingMiddleware>();
-
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 
 app.UseRouting();
-app.UseMiddleware<TokenManagementMiddleware>();
+
+//Middleware
+app.UseMiddleware<ErrorHandlingMiddleware>();
 app.UseAuthentication();
 app.UseAuthorization();
+app.UseMiddleware<TokenManagementMiddleware>();
+//app.UseMiddleware<TokenManagementMiddleware>();
 
 app.MapControllerRoute(
     name: "default",

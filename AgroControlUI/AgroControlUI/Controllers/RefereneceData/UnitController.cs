@@ -21,7 +21,7 @@ namespace AgroControlUI.Controllers.RefereneceData
         [HttpGet]
         public async Task<IActionResult> Index()
         {
-            var token = HttpContext.Request.Cookies["token"];
+            var token = HttpContext.Request.Cookies["token"];if(token==null){token = Request.Headers["Authorization"];}
             _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
             var endpoint = "/api/units";
@@ -50,7 +50,7 @@ namespace AgroControlUI.Controllers.RefereneceData
             }
             try
             {
-                var token = HttpContext.Request.Cookies["token"];
+                var token = HttpContext.Request.Cookies["token"];if(token==null){token = Request.Headers["Authorization"];}
                 _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
                 var endpoint = "/api/units";
@@ -81,7 +81,7 @@ namespace AgroControlUI.Controllers.RefereneceData
         {
             try
             {
-                var token = HttpContext.Request.Cookies["token"];
+                var token = HttpContext.Request.Cookies["token"];if(token==null){token = Request.Headers["Authorization"];}
                 _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
                 var endpoint = $"/api/units/{id}";
@@ -109,7 +109,7 @@ namespace AgroControlUI.Controllers.RefereneceData
         {
             try
             {
-                var token = HttpContext.Request.Cookies["token"];
+                var token = HttpContext.Request.Cookies["token"];if(token==null){token = Request.Headers["Authorization"];}
                 _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
                 var endpoint = $"/api/units/{id}";
@@ -140,7 +140,7 @@ namespace AgroControlUI.Controllers.RefereneceData
             }
             try
             {
-                var token = HttpContext.Request.Cookies["token"];
+                var token = HttpContext.Request.Cookies["token"];if(token==null){token = Request.Headers["Authorization"];}
                 _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
                 var endpoint = $"/api/units/{unitDto.Id}";

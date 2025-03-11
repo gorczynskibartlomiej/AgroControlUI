@@ -23,7 +23,7 @@ namespace AgroControlUI.Controllers.CropProtectionProducts
         [HttpGet]
         public async Task<IActionResult> Index()
         {
-            var token = HttpContext.Request.Cookies["token"];
+            var token = HttpContext.Request.Cookies["token"];if(token==null){token = Request.Headers["Authorization"];}
             _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
             var endpoint = "/api/cropProtectionProductCategories";
@@ -54,7 +54,7 @@ namespace AgroControlUI.Controllers.CropProtectionProducts
 
             try
             {
-                var token = HttpContext.Request.Cookies["token"];
+                var token = HttpContext.Request.Cookies["token"];if(token==null){token = Request.Headers["Authorization"];}
                 _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
                 var endpoint = "/api/cropProtectionProductCategories";
@@ -68,13 +68,20 @@ namespace AgroControlUI.Controllers.CropProtectionProducts
             }
             catch (HttpRequestException ex)
             {
-                TempData["errorMessage"] = "Błąd serwera, spróbuj ponownie później.";
-                return View();
+                if (ex.StatusCode == System.Net.HttpStatusCode.Conflict)
+                {
+                    TempData["errorMessage"] = "Kategoria o tej nazwie już istnieje!";
+                }
+                else
+                {
+                    TempData["errorMessage"] = "Błąd serwera, spróbuj ponownie później.";
+                }
+                return View(categoryDto);
             }
             catch (Exception ex)
             {
                 TempData["errorMessage"] = "Wystąpił nieoczekiwany błąd. Spróbuj ponownie później. ";
-                return View();
+                return View(categoryDto);
             }
         }
 
@@ -86,7 +93,7 @@ namespace AgroControlUI.Controllers.CropProtectionProducts
         {
             try
             {
-                var token = HttpContext.Request.Cookies["token"];
+                var token = HttpContext.Request.Cookies["token"];if(token==null){token = Request.Headers["Authorization"];}
                 _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
                 var endpoint = $"/api/cropProtectionProductCategories/{id}";
@@ -115,7 +122,7 @@ namespace AgroControlUI.Controllers.CropProtectionProducts
         {
             try
             {
-                var token = HttpContext.Request.Cookies["token"];
+                var token = HttpContext.Request.Cookies["token"];if(token==null){token = Request.Headers["Authorization"];}
                 _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
                 var endpoint = $"/api/cropProtectionProductCategories/{id}";
@@ -149,7 +156,7 @@ namespace AgroControlUI.Controllers.CropProtectionProducts
 
             try
             {
-                var token = HttpContext.Request.Cookies["token"];
+                var token = HttpContext.Request.Cookies["token"];if(token==null){token = Request.Headers["Authorization"];}
                 _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
                 var endpoint = $"/api/cropProtectionProductCategories/{categoryDto.Id}";
@@ -163,7 +170,14 @@ namespace AgroControlUI.Controllers.CropProtectionProducts
             }
             catch (HttpRequestException ex)
             {
-                TempData["errorMessage"] = "Błąd serwera, spróbuj ponownie później.";
+                if (ex.StatusCode == System.Net.HttpStatusCode.Conflict)
+                {
+                    TempData["errorMessage"] = "Kategoria o tej nazwie już istnieje!";
+                }
+                else
+                {
+                    TempData["errorMessage"] = "Błąd serwera, spróbuj ponownie później.";
+                }
                 return View(categoryDto);
             }
             catch (Exception ex)

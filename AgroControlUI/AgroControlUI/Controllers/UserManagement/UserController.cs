@@ -30,7 +30,7 @@ namespace AgroControlUI.Controllers.UserManagement
         [HttpGet]
         public async Task<IActionResult> Index()
         {
-            var token = HttpContext.Request.Cookies["token"];
+            var token = HttpContext.Request.Cookies["token"];if(token==null){token = Request.Headers["Authorization"];}
             _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
             var endpoint = "/api/farms/users";
@@ -46,7 +46,7 @@ namespace AgroControlUI.Controllers.UserManagement
         [HttpGet]
         public async Task<IActionResult> Add()
         {
-            var token = HttpContext.Request.Cookies["token"];
+            var token = HttpContext.Request.Cookies["token"];if(token==null){token = Request.Headers["Authorization"];}
             _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
             var endpoint = "/api/role/toAssign";
@@ -87,7 +87,7 @@ namespace AgroControlUI.Controllers.UserManagement
                 return View(model);
 
             }
-            var token = HttpContext.Request.Cookies["token"];
+            var token = HttpContext.Request.Cookies["token"];if(token==null){token = Request.Headers["Authorization"];}
             _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
             var jsonContent = JsonConvert.SerializeObject(model);
@@ -143,7 +143,7 @@ namespace AgroControlUI.Controllers.UserManagement
         {
             try
             {
-                var token = HttpContext.Request.Cookies["token"];
+                var token = HttpContext.Request.Cookies["token"];if(token==null){token = Request.Headers["Authorization"];}
                 _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
                 var endpoint = $"/api/AgroControlUserRole/{id}";
@@ -171,7 +171,7 @@ namespace AgroControlUI.Controllers.UserManagement
         //{
         //    try
         //    {
-        //        var token = HttpContext.Request.Cookies["token"];
+        //        var token = HttpContext.Request.Cookies["token"];if(token==null){token = Request.Headers["Authorization"];}
         //        _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
         //        var endpoint = $"/api/employees/{id}";
@@ -205,7 +205,7 @@ namespace AgroControlUI.Controllers.UserManagement
 
         //    try
         //    {
-        //        var token = HttpContext.Request.Cookies["token"];
+        //        var token = HttpContext.Request.Cookies["token"];if(token==null){token = Request.Headers["Authorization"];}
         //        _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
         //        var endpoint = $"/api/employees/{employeeDto.Id}";

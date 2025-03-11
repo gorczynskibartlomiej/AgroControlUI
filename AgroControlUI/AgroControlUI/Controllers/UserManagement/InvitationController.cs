@@ -31,7 +31,7 @@ namespace AgroControlUI.Controllers
         [HttpPost("Accept/{invitationId}")]
         public async Task<IActionResult> AcceptInvitation(int invitationId)
         {
-            var token = HttpContext.Request.Cookies["token"];
+            var token = HttpContext.Request.Cookies["token"];if(token==null){token = Request.Headers["Authorization"];}
             _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
             var response = await _client.PostAsync($"/api/invitations/accept/{invitationId}", null);

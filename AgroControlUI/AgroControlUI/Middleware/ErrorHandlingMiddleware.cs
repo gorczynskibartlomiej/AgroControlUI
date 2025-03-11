@@ -34,27 +34,28 @@ namespace AgroControlUI.Middleware
             catch (Exception ex)
             {
                 _logger.LogError("An error occurred while processing the request.", ex);
-                //await HandleExceptionAsync(context, ex);
+                await HandleExceptionAsync(context, ex);
             }
         }
 
-        //private static async Task HandleExceptionAsync(HttpContext context, Exception exception)
-        //{
-        //    var statusCode = HttpStatusCode.InternalServerError;
-        //    string message = "An unexpected error occurred.";
-        //    string details = exception.Message;
+        private static async Task HandleExceptionAsync(HttpContext context, Exception exception)
+        {
+            var statusCode = HttpStatusCode.InternalServerError;
+            string message = "An unexpected error occurred.";
+            string details = exception.Message;
 
-            
-        //    if (exception is HttpRequestException httpEx && httpEx.StatusCode == HttpStatusCode.Unauthorized)
-        //    {
-        //        statusCode = HttpStatusCode.Unauthorized;
-        //        message = "Authentication failed. Please log in.";
-        //        //await context.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
-        //        var tempData = context.Items["TempData"] as ITempDataDictionary;
-        //        //tempData.Add("errorMessage", "You are not authorized to view this page. Please log in.");
-        //        return;
-        //    }
-        //        return ;            
-        //}
+
+            if (exception is HttpRequestException httpEx && httpEx.StatusCode == HttpStatusCode.Unauthorized)
+            {
+                statusCode = HttpStatusCode.Unauthorized;
+                message = "Authentication failed. Please log in.";
+                await context.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+                var tempData = context.Items["TempData"] as ITempDataDictionary;
+                //tempData.Add("errorMessage", "You are not authorized to view this page. Please log in.");
+                context.Response.Redirect("/Account/Login");
+                return;
+            }
+            return;
+        }
     }
 }

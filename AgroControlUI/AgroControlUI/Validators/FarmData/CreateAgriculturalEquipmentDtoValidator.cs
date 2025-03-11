@@ -1,5 +1,6 @@
 ﻿using AgroControlUI.DTOs.FarmData;
 using FluentValidation;
+using System.Numerics;
 using System.Text.RegularExpressions;
 
 namespace AgroControlUI.Validators.FarmData
@@ -25,41 +26,40 @@ namespace AgroControlUI.Validators.FarmData
                 .NotEmpty().WithMessage("Typ maszyny jest wymagany.");
 
             RuleFor(x => x.YearOfManufacture)
-                .InclusiveBetween(1900, DateTime.Now.Year).WithMessage($"Rok produkcji musi być między 1900 a {DateTime.Now.Year}.");
+                .InclusiveBetween(1900, DateTime.Now.Year).WithMessage($"Rok produkcji musi być między 1900 a {DateTime.Now.Year}.")
+                .PrecisionScale(18, 0, false).WithMessage("Rok produkcji musi być liczbą całkowitą");
 
             RuleFor(x => x.FuelCapacity)
-                .GreaterThan(0).WithMessage("Pojemność zbiornika musi być większa niż 0.")
-                .When(x => x.FuelCapacity.HasValue);
+                 .GreaterThanOrEqualTo(0).WithMessage("Pojemność zbiornika musi być większa niż 0.")
+                .PrecisionScale(18, 0, false).WithMessage("Pojemnośc musi być liczbą całkowitą");
 
             RuleFor(x => x.EnginePower)
-                .NotEmpty().WithMessage("Moc silnika jest wymagana.")
-                .GreaterThan(0).WithMessage("Moc silnika musi być większa niż 0.")
-                .When(x => x.EnginePower.HasValue);
+                .GreaterThanOrEqualTo(0).WithMessage("Moc silnika musi być większa niż 0.")
+                .PrecisionScale(18, 0, false).WithMessage("Moc silnika być liczbą całkowitą");
 
             RuleFor(x => x.Weight)
-                .NotEmpty().WithMessage("Szerokość jest wymagana.")
                 .GreaterThanOrEqualTo(0).WithMessage("Waga musi być większa niż 0.")
-                .When(x => x.Weight.HasValue);
+                .PrecisionScale(18, 0, false).WithMessage("Waga być liczbą całkowitą");
 
             RuleFor(x => x.Width)
                 .GreaterThanOrEqualTo(0).WithMessage("Szerokość musi być większa niż 0.")
-                .PrecisionScale(18,2,false).WithMessage("Podaj maksymanlnie 2 liczby po ',' np. '5.55'.");
+                .PrecisionScale(18, 2, false).WithMessage("Podaj maksymanlnie 2 liczby po ',' np. '5.55'.");
 
             RuleFor(x => x.WorkingWidth)
                 .GreaterThanOrEqualTo(0).WithMessage("Szerokość robocza musi być większa niż 0.")
-                .When(x => x.WorkingWidth.HasValue);
+                .PrecisionScale(18, 2, false).WithMessage("Podaj maksymanlnie 2 liczby po ',' np. '5.55'.");
 
             RuleFor(x => x.Height)
                 .GreaterThanOrEqualTo(0).WithMessage("Wysokość musi być większa niż 0.")
-                .When(x => x.Height.HasValue);
+                .PrecisionScale(18, 2, false).WithMessage("Podaj maksymanlnie 2 liczby po ',' np. '5.55'.");
 
             RuleFor(x => x.WorkingSpeed)
                 .GreaterThanOrEqualTo(0).WithMessage("Prędkość robocza musi być większa niż 0.")
-                .When(x => x.WorkingSpeed.HasValue);
+                .PrecisionScale(18, 2, false).WithMessage("Podaj maksymanlnie 2 liczby po ',' np. '5.55'.");
 
             RuleFor(x => x.TransportSpeed)
                 .GreaterThanOrEqualTo(0).WithMessage("Prędkość transportowa musi być większa niż 0.")
-                .When(x => x.TransportSpeed.HasValue);
+                .PrecisionScale(18, 2, false).WithMessage("Podaj maksymanlnie 2 liczby po ',' np. '5.55'.");
 
             RuleFor(x => x.LastServiceDate)
             .Must(date => !date.HasValue || date.Value.ToDateTime(new TimeOnly(0, 0)) <= DateTime.Now)

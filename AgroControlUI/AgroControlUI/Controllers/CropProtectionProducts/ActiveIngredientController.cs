@@ -23,11 +23,7 @@ namespace AgroControlUI.Controllers.CropProtectionProducts
         [HttpGet]
         public async Task<IActionResult> Index()
         {
-            var token = HttpContext.Request.Cookies["token"];
-            if(token==null)
-            {
-                token = Request.Headers["Authorization"];
-            }
+            var token = HttpContext.Request.Cookies["token"];if(token==null){token = Request.Headers["Authorization"];}
 
             _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
@@ -59,7 +55,7 @@ namespace AgroControlUI.Controllers.CropProtectionProducts
 
             try
             {
-                var token = HttpContext.Request.Cookies["token"];
+                var token = HttpContext.Request.Cookies["token"];if(token==null){token = Request.Headers["Authorization"];}
                 _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
                 var endpoint = "/api/activeIngredients";
@@ -98,7 +94,7 @@ namespace AgroControlUI.Controllers.CropProtectionProducts
         {
             try
             {
-                var token = HttpContext.Request.Cookies["token"];
+                var token = HttpContext.Request.Cookies["token"];if(token==null){token = Request.Headers["Authorization"];}
                 _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
                 var endpoint = $"/api/activeIngredients/{id}";
@@ -127,7 +123,7 @@ namespace AgroControlUI.Controllers.CropProtectionProducts
         {
             try
             {
-                var token = HttpContext.Request.Cookies["token"];
+                var token = HttpContext.Request.Cookies["token"];if(token==null){token = Request.Headers["Authorization"];}
                 _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
                 var endpoint = $"/api/activeIngredients/{id}";
@@ -161,7 +157,7 @@ namespace AgroControlUI.Controllers.CropProtectionProducts
 
             try
             {
-                var token = HttpContext.Request.Cookies["token"];
+                var token = HttpContext.Request.Cookies["token"];if(token==null){token = Request.Headers["Authorization"];}
                 _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
                 var endpoint = $"/api/activeIngredients/{activeIngredientDto.Id}";
@@ -175,12 +171,19 @@ namespace AgroControlUI.Controllers.CropProtectionProducts
             }
             catch (HttpRequestException ex)
             {
-                TempData["errorMessage"] = "Błąd żądania HTTP: " + ex.Message;
+                if (ex.StatusCode == System.Net.HttpStatusCode.Conflict)
+                {
+                    TempData["errorMessage"] = "Substancja o tej nazwie już istnieje!";
+                }
+                else
+                {
+                    TempData["errorMessage"] = "Błąd serwera, spróbuj ponownie później.";
+                }
                 return View(activeIngredientDto);
             }
             catch (Exception ex)
             {
-                TempData["errorMessage"] = "Wystąpił nieoczekiwany błąd: " + ex.Message;
+                TempData["errorMessage"] = "Wystąpił nieoczekiwany błąd. Spróbuj ponownie później. ";
                 return View(activeIngredientDto);
             }
         }

@@ -3,7 +3,6 @@
         function checkFilled() {
             if (field.type === "number") {
                 field.classList.toggle("filled", field.value.trim() !== "");
-                console.log("Dopisalem do numbera filled")
             } else {
                 field.classList.toggle("filled", field.value.trim() !== "");
             }
@@ -24,6 +23,14 @@
         field.classList.remove("filled");
     });
     document.querySelectorAll(".group input[type='number']").forEach(function (field) {
+        function checkFilled() {
+            if (field.type === "number") {
+                field.classList.toggle("filled", field.value.trim() !== "");
+                console.log("Dopisalem do numbera filled")
+            } else {
+                field.classList.toggle("filled", field.value.trim() !== "");
+            }
+        }
         field.addEventListener("blur", function () {
             // Sprawdzamy, czy pole zawiera błąd walidacji (klasa input-validation-error)
             const validationError = field.closest('.group').querySelector('.input-validation-error');

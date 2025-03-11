@@ -1,6 +1,7 @@
 ﻿@model AgroControlUI.DTOs.FarmData.FarmDto
 
 @await Html.PartialAsync("_DeleteConfirmationModal")
+@await Html.PartialAsync("_LeaveConfirmationModal")
 <link rel="stylesheet" href="~/css/Details.css" />
 
 <div class="details-container">
@@ -21,10 +22,10 @@
         <p>@(string.IsNullOrEmpty(Model.Description) ? "Brak" : Model.Description)</p>
     </div>
 
-    <div class="info-section">
+ @*    <div class="info-section">
         <p class="info-title">Całkowita powierzchnia:</p>
         <p>@(Model.TotalArea > 0 ? $"{Model.TotalArea} ha" : "Brak danych")</p>
-    </div>
+    </div> *@
 
     <div class="info-section">
         <p class="info-title">Rok założenia:</p>
@@ -48,7 +49,7 @@
 
     <div class="info-section">
         <p class="info-title">Utworzono:</p>
-        <p class="timestamp">@Model.CreatedOn.ToString("yyyy-MM-dd HH:mm") przez @Model.</p>
+        <p class="timestamp">@Model.CreatedOn.ToString("yyyy-MM-dd HH:mm") przez @Model.CreatedBy</p>
     </div>
 
     <div class="info-section">
@@ -58,12 +59,23 @@
 
     <div class="action-buttons">
         <a asp-action="Edit" asp-route-id="@Model.Id" class="edit-btn">Edytuj</a>
+        @if (User.IsInRole("Właściciel"))
+        {
         <button type="button" class="delete-btn" data-bs-toggle="modal" data-bs-target="#deleteModal"
                 onclick="setDeleteUrl('@Url.Action("DeleteConfirmed", new { id = Model.Id })')">
             Usuń
         </button>
+        }
+        else if (User.IsInRole("Współwłaściciel"))
+        {
+            <button type="button" class="delete-btn" data-bs-toggle="modal" data-bs-target="#leaveModal"
+                    onclick="setLeaveUrl('@Url.Action("LeaveFarm", "Farm")')">
+                Opuść
+            </button>
+        }
         <a asp-controller="Home" asp-action="Index" class="cancel-btn">Powrót</a>
     </div>
 </div>
 
 <script src="~/js/deleteModal.js"></script>
+<script src="~/js/leaveModal.js"></script>

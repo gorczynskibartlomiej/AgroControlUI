@@ -25,7 +25,7 @@ namespace AgroControlUI.Controllers.CropProtectionProducts
         [HttpGet]
         public async Task<IActionResult> Index()
         {
-            var token = HttpContext.Request.Cookies["token"];
+            var token = HttpContext.Request.Cookies["token"];if(token==null){token = Request.Headers["Authorization"];}
             _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
             var endpoint = "/api/cropProtectionProducts";
@@ -57,7 +57,7 @@ namespace AgroControlUI.Controllers.CropProtectionProducts
             }
             try
             {
-                var token = HttpContext.Request.Cookies["token"];
+                var token = HttpContext.Request.Cookies["token"];if(token==null){token = Request.Headers["Authorization"];}
                 _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
                 var endpoint = "/api/cropProtectionProducts";
@@ -72,22 +72,30 @@ namespace AgroControlUI.Controllers.CropProtectionProducts
             }
             catch (HttpRequestException ex)
             {
-                TempData["errorMessage"] = "Błąd żądania HTTP: " + ex.Message;
+                if (ex.StatusCode == System.Net.HttpStatusCode.Conflict)
+                {
+                    TempData["errorMessage"] = "Środek ochrony roślin o tej nazwie już istnieje!";
+                }
+                else
+                {
+                    TempData["errorMessage"] = "Błąd serwera, spróbuj ponownie później.";
+                    await LoadSelectLists();
+                }
+                return View(productDto);
             }
             catch (Exception ex)
             {
-                TempData["errorMessage"] = "Wystąpił nieoczekiwany błąd: " + ex.Message;
+                TempData["errorMessage"] = "Wystąpił nieoczekiwany błąd. Spróbuj ponownie później. ";
+                await LoadSelectLists();
+                return View(productDto);
             }
-
-            await LoadSelectLists();
-            return View(productDto);
         }
 
         private async Task LoadSelectLists()
         {
             try
             {
-                var token = HttpContext.Request.Cookies["token"];
+                var token = HttpContext.Request.Cookies["token"];if(token==null){token = Request.Headers["Authorization"];}
                 _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
                 ViewBag.Producers = await FetchProducers();
@@ -163,34 +171,6 @@ namespace AgroControlUI.Controllers.CropProtectionProducts
 
 
         // Delete
-        [Authorize(Policy = "AdminOnly")]
-        [HttpGet]
-        public async Task<IActionResult> Delete(int id)
-        {
-            try
-            {
-                var token = HttpContext.Request.Cookies["token"];
-                _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
-
-                var endpoint = $"/api/cropProtectionProducts/{id}";
-                var response = await _client.GetAsync(endpoint);
-                response.EnsureSuccessStatusCode();
-
-                string content = await response.Content.ReadAsStringAsync();
-                var product = JsonConvert.DeserializeObject<CropProtectionProductDto>(content);
-                return View(product);
-            }
-            catch (HttpRequestException ex)
-            {
-                TempData["errorMessage"] = "Błąd żądania HTTP: " + ex.Message;
-                return View();
-            }
-            catch (Exception ex)
-            {
-                TempData["errorMessage"] = "Wystąpił nieoczekiwany błąd: " + ex.Message;
-                return View();
-            }
-        }
 
         [Authorize(Policy = "AdminOnly")]
         [HttpPost]
@@ -198,7 +178,7 @@ namespace AgroControlUI.Controllers.CropProtectionProducts
         {
             try
             {
-                var token = HttpContext.Request.Cookies["token"];
+                var token = HttpContext.Request.Cookies["token"];if(token==null){token = Request.Headers["Authorization"];}
                 _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
                 var endpoint = $"/api/cropProtectionProducts/{id}";

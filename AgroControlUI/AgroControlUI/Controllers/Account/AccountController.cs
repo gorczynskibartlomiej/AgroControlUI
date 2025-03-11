@@ -69,9 +69,9 @@ public class AccountController : Controller
             bool isAdmin = (bool)isAdminJson.isAdmin;
 
             var claims = new List<Claim>();
-            {
-                new Claim(ClaimTypes.Name, login.Email);
-            };
+            
+            claims.Add(new Claim(ClaimTypes.Name, login.Email));
+            
 
             if (isAdmin)
             {

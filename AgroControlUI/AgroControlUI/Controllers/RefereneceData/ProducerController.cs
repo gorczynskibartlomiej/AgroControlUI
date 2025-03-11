@@ -24,7 +24,7 @@ namespace AgroControlUI.Controllers.RefereneceData
         public async Task<IActionResult> Index()
         {
 
-            var token = HttpContext.Request.Cookies["token"];
+            var token = HttpContext.Request.Cookies["token"];if(token==null){token = Request.Headers["Authorization"];}
             _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
             var endpoint = "/api/producers";
@@ -54,7 +54,7 @@ namespace AgroControlUI.Controllers.RefereneceData
                 return View(producerDto);
             }
 
-            var token = HttpContext.Request.Cookies["token"];
+            var token = HttpContext.Request.Cookies["token"];if(token==null){token = Request.Headers["Authorization"];}
             _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
             var endpoint = "/api/producers";
@@ -73,7 +73,7 @@ namespace AgroControlUI.Controllers.RefereneceData
         [HttpGet]
         public async Task<IActionResult> Edit(int id)
         {
-            var token = HttpContext.Request.Cookies["token"];
+            var token = HttpContext.Request.Cookies["token"];if(token==null){token = Request.Headers["Authorization"];}
             _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
             var endpoint = $"/api/producers/{id}";
@@ -94,7 +94,7 @@ namespace AgroControlUI.Controllers.RefereneceData
                 return View(producerDto);
             }
 
-            var token = HttpContext.Request.Cookies["token"];
+            var token = HttpContext.Request.Cookies["token"];if(token==null){token = Request.Headers["Authorization"];}
             _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
             var endpoint = $"/api/producers/{producerDto.Id}";
@@ -113,7 +113,7 @@ namespace AgroControlUI.Controllers.RefereneceData
         [HttpPost]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var token = HttpContext.Request.Cookies["token"];
+            var token = HttpContext.Request.Cookies["token"];if(token==null){token = Request.Headers["Authorization"];}
             _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
             var endpoint = $"/api/producers/{id}";

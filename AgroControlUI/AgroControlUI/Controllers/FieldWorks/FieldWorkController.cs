@@ -27,7 +27,7 @@ namespace AgroControlUI.Controllers.FieldWorks
         [HttpGet]
         public async Task<IActionResult> Index(string filterType, bool? isPlanned)
         {
-            var token = HttpContext.Request.Cookies["token"];
+            var token = HttpContext.Request.Cookies["token"];if(token==null){token = Request.Headers["Authorization"];}
             _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
             var endpoint = "/api/fieldworks";
@@ -64,7 +64,7 @@ namespace AgroControlUI.Controllers.FieldWorks
         [HttpGet]
         public async Task<IActionResult> CreateFertilizingWork()
         {
-            var token = HttpContext.Request.Cookies["token"];
+            var token = HttpContext.Request.Cookies["token"];if(token==null){token = Request.Headers["Authorization"];}
             _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
             // Pobieranie listy pól
@@ -128,7 +128,7 @@ namespace AgroControlUI.Controllers.FieldWorks
 
             try
             {
-                var token = HttpContext.Request.Cookies["token"];
+                var token = HttpContext.Request.Cookies["token"];if(token==null){token = Request.Headers["Authorization"];}
                 _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
                 // Przygotowanie danych do wysłania
@@ -174,7 +174,7 @@ namespace AgroControlUI.Controllers.FieldWorks
 
             try
             {
-                var token = HttpContext.Request.Cookies["token"];
+                var token = HttpContext.Request.Cookies["token"];if(token==null){token = Request.Headers["Authorization"];}
                 _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
                 var endpoint = "/api/sprayingWorks/create";
@@ -217,7 +217,7 @@ namespace AgroControlUI.Controllers.FieldWorks
 
             try
             {
-                var token = HttpContext.Request.Cookies["token"];
+                var token = HttpContext.Request.Cookies["token"];if(token==null){token = Request.Headers["Authorization"];}
                 _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
                 var endpoint = "/api/harvestingWorks/create";
@@ -260,7 +260,7 @@ namespace AgroControlUI.Controllers.FieldWorks
 
             try
             {
-                var token = HttpContext.Request.Cookies["token"];
+                var token = HttpContext.Request.Cookies["token"];if(token==null){token = Request.Headers["Authorization"];}
                 _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
                 var endpoint = "/api/otherWorks/create";

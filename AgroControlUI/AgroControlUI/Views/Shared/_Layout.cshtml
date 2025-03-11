@@ -89,7 +89,7 @@
                             </li>
                                 
                         }
-                        else if(User.IsInRole("Właściciel"))
+                        else if (User.IsInRole("Właściciel") || User.IsInRole("Współwłaściciel"))
                         {
                             <li class="nav-item dropdown">
                                 <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button">Gospodarstwo</a>

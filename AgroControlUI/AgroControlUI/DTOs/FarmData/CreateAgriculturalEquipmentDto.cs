@@ -7,11 +7,11 @@
         public string? Brand { get; set; }
         public string? Description { get; set; }
         public bool IsActive { get; set; }
-        public int? YearOfManufacture { get; set; }
+        public decimal? YearOfManufacture { get; set; }
         public int? FuelId { get; set; }
-        public int? FuelCapacity { get; set; }
-        public int? EnginePower { get; set; }
-        public int? Weight { get; set; }
+        public decimal? FuelCapacity { get; set; }
+        public decimal? EnginePower { get; set; }
+        public decimal? Weight { get; set; }
         public decimal? Width { get; set; }
         public decimal? Height { get; set; }
         public decimal? WorkingSpeed { get; set; }
