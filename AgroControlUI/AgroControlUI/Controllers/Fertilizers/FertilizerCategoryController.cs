@@ -68,7 +68,14 @@ namespace AgroControlUI.Controllers.Fertilizers
             }
             catch(HttpRequestException ex)
             {
-                TempData["errorMessage"] = "Błąd serwera, spróbuj ponownie później.";
+                if (ex.StatusCode == System.Net.HttpStatusCode.Conflict)
+                {
+                    TempData["errorMessage"] = "Kategoria o tej nazwie już istnieje!";
+                }
+                else
+                {
+                    TempData["errorMessage"] = "Błąd serwera, spróbuj ponownie później.";
+                }
                 return View(fertilizerCategoryDto);
             }
             catch (Exception ex)
@@ -79,34 +86,6 @@ namespace AgroControlUI.Controllers.Fertilizers
         }
 
         // Delete
-        [Authorize(Policy = "AdminOnly")]
-        [HttpGet]
-        public async Task<IActionResult> Delete(int id)
-        {
-            try
-            {
-                var token = HttpContext.Request.Cookies["token"];if(token==null){token = Request.Headers["Authorization"];}
-                _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
-
-                var endpoint = $"/api/fertilizercategories/{id}";
-                var response = await _client.GetAsync(endpoint);
-                response.EnsureSuccessStatusCode();
-
-                string content = await response.Content.ReadAsStringAsync();
-                var fertilizerCategory = JsonConvert.DeserializeObject<FertilizerCategoryDto>(content);
-                return View(fertilizerCategory);
-            }
-            catch(HttpRequestException ex)
-            {
-                TempData["errorMessage"] = "Błąd serwera, spróbuj ponownie później.";
-                return View();
-            }
-            catch (Exception ex)
-            {
-                TempData["errorMessage"] = "Wystąpił nieoczekiwany błąd. Spróbuj ponownie później. ";
-                return View();
-            }
-        }
 
         [Authorize(Policy = "AdminOnly")]
         [HttpPost]
@@ -126,7 +105,14 @@ namespace AgroControlUI.Controllers.Fertilizers
             }
             catch(HttpRequestException ex)
             {
-                TempData["errorMessage"] = "Błąd serwera, spróbuj ponownie później.";
+                if (ex.StatusCode == System.Net.HttpStatusCode.Conflict)
+                {
+                    TempData["errorMessage"] = "Nie można usunąć tego obiektu, ponieważ jest powiązany z innymi danymi.";
+                }
+                else
+                {
+                    TempData["errorMessage"] = "Błąd serwera, spróbuj ponownie później.";
+                }
                 return RedirectToAction("Index");
             }
             catch (Exception ex)
@@ -191,7 +177,14 @@ namespace AgroControlUI.Controllers.Fertilizers
             }
             catch (HttpRequestException ex)
             {
-                TempData["errorMessage"] = "Błąd serwera, spróbuj ponownie później.";
+                if (ex.StatusCode == System.Net.HttpStatusCode.Conflict)
+                {
+                    TempData["errorMessage"] = "Kategoria o tej nazwie już istnieje!";
+                }
+                else
+                {
+                    TempData["errorMessage"] = "Błąd serwera, spróbuj ponownie później.";
+                }
                 return View(fertilizerCategoryDto);
             }
             catch (Exception ex)

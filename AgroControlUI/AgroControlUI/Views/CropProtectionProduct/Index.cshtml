@@ -1,5 +1,6 @@
 ﻿@model List<AgroControlUI.DTOs.CropProtectionProducts.CropProtectionProductDto>
 
+@await Html.PartialAsync("_DescriptionModal")
 @await Html.PartialAsync("_DeleteConfirmationModal")
 <link rel="stylesheet" href="~/css/indexList.css">
 <link rel="stylesheet" href="~/css/listOperations.css">
@@ -61,7 +62,7 @@
                     @cropProtectionProduct.Name
                 </div>
                 <div class="cell producer" data-title="Producent">
-                    @cropProtectionProduct.ProducerName
+                    @cropProtectionProduct.Producer.Name
                 </div>
                 <div class="cell cppcategory" data-title="Kategorie">
                     @foreach (var cropProtectionProductCategory in cropProtectionProduct.cropProtectionProductCategories)
@@ -95,8 +96,8 @@
                 </div>
                 <div class="cell" data-title="Akcje">
                     <div class="action-buttons">
-                        <a asp-action="Details" asp-route-id="@cropProtectionProduct.Id" class="btn cancel-btn"><img src="~/images/details.svg" />Edytuj</a>
-                        <a asp-action="Edit" asp-route-id="@cropProtectionProduct.Id" class="btn edit-btn"><img src="~/images/edit.svg" />Edytuj</a>
+                            <a href="javascript:void(0);" class="cancel-btn" data-bs-toggle="modal" data-bs-target="#descriptionModal" onclick="showDescriptionModal('@cropProtectionProduct.Description')">Opis</a>
+                        <a asp-action="Edit" asp-route-id="@cropProtectionProduct.Id" class="edit-btn"><img src="~/images/edit.svg" />Edytuj</a>
                         <button type="button" class="delete-btn" data-bs-toggle="modal" data-bs-target="#deleteModal" onclick="setDeleteUrl('@Url.Action("DeleteConfirmed", new { id = cropProtectionProduct.Id })')">
                             <img src="~/images/delete.svg" />Usuń
                         </button>
@@ -109,6 +110,7 @@
     </div>
     <ul class="pagination"></ul>
 </div>
+<script src="~/js/description.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/list.js/2.3.1/list.min.js"></script>
 <script src="~/js/listOperations.js"></script>
 <script src="~/js/deleteModal.js"></script>

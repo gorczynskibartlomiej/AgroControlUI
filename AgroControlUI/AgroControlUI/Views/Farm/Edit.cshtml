@@ -19,7 +19,7 @@
                 <input asp-for="FarmNumber" required value="@Model.FarmNumber"/>
                 
                 <span class="bar"></span>
-                <label asp-for="FarmNumber">Numer gospodarstwa</label>
+                <label asp-for="FarmNumber">Numer gospodarstwa*</label>
                 <span asp-validation-for="FarmNumber" class="text-danger"></span>
             </div>
             <div class="group">
@@ -54,11 +54,14 @@
                 <textarea asp-for="Description" class="description-field" required value="@Model.Description"></textarea>
                 
                 <span class="bar"></span>
-                <label asp-for="Description">Opis</label>
+                <label asp-for="Description">Opis*</label>
                 <span asp-validation-for="Description" class="text-danger"></span>
             </div>
             <input type="hidden" id="TotalArea" name="TotalArea" value="@Model.TotalArea" />
             <input type="hidden" asp-for="Id" required value="@Model.Id" />
+            <div style="margin-bottom:20px;margin-top:-35px">
+                <span>* - pole opcjonalne</span>
+            </div>
             <div class="action-buttons">
                 <a asp-action="Index" class="cancel-btn">Anuluj</a>
                 <button type="submit" class="add-btn">Zapisz</button>

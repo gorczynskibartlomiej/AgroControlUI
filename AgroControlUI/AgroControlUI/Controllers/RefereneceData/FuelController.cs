@@ -64,7 +64,14 @@ namespace AgroControlUI.Controllers.Fuel
             }
             catch (HttpRequestException ex)
             {
-                TempData["errorMessage"] = "Błąd serwera, spróbuj ponownie później.";
+                if (ex.StatusCode == System.Net.HttpStatusCode.Conflict)
+                {
+                    TempData["errorMessage"] = "Rodzaj paliwa o tej nazwie już istnieje!";
+                }
+                else
+                {
+                    TempData["errorMessage"] = "Błąd serwera, spróbuj ponownie później.";
+                }
                 return View(fuelDto);
             }
             catch (Exception ex)
@@ -93,7 +100,14 @@ namespace AgroControlUI.Controllers.Fuel
             }
             catch (HttpRequestException ex)
             {
-                TempData["errorMessage"] = "Błąd serwera, spróbuj ponownie później.";
+                if (ex.StatusCode == System.Net.HttpStatusCode.Conflict)
+                {
+                    TempData["errorMessage"] = "Nie można usunąć tego obiektu, ponieważ jest powiązany z innymi danymi.";
+                }
+                else
+                {
+                    TempData["errorMessage"] = "Błąd serwera, spróbuj ponownie później.";
+                }
                 return RedirectToAction("Index");
             }
             catch (Exception ex)
@@ -154,7 +168,14 @@ namespace AgroControlUI.Controllers.Fuel
             }
             catch (HttpRequestException ex)
             {
-                TempData["errorMessage"] = "Błąd serwera, spróbuj ponownie później.";
+                if (ex.StatusCode == System.Net.HttpStatusCode.Conflict)
+                {
+                    TempData["errorMessage"] = "Rodzaj paliwa o tej nazwie już istnieje!";
+                }
+                else
+                {
+                    TempData["errorMessage"] = "Błąd serwera, spróbuj ponownie później.";
+                }
                 return View(fuelDto);
             }
             catch (Exception ex)

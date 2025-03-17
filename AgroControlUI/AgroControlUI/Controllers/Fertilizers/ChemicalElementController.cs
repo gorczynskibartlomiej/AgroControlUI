@@ -1,4 +1,5 @@
 ﻿using AgroControlUI.Constants;
+using AgroControlUI.DTOs.FarmData;
 using AgroControlUI.DTOs.Fertilizers;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -68,7 +69,14 @@ namespace AgroControlUI.Controllers.Fertilizers
             }
             catch (HttpRequestException ex)
             {
-                TempData["errorMessage"] = "Błąd serwera, spróbuj ponownie później.";
+                if (ex.StatusCode == System.Net.HttpStatusCode.Conflict)
+                {
+                    TempData["errorMessage"] = "Składnik chemiczny o tej nazwie już istnieje!";
+                }
+                else
+                {
+                    TempData["errorMessage"] = "Błąd serwera, spróbuj ponownie później.";
+                }
                 return View(chemicalElementDto);
             }
             catch (Exception ex)
@@ -98,7 +106,14 @@ namespace AgroControlUI.Controllers.Fertilizers
             }
             catch (HttpRequestException ex)
             {
-                TempData["errorMessage"] = "Błąd serwera, spróbuj ponownie później.";
+                if (ex.StatusCode == System.Net.HttpStatusCode.Conflict)
+                {
+                    TempData["errorMessage"] = "Nie można usunąć tego obiektu, ponieważ jest powiązany z innymi danymi.";
+                }
+                else
+                {
+                    TempData["errorMessage"] = "Błąd serwera, spróbuj ponownie później.";
+                }
                 return RedirectToAction("Index");
             }
             catch (Exception ex)
@@ -163,7 +178,14 @@ namespace AgroControlUI.Controllers.Fertilizers
             }
             catch (HttpRequestException ex)
             {
-                TempData["errorMessage"] = "Błąd serwera, spróbuj ponownie później.";
+                if (ex.StatusCode == System.Net.HttpStatusCode.Conflict)
+                {
+                    TempData["errorMessage"] = "Składnik chemiczny o tej nazwie już istnieje!";
+                }
+                else
+                {
+                    TempData["errorMessage"] = "Błąd serwera, spróbuj ponownie później.";
+                }
                 return View(chemicalElementDto);
             }
             catch (Exception ex)

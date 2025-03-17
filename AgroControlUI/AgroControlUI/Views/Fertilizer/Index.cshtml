@@ -1,64 +1,94 @@
 ﻿@model List<AgroControlUI.DTOs.Fertilizers.FertilizerDto>
 
+@await Html.PartialAsync("_DescriptionModal")
+@await Html.PartialAsync("_DeleteConfirmationModal")
 <link rel="stylesheet" href="~/css/indexList.css">
+<link rel="stylesheet" href="~/css/listOperations.css">
 
-<h1 class="green">Nawozy</h1>
+<h1 class="blue">Nawozy</h1>
 
-<div class="wrapper">
+<div id="categories" class="wrapper">
     <p>
-        <a asp-action="Create" class="add-btn btn"><img src="~/images/plus-solid.svg" />Dodaj nawóz</a>
+        <a asp-action="Create" class="add-btn"><img src="~/images/plus-solid.svg" />Dodaj nawóz</a>
     </p>
     <div class="table">
-        <div class="row header green">
-            <div class="cell">
-                Nazwa nawozu
+        <div class="row header blue" id="headerRow">
+            <div class="cell" data-sort="name" onclick="sortByColumn(this)">
+                <div class="sort-wrapper">
+                    <span class="sort-text">Nazwa nawozu</span>
+                    <span class="sort-arrow">▼</span>
+                </div>
             </div>
-            <div class="cell">
-                Producent
+            <div class="cell" data-sort="producer" onclick="sortByColumn(this)">
+                <div class="sort-wrapper">
+                    <span class="sort-text">Producent</span>
+                    <span class="sort-arrow">▼</span>
+                </div>
             </div>
-            <div class="cell">
-                Kategoria
+            <div class="cell" data-sort="fertilizerCategory">
+                Kategoria nawozu
             </div>
-            <div class="cell">
+            <div class="cell" data-sort="fertilizerComponents">
                 Skład
             </div>
             <div class="cell">
                 Akcje
             </div>
         </div>
-        @foreach (var fertilizer in Model)
-        {
-            <div class="row">
-                <div class="cell" data-title="Nazwa nawozu">
-                    @fertilizer.Name
-                </div>
-                <div class="cell" data-title="Producent">
-                    @fertilizer.ProducerName
-                </div>
-                <div class="cell" data-title="Kategoria">
-                    @fertilizer.FertilizerCategoryName
-                </div>
-                <div class="cell" data-title="Skład">
-                    @foreach (var fertilizerComponent in fertilizer.fertilizerComponents)
-                    {
-                        @($"{fertilizerComponent.ChemicalElement} ({fertilizerComponent.ElementPercentage}%)")
-                        @if (fertilizerComponent != fertilizer.fertilizerComponents.Last())
-                        {
-                            @(", ")
-                        }
-                    }
-                </div>
-                <div class="cell" data-title="Akcje">
-                    <div class="action-buttons">
-                        <a asp-action="Details" asp-route-id="@fertilizer.Id" class="btn cancel-btn"><img src="~/images/details.svg" />Edytuj</a>
-                        <a asp-action="Edit" asp-route-id="@fertilizer.Id" class="btn edit-btn"><img src="~/images/edit.svg" />Edytuj</a>
-                        <button type="button" class="delete-btn" data-bs-toggle="modal" data-bs-target="#deleteModal" onclick="setDeleteUrl('@Url.Action("DeleteConfirmed", new { id = fertilizer.Id })')">
-                            <img src="~/images/delete.svg" />Usuń
-                        </button>
-                    </div> 
-                </div>
+        <div class="row">
+            <div class="cell">
+                <input type="text" class="search-input" data-search="name" placeholder="Szukaj..." oninput="searchByColumn()" />
             </div>
-        }
-
+            <div class="cell">
+                <input type="text" class="search-input" data-search="producer" placeholder="Szukaj..." oninput="searchByColumn()" />
+            </div>
+            <div class="cell">
+            </div>
+            <div class="cell">
+            </div>
+            <div class="cell">
+            </div>
+        </div>
+        <div class="list">
+            @foreach (var fertilizer in Model)
+            {
+                <div class="row">
+                    <div class="cell name" data-title="Nazwa nawozu">
+                        @fertilizer.Name
+                    </div>
+                    <div class="cell producer" data-title="Producent">
+                        @fertilizer.Producer.Name
+                    </div>
+                    <div class="cell fertilizerCategory" data-title="Kategoria nawozu">
+                        @fertilizer.FertilizerCategory.Name
+                    </div>
+                    <div class="cell fertilizerComponents" data-title="Skład">
+                        @foreach (var component in fertilizer.FertilizerComponents)
+                        {
+                            @($"{component.ChemicalElement.Name}({component.ElementPercentage}%)")
+                            @if (component != fertilizer.FertilizerComponents.Last())
+                            {
+                                @(", ")
+                            }
+                        }
+                    </div>
+                    <div class="cell" data-title="Akcje">
+                        <div class="action-buttons">
+                            <a href="javascript:void(0);" class="cancel-btn" data-bs-toggle="modal" data-bs-target="#descriptionModal" onclick="showDescriptionModal('@fertilizer.Description')">Opis</a>
+                            <a asp-action="Edit" asp-route-id="@fertilizer.Id" class="edit-btn"><img src="~/images/edit.svg" />Edytuj</a>
+                            <button type="button" class="delete-btn" data-bs-toggle="modal" data-bs-target="#deleteModal" onclick="setDeleteUrl('@Url.Action("DeleteConfirmed", new { id = fertilizer.Id })')">
+                                <img src="~/images/delete.svg" />Usuń
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
     </div>
+    <ul class="pagination"></ul>
 </div>
+
+<script src="~/js/description.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/list.js/2.3.1/list.min.js"></script>
+<script src="~/js/listOperations.js"></script>
+<script src="~/js/deleteModal.js"></script>

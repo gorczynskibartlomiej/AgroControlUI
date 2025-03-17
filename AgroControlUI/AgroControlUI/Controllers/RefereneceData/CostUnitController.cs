@@ -65,12 +65,12 @@ namespace AgroControlUI.Controllers.RefereneceData
             }
             catch (HttpRequestException ex)
             {
-                TempData["errorMessage"] = "Błąd żądania HTTP: " + ex.Message;
+                TempData["errorMessage"] = "Błąd serwera, spróbuj ponownie później.";
                 return View(costUnitDto);
             }
             catch (Exception ex)
             {
-                TempData["errorMessage"] = "Wystąpił nieoczekiwany błąd: " + ex.Message;
+                TempData["errorMessage"] = "Wystąpił nieoczekiwany błąd. Spróbuj ponownie później. ";
                 return View(costUnitDto);
             }
         }
@@ -94,12 +94,12 @@ namespace AgroControlUI.Controllers.RefereneceData
             }
             catch (HttpRequestException ex)
             {
-                TempData["errorMessage"] = "Błąd żądania HTTP: " + ex.Message;
+                TempData["errorMessage"] = "Błąd serwera, spróbuj ponownie później.";
                 return View();
             }
             catch (Exception ex)
             {
-                TempData["errorMessage"] = "Wystąpił nieoczekiwany błąd: " + ex.Message;
+                TempData["errorMessage"] = "Wystąpił nieoczekiwany błąd. Spróbuj ponownie później. ";
                 return View();
             }
         }
@@ -123,12 +123,12 @@ namespace AgroControlUI.Controllers.RefereneceData
             }
             catch (HttpRequestException ex)
             {
-                TempData["errorMessage"] = "Błąd żądania HTTP: " + ex.Message;
+                TempData["errorMessage"] = "Błąd serwera, spróbuj ponownie później.";
                 return View();
             }
             catch (Exception ex)
             {
-                TempData["errorMessage"] = "Wystąpił nieoczekiwany błąd: " + ex.Message;
+                TempData["errorMessage"] = "Wystąpił nieoczekiwany błąd. Spróbuj ponownie później. ";
                 return View();
             }
         }
@@ -156,12 +156,12 @@ namespace AgroControlUI.Controllers.RefereneceData
             }
             catch (HttpRequestException ex)
             {
-                TempData["errorMessage"] = "Błąd żądania HTTP: " + ex.Message;
+                TempData["errorMessage"] = "Błąd serwera, spróbuj ponownie później.";
                 return View(costUnitDto);
             }
             catch (Exception ex)
             {
-                TempData["errorMessage"] = "Wystąpił nieoczekiwany błąd: " + ex.Message;
+                TempData["errorMessage"] = "Wystąpił nieoczekiwany błąd. Spróbuj ponownie później. ";
                 return View(costUnitDto);
             }
         }

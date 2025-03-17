@@ -135,12 +135,19 @@
             }
             catch (HttpRequestException ex)
             {
-                TempData["errorMessage"] = "Błąd żądania HTTP: " + ex.Message;
+                if (ex.StatusCode == System.Net.HttpStatusCode.Conflict)
+                {
+                    TempData["errorMessage"] = "Gospodarstwo o tej nazwie już istnieje!";
+                }
+                else
+                {
+                    TempData["errorMessage"] = "Błąd serwera, spróbuj ponownie później.";
+                }
                 return View(farmDto);
             }
             catch (Exception ex)
             {
-                TempData["errorMessage"] = "Wystąpił nieoczekiwany błąd: " + ex.Message;
+                TempData["errorMessage"] = "Wystąpił nieoczekiwany błąd. Spróbuj ponownie później. ";
                 return View(farmDto);
             }
         }
@@ -165,12 +172,19 @@
             }
             catch (HttpRequestException ex)
             {
-                TempData["errorMessage"] = "Błąd żądania HTTP: " + ex.Message;
+                if (ex.StatusCode == System.Net.HttpStatusCode.Conflict)
+                {
+                    TempData["errorMessage"] = "Nie można usunąć tego obiektu, ponieważ jest powiązany z innymi danymi.";
+                }
+                else
+                {
+                    TempData["errorMessage"] = "Błąd serwera, spróbuj ponownie później.";
+                }
                 return RedirectToAction("index", "Farm");
             }
             catch (Exception ex)
             {
-                TempData["errorMessage"] = "Wystąpił nieoczekiwany błąd: " + ex.Message;
+                TempData["errorMessage"] = "Wystąpił nieoczekiwany błąd. Spróbuj ponownie później. ";
                 return RedirectToAction("index", "Farm");
             }
         }
@@ -192,12 +206,12 @@
             }
             catch (HttpRequestException ex)
             {
-                TempData["errorMessage"] = "Błąd żądania HTTP: " + ex.Message;
+                TempData["errorMessage"] = "Błąd serwera, spróbuj ponownie później.";
                 return RedirectToAction("index", "Farm");
             }
             catch (Exception ex)
             {
-                TempData["errorMessage"] = "Wystąpił nieoczekiwany błąd: " + ex.Message;
+                TempData["errorMessage"] = "Wystąpił nieoczekiwany błąd. Spróbuj ponownie później. ";
                 return RedirectToAction("index", "Farm");
             }
         }
@@ -221,12 +235,12 @@
             }
             catch (HttpRequestException ex)
             {
-                TempData["errorMessage"] = "Błąd żądania HTTP: " + ex.Message;
+                TempData["errorMessage"] = "Błąd serwera, spróbuj ponownie później.";
                 return View();
             }
             catch (Exception ex)
             {
-                TempData["errorMessage"] = "Wystąpił nieoczekiwany błąd: " + ex.Message;
+                TempData["errorMessage"] = "Wystąpił nieoczekiwany błąd. Spróbuj ponownie później. ";
                 return View();
             }
         }
@@ -256,12 +270,19 @@
             }
             catch (HttpRequestException ex)
             {
-                TempData["errorMessage"] = "Błąd żądania HTTP: " + ex.Message;
+                if (ex.StatusCode == System.Net.HttpStatusCode.Conflict)
+                {
+                    TempData["errorMessage"] = "Gospodarstwo o tej nazwie już istnieje!";
+                }
+                else
+                {
+                    TempData["errorMessage"] = "Błąd serwera, spróbuj ponownie później.";
+                }
                 return View(farmDto);
             }
             catch (Exception ex)
             {
-                TempData["errorMessage"] = "Wystąpił nieoczekiwany błąd: " + ex.Message;
+                TempData["errorMessage"] = "Wystąpił nieoczekiwany błąd. Spróbuj ponownie później. ";
                 return View(farmDto);
             }
         }

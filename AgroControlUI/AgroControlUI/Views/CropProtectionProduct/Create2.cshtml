@@ -6,12 +6,58 @@
 <link rel="stylesheet" href="~/css/colors.css" />
 
 <style>
+    .remove-row {
+        background: none;
+        border: none;
+        color: #999; /* Zielony kolor */
+        font-size: 24px; /* Duży rozmiar czcionki */
+        font-weight: bold;
+        cursor: pointer;
+        padding: 5px 10px;
+        line-height: 1;
+        transition: transform 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease;
+    }
+
+        .remove-row:hover {
+            background: none;
+            border: none;
+            color: var(--main-app-color); /* Zielony kolor */
+            font-size: 24px; /* Duży rozmiar czcionki */
+            font-weight: bold;
+            cursor: pointer;
+            padding: 5px 10px;
+            line-height: 1;
+            transform: translateY(-3px);
+            transition: transform 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease;
+        }
+    /* Styl dla przycisku "Dodaj kolejny" - dopasowany do stylu action-buttons */
+    #add-ingredient {
+        display: inline-block;
+        background-color: var(--add-btn-color);
+        color: #fff;
+        border: none;
+        padding: 10px 20px;
+        font-size: 16px;
+        font-weight: 500;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: transform 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease;
+        margin-top: 10px;
+    }
+
+        #add-ingredient:hover {
+            transform: translateY(-3px);
+            box-shadow: 0px 0px 10px 3px var(--add-btn-color);
+        }
+
+
+
     .adding-wrapper {
         display: flex;
         position: relative;
         align-items: center;
         gap: 10px;
-        padding-bottom: 25px;
+        padding-bottom: 12px;
         justify-content: space-between
     }
 
@@ -23,38 +69,13 @@
             border-bottom: 2px #757575 solid;
         }
 
-        /* Styl dla inputa */
-        .adding-wrapper .input-wrapper {
-            position: relative;
-            width: 30%;
-        }
-
-        .adding-wrapper .ts-wrapper .ts-control {
-            border: none !important;
-        }
-
-        .adding-wrapper .input-wrapper input {
-            width: 100%;
-            border: none;
-            background: transparent;
-            font-size: 18px;
-            outline: none;
-            padding: 10px 10px 5px 5px;
-            border-bottom: 2px solid #757575;
-        }
-
-        .adding-wrapper .input-wrapper .input-bar {
-            bottom: -2px;
-            left: 0;
-            width: 100%;
-            height: 2px;
-            background-color: var(--main-app-color);
-            transform: scaleX(0);
-            transition: transform 0.3s ease-in-out;
-        }
+            .adding-wrapper .ts-wrapper .ts-control {
+                border: none !important;
+            }
 
     .adding-input {
         width: 25%;
+        height: 46px;
     }
 
     .adding-select {
@@ -74,7 +95,7 @@
 
             <!-- Nazwa środka -->
             <div class="group">
-                <input asp-for="Name" required />
+                <input asp-for="Name" />
                 <span class="bar"></span>
                 <label asp-for="Name">Nazwa środka ochrony roślin</label>
                 <span asp-validation-for="Name" class="text-danger"></span>
@@ -87,6 +108,7 @@
                 </select>
                 <span class="bar"></span>
                 <label asp-for="ProducerId">Producent</label>
+                <span asp-validation-for="ProducerId" class="text-danger"></span>
             </div>
 
             <!-- Kategorie -->
@@ -94,6 +116,7 @@
                 <select asp-for="CategoryIds" asp-items="ViewBag.Categories" id="categorySelect" multiple></select>
                 <span class="bar"></span>
                 <label asp-for="CategoryIds">Kategorie</label>
+                <span asp-validation-for="CategoryIds" class="text-danger"></span>
             </div>
 
             <!-- Rośliny -->
@@ -101,17 +124,23 @@
                 <select asp-for="CropIds" asp-items="ViewBag.Crops" id="cropSelect" multiple></select>
                 <span class="bar"></span>
                 <label asp-for="CropIds">Rośliny</label>
+                <span asp-validation-for="CropIds" class="text-danger"></span>
             </div>
 
             <!-- Składniki aktywne -->
             <div class="single-dropdown">
                 <div id="adding-container" class="adding-container"></div>
+                @if (TempData["ActiveIngredientErrors"] != null)
+                {
+                    <span class="text-danger">
+                        @TempData["ActiveIngredientErrors"]
+                    </span>
+                }
                 <button type="button" id="add-ingredient">Dodaj kolejny</button>
             </div>
-
             <!-- Opis -->
             <div class="group">
-                <textarea asp-for="Description" class="description-field" required></textarea>
+                <textarea asp-for="Description" class="description-field"></textarea>
                 <span class="bar"></span>
                 <label asp-for="Description">Opis</label>
                 <span asp-validation-for="Description" class="text-danger"></span>
@@ -121,6 +150,7 @@
                 <a asp-action="Index" class="cancel-btn btn">Anuluj</a>
                 <button type="submit" class="add-btn btn">Dodaj</button>
             </div>
+
         </form>
     </div>
 </div>
@@ -132,109 +162,235 @@
         <option value="@option.Value">@option.Text</option>
     }
 </select>
-
+<script src="~/lib/jquery-validation/jquery.validate.min.js"></script>
+<script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
 <script src="~/js/inputLabel.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/tom-select/dist/js/tom-select.complete.min.js"></script>
-
 <script>
-            document.addEventListener("DOMContentLoaded", function () {
-            new TomSelect("#producerSelect", { create: false, sortField: "text", placeholder: "Wybierz producenta" });
-            new TomSelect("#categorySelect", { create: false, sortField: "text", placeholder: "Wyszukaj...", plugins: ['remove_button'] });
-            new TomSelect("#cropSelect", { create: false, sortField: "text", placeholder: "Wyszukaj...", plugins: ['remove_button'] });
+            let isUpdatingOptions = false;
 
-            const addIngredientButton = document.getElementById("add-ingredient");
-            const container = document.getElementById("adding-container");
-            let selectedIngredients = new Set();
-            let ingredientSelects = [];
+    function getOriginalOptions() {
+        const compSelect = document.getElementById("componentOptions");
+        return Array.from(compSelect.options).map(opt => ({
+            value: opt.value,
+            text: opt.text
+        }));
+    }
 
-            function createIngredientRow() {
-                const wrapper = document.createElement("div");
-                wrapper.classList.add("adding-wrapper");
+    function updateAvailableOptions() {
+        // Jeśli już trwa aktualizacja, kończymy
+        if (isUpdatingOptions) return;
+        isUpdatingOptions = true;
 
-                // Select składnika
-                const selectWrapper = document.createElement("div");
-                selectWrapper.classList.add("group");
-                selectWrapper.classList.add("adding-select");
+        const originalOptions = getOriginalOptions();
+        const allSelects = document.querySelectorAll("select.ingredient-select");
 
-                const select = document.createElement("select");
-                select.classList.add("ingredient-select");
-                select.innerHTML = document.getElementById("componentOptions").innerHTML;
+        allSelects.forEach(select => {
+            const instance = select.tomselect;
+            const currentValue = instance.getValue();
+            const selectedValuesOther = new Set();
 
-                const selectBar = document.createElement("span");
-                selectBar.classList.add("bar");
-
-                const selectLabel = document.createElement("label");
-                selectLabel.textContent = "Składnik aktywny";
-
-                selectWrapper.appendChild(select);
-                selectWrapper.appendChild(selectBar);
-                selectWrapper.appendChild(selectLabel);
-
-                // Input ilości
-                const inputWrapper = document.createElement("div");
-                inputWrapper.classList.add("group");
-                inputWrapper.classList.add("adding-input");
-
-                const input = document.createElement("input");
-                input.type = "number";
-                input.min = "0";
-                input.step = "1";
-                input.required = true;
-
-                const inputBar = document.createElement("span");
-                inputBar.classList.add("bar");
-
-                const inputLabel = document.createElement("label");
-                inputLabel.textContent = "Ilość";
-
-                inputWrapper.appendChild(input);
-                inputWrapper.appendChild(inputBar);
-                inputWrapper.appendChild(inputLabel);
-
-                // Przycisk usuwania
-                const removeButton = document.createElement("button");
-                removeButton.type = "button";
-                removeButton.classList.add("remove-row");
-                removeButton.textContent = "X";
-
-                removeButton.addEventListener("click", function () {
-                    selectedIngredients.delete(select.tomselect.getValue());
-                    ingredientSelects = ingredientSelects.filter(s => s !== select.tomselect);
-                    wrapper.remove();
-                    updateDropdownOptions();
-                });
-
-                // Dodanie do wrappera
-                wrapper.appendChild(selectWrapper);
-                wrapper.appendChild(inputWrapper);
-                wrapper.appendChild(removeButton);
-                container.appendChild(wrapper);
-
-                // Inicjalizacja TomSelect
-                const ts = new TomSelect(select, {
-                    create: false,
-                    sortField: "text",
-                    placeholder: "Wybierz składnik...",
-                    plugins: ['remove_button'],
-                    onChange: function (value) {
-                        selectedIngredients.add(value);
-                        updateDropdownOptions();
+            allSelects.forEach(s => {
+                if (s !== select) {
+                    const val = s.tomselect.getValue();
+                    if (val !== "") {
+                        selectedValuesOther.add(val);
                     }
-                });
+                }
+            });
 
-                input.addEventListener("input", function () {
-        checkFilled(input);  // Sprawdzamy, czy input jest wypełniony
-    });
-    input.addEventListener("blur", function () {
-        checkFilled(input);  // Po utracie fokusu, również sprawdzamy
-    });
+            // Budujemy nową listę opcji:
+            let newOptions = [];
+            newOptions.push({ value: "", text: "Wybierz składnik aktywny" });
+            originalOptions.forEach(opt => {
+                if (!selectedValuesOther.has(opt.value) || opt.value === currentValue) {
+                    newOptions.push(opt);
+                }
+            });
 
-                ingredientSelects.push(ts);
-                updateDropdownOptions();
+            // Aktualizujemy instancję TomSelect
+            instance.clearOptions();
+            instance.addOption(newOptions);
+            instance.refreshOptions(false);
+            if (currentValue !== "") {
+                instance.setValue(currentValue);
+            } else {
+                instance.clear();
             }
-
-            addIngredientButton.addEventListener("click", createIngredientRow);
-            createIngredientRow();
         });
 
+        isUpdatingOptions = false;
+    }
+
+    // Nasłuchiwanie zmian w selectach ingredient-select
+    document.addEventListener("change", (event) => {
+        if (event.target.matches("select.ingredient-select")) {
+            updateAvailableOptions();
+        }
+    });
+
+    // Wywołaj updateAvailableOptions() na starcie
+    updateAvailableOptions();
+
+    document.addEventListener("DOMContentLoaded", function () {
+        // Inicjalizacja TomSelect dla pozostałych dropdownów
+        new TomSelect("#producerSelect", { create: false, sortField: "text", placeholder: "Wybierz producenta" });
+        new TomSelect("#categorySelect", { create: false, sortField: "text", placeholder: "Wyszukaj...", plugins: ['remove_button'] });
+        new TomSelect("#cropSelect", { create: false, sortField: "text", placeholder: "Wyszukaj...", plugins: ['remove_button'] });
+
+        const addIngredientButton = document.getElementById("add-ingredient");
+        const container = document.getElementById("adding-container");
+        // Pobieranie oryginalnych opcji z ukrytego selecta (jako string, do wstawienia początkowo)
+        const componentOptions = document.getElementById("componentOptions").innerHTML;
+
+        // Funkcja tworzenia wiersza składnika
+        function createIngredientRow(activeIngredientId = null, concentration = null) {
+            const wrapper = document.createElement("div");
+            wrapper.classList.add("adding-wrapper");
+
+            // Tworzenie selecta dla składnika aktywnego
+            const selectWrapper = document.createElement("div");
+            selectWrapper.classList.add("group", "adding-select");
+
+            const select = document.createElement("select");
+            select.classList.add("ingredient-select");
+            select.required = false;
+            select.setAttribute("data-val", "true");
+
+            // Używamy dynamicznie generowanych nazw dla selectów i inputów
+            const currentIndex = container.children.length;
+            select.name = `ActiveIngredients[${currentIndex}].ActiveIngredientId`;
+
+            const selectBar = document.createElement("span");
+            selectBar.classList.add("bar");
+
+            const selectLabel = document.createElement("label");
+            selectLabel.textContent = "Składnik aktywny";
+
+            // Wstawiamy oryginalne opcje wraz z domyślną pustą opcją
+            select.innerHTML = `<option value="" selected disabled>Wybierz składnik aktywny</option>` + componentOptions;
+
+            selectWrapper.appendChild(select);
+            selectWrapper.appendChild(selectBar);
+            selectWrapper.appendChild(selectLabel);
+
+            // Tworzenie inputa dla ilości
+            const inputWrapper = document.createElement("div");
+            inputWrapper.classList.add("group", "adding-input");
+
+            const input = document.createElement("input");
+            input.type = "number";
+            input.min = "0";
+            input.step = "1";
+            input.required = false;
+            input.name = `ActiveIngredients[${currentIndex}].Concentration`;
+
+            input.setAttribute("data-val", "true");
+            // input.setAttribute("data-val-required", "To pole jest wymagane.");
+            // input.setAttribute("data-val-number", "Wartość musi być liczbą.");
+
+            const inputBar = document.createElement("span");
+            inputBar.classList.add("bar");
+
+            const inputLabel = document.createElement("label");
+            inputLabel.textContent = "Ilość";
+
+            inputWrapper.appendChild(input);
+            inputWrapper.appendChild(inputBar);
+            inputWrapper.appendChild(inputLabel);
+
+            // Przycisk usuwania
+            const removeButton = document.createElement("button");
+            removeButton.type = "button";
+            removeButton.classList.add("remove-row");
+            removeButton.textContent = "X";
+
+            removeButton.addEventListener("click", function () {
+                console.log(`Usuwam składnik aktywny - Indeks: ${currentIndex}`);
+                wrapper.remove();
+                updateAvailableOptions();
+                updateIndexes();
+                toggleRemoveButtons();
+            });
+
+            // Dodanie elementów do wrappera i kontenera
+            wrapper.append(selectWrapper, inputWrapper, removeButton);
+            container.appendChild(wrapper);
+
+            // Inicjalizacja TomSelect dla nowego selecta
+            new TomSelect(select, {
+                create: false,
+                sortField: "text",
+                placeholder: "Wyszukaj..."
+            }).setValue("");
+
+            // Nasłuch zmiany w tym selectie
+            select.addEventListener("change", updateAvailableOptions);
+
+            input.addEventListener("input", function () {
+        if (input.value.trim() !== "") {
+            input.classList.add("filled");
+        } else {
+            input.classList.remove("filled");
+        }
+    });
+
+    input.addEventListener("blur", function () {
+        const validationError = input.closest('.group').querySelector('.input-validation-error');
+        if (validationError) {
+            // Jeśli pole ma błąd walidacji, nie usuwamy klasy 'filled'
+            input.classList.add("filled");
+        } else {
+            // Używamy tej samej logiki jak w "input", żeby dodać lub usunąć klasę 'filled'
+            if (input.value.trim() !== "") {
+                input.classList.add("filled");
+            } else {
+                input.classList.remove("filled");
+            }
+        }
+    });
+
+            updateIndexes();
+            updateAvailableOptions();
+            toggleRemoveButtons();
+        }
+
+        // Funkcja aktualizująca indeksy (dla poprawnego przypisywania nazw)
+        function updateIndexes() {
+            const allSelects = container.querySelectorAll("select.ingredient-select");
+            const allInputs = container.querySelectorAll("input[type='number']");
+
+            allSelects.forEach((select, idx) => {
+                select.name = `ActiveIngredients[${idx}].ActiveIngredientId`;
+            });
+            allInputs.forEach((input, idx) => {
+                input.name = `ActiveIngredients[${idx}].Concentration`;
+            });
+        }
+            function toggleRemoveButtons() {
+        const removeButtons = container.querySelectorAll(".remove-row");
+        const isOnlyOneLeft = removeButtons.length === 1;
+
+        removeButtons.forEach(btn => {
+            if (isOnlyOneLeft) {
+                btn.style.visibility = "hidden";
+                btn.style.opacity = "0";
+                btn.style.pointerEvents = "none";
+            } else {
+                btn.style.visibility = "visible";
+                btn.style.opacity = "1";
+                btn.style.pointerEvents = "auto";
+            }
+        });
+    }
+
+         const existingIngredients = @Html.Raw(Json.Serialize(Model.ActiveIngredients));
+    console.log(existingIngredients);
+        // Załaduj istniejące składniki do formularza
+         existingIngredients.forEach(ingredient => {
+             createIngredientRow(ingredient.ActiveIngredientId, ingredient.Concentration);
+
+        addIngredientButton.addEventListener("click", createIngredientRow);
+        createIngredientRow();
+    });
 </script>

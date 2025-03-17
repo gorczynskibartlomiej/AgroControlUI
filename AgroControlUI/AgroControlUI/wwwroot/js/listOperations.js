@@ -83,7 +83,7 @@ function sortByColumn(headerCell) {
 var options = {
     valueNames: dynamicValueNames,
     ListClass:'list',
-    page: 2,
+    page: 10,
     pagination: [{
         paginationClass: "pagination",
         innerWindow: 1,

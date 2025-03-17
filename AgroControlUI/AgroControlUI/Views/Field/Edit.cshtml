@@ -27,7 +27,7 @@
             <div class="group">
                 <textarea asp-for="Description" class="description-field" value="@Model.Description"></textarea>
                 <span class="bar"></span>
-                <label asp-for="Description">Opis</label>
+                <label asp-for="Description">Opis*</label>
                 <span asp-validation-for="Description" class="text-danger"></span>
             </div>
 
@@ -51,6 +51,9 @@
                 <span class="bar"></span>
                 <label asp-for="Area">Powierzchnia (ha)</label>
                 <span asp-validation-for="Area" class="text-danger"></span>
+            </div>
+            <div style="margin-bottom:20px;margin-top:-35px">
+                <span>* - pole opcjonalne</span>
             </div>
             <div class="action-buttons">
                 <a asp-action="Index" class="cancel-btn">Anuluj</a>

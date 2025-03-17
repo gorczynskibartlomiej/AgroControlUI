@@ -188,12 +188,12 @@ namespace AgroControlUI.Controllers.FieldWorks
             }
             catch (HttpRequestException ex)
             {
-                TempData["errorMessage"] = "Błąd żądania HTTP: " + ex.Message;
+                TempData["errorMessage"] = "Błąd serwera, spróbuj ponownie później.";
                 return View(model);
             }
             catch (Exception ex)
             {
-                TempData["errorMessage"] = "Wystąpił nieoczekiwany błąd: " + ex.Message;
+                TempData["errorMessage"] = "Wystąpił nieoczekiwany błąd. Spróbuj ponownie później. ";
                 return View(model);
             }
         }
@@ -231,12 +231,12 @@ namespace AgroControlUI.Controllers.FieldWorks
             }
             catch (HttpRequestException ex)
             {
-                TempData["errorMessage"] = "Błąd żądania HTTP: " + ex.Message;
+                TempData["errorMessage"] = "Błąd serwera, spróbuj ponownie później.";
                 return View(model);
             }
             catch (Exception ex)
             {
-                TempData["errorMessage"] = "Wystąpił nieoczekiwany błąd: " + ex.Message;
+                TempData["errorMessage"] = "Wystąpił nieoczekiwany błąd. Spróbuj ponownie później. ";
                 return View(model);
             }
         }
@@ -274,12 +274,12 @@ namespace AgroControlUI.Controllers.FieldWorks
             }
             catch (HttpRequestException ex)
             {
-                TempData["errorMessage"] = "Błąd żądania HTTP: " + ex.Message;
+                TempData["errorMessage"] = "Błąd serwera, spróbuj ponownie później.";
                 return View(model);
             }
             catch (Exception ex)
             {
-                TempData["errorMessage"] = "Wystąpił nieoczekiwany błąd: " + ex.Message;
+                TempData["errorMessage"] = "Wystąpił nieoczekiwany błąd. Spróbuj ponownie później. ";
                 return View(model);
             }
         }

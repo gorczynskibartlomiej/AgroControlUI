@@ -154,12 +154,12 @@ namespace AgroControlUI.Controllers.UserManagement
             }
             catch (HttpRequestException ex)
             {
-                TempData["errorMessage"] = "Błąd żądania HTTP: " + ex.Message;
+                TempData["errorMessage"] = "Błąd serwera, spróbuj ponownie później.";
                 return View();
             }
             catch (Exception ex)
             {
-                TempData["errorMessage"] = "Wystąpił nieoczekiwany błąd: " + ex.Message;
+                TempData["errorMessage"] = "Wystąpił nieoczekiwany błąd. Spróbuj ponownie później. ";
                 return View();
             }
         }
@@ -184,12 +184,12 @@ namespace AgroControlUI.Controllers.UserManagement
         //    }
         //    catch (HttpRequestException ex)
         //    {
-        //        TempData["errorMessage"] = "Błąd żądania HTTP: " + ex.Message;
+        //        TempData["errorMessage"] = "Błąd serwera, spróbuj ponownie później.";
         //        return View();
         //    }
         //    catch (Exception ex)
         //    {
-        //        TempData["errorMessage"] = "Wystąpił nieoczekiwany błąd: " + ex.Message;
+        //        TempData["errorMessage"] = "Wystąpił nieoczekiwany błąd. Spróbuj ponownie później. ";
         //        return View();
         //    }
         //}
@@ -219,12 +219,12 @@ namespace AgroControlUI.Controllers.UserManagement
         //    }
         //    catch (HttpRequestException ex)
         //    {
-        //        TempData["errorMessage"] = "Błąd żądania HTTP: " + ex.Message;
+        //        TempData["errorMessage"] = "Błąd serwera, spróbuj ponownie później.";
         //        return View(employeeDto);
         //    }
         //    catch (Exception ex)
         //    {
-        //        TempData["errorMessage"] = "Wystąpił nieoczekiwany błąd: " + ex.Message;
+        //        TempData["errorMessage"] = "Wystąpił nieoczekiwany błąd. Spróbuj ponownie później. ";
         //        return View(employeeDto);
         //    }
         //}

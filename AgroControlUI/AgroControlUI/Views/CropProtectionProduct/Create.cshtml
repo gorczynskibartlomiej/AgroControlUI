@@ -4,101 +4,8 @@
 <link href="https://cdn.jsdelivr.net/npm/tom-select/dist/css/tom-select.css" rel="stylesheet" />
 <link rel="stylesheet" href="~/css/addWithSelects.css" />
 <link rel="stylesheet" href="~/css/colors.css" />
+<link rel="stylesheet" href="~/css/selectWithInput.css" />
 
-<style>
-    .remove-row {
-        background: none;
-        border: none;
-        color: #28a745; /* Zielony kolor */
-        font-size: 24px; /* Duży rozmiar czcionki */
-        font-weight: bold;
-        cursor: pointer;
-        padding: 5px 10px;
-        line-height: 1;
-    }
-
-    /* Styl dla przycisku "Dodaj kolejny" - dopasowany do stylu action-buttons */
-    #add-ingredient {
-        display: inline-block;
-        background-color: #007bff; /* Główny kolor, np. niebieski */
-        color: #fff;
-        border: none;
-        padding: 10px 20px;
-        font-size: 16px;
-        font-weight: bold;
-        border-radius: 4px;
-        cursor: pointer;
-        transition: background 0.3s ease;
-        margin-top: 10px;
-    }
-
-        #add-ingredient:hover {
-            background-color: #0056b3;
-        }
-
-
-
-    .adding-wrapper {
-        display: flex;
-        position: relative;
-        align-items: center;
-        gap: 10px;
-        padding-bottom: 25px;
-        justify-content: space-between
-    }
-
-        /* Styl dla selecta */
-        .adding-wrapper .ts-wrapper {
-            position: relative;
-            width: 100%;
-            border: none;
-            border-bottom: 2px #757575 solid;
-        }
-
-        /* Styl dla inputa */
-        .adding-wrapper .input-wrapper {
-            position: relative;
-            width: 30%;
-            border: none;
-            border-bottom: 2px #757575 solid;
-        }
-
-        .adding-wrapper .ts-wrapper .ts-control {
-            border: none !important;
-        }
-
-        .adding-wrapper .input-wrapper input {
-            width: 100%;
-            border: none;
-            background: transparent;
-            font-size: 18px;
-            outline: none;
-            padding: 10px 10px 10px 5px;
-            border-bottom: 2px solid #757575;
-        }
-
-        .adding-wrapper .input-wrapper .input-bar {
-            bottom: -2px;
-            left: 0;
-            width: 100%;
-            height: 2px;
-            background-color: var(--main-app-color);
-            transform: scaleX(0);
-            transition: transform 0.3s ease-in-out;
-        }
-
-    .adding-input {
-        width: 25%;
-    }
-
-    .adding-select {
-        width: 60%;
-    }
-
-    .adding-wrapper .group {
-        margin-bottom: 15px;
-    }
-</style>
 
 <div class="form-container">
     <div class="green-form">
@@ -108,7 +15,7 @@
 
             <!-- Nazwa środka -->
             <div class="group">
-                <input asp-for="Name" required />
+                <input asp-for="Name" />
                 <span class="bar"></span>
                 <label asp-for="Name">Nazwa środka ochrony roślin</label>
                 <span asp-validation-for="Name" class="text-danger"></span>
@@ -121,6 +28,7 @@
                 </select>
                 <span class="bar"></span>
                 <label asp-for="ProducerId">Producent</label>
+                <span asp-validation-for="ProducerId" class="text-danger"></span>
             </div>
 
             <!-- Kategorie -->
@@ -128,6 +36,7 @@
                 <select asp-for="CategoryIds" asp-items="ViewBag.Categories" id="categorySelect" multiple></select>
                 <span class="bar"></span>
                 <label asp-for="CategoryIds">Kategorie</label>
+                <span asp-validation-for="CategoryIds" class="text-danger"></span>
             </div>
 
             <!-- Rośliny -->
@@ -135,27 +44,36 @@
                 <select asp-for="CropIds" asp-items="ViewBag.Crops" id="cropSelect" multiple></select>
                 <span class="bar"></span>
                 <label asp-for="CropIds">Rośliny</label>
+                <span asp-validation-for="CropIds" class="text-danger"></span>
             </div>
 
             <!-- Składniki aktywne -->
             <div class="single-dropdown">
                 <div id="adding-container" class="adding-container"></div>
+                @if (TempData["ActiveIngredientErrors"] != null)
+                {
+                    <span class="text-danger">
+                        @TempData["ActiveIngredientErrors"]
+                    </span>
+                }
                 <button type="button" id="add-ingredient">Dodaj kolejny</button>
             </div>
-
             <!-- Opis -->
             <div class="group">
-                <textarea asp-for="Description" class="description-field" required></textarea>
+                <textarea asp-for="Description" class="description-field"></textarea>
                 <span class="bar"></span>
-                <label asp-for="Description">Opis</label>
+                <label asp-for="Description">Opis*</label>
                 <span asp-validation-for="Description" class="text-danger"></span>
             </div>
-
+            <div style="margin-bottom:20px;margin-top:-35px">
+                <span>* - pole opcjonalne</span>
+            </div>
+            
             <div class="action-buttons">
                 <a asp-action="Index" class="cancel-btn btn">Anuluj</a>
                 <button type="submit" class="add-btn btn">Dodaj</button>
             </div>
-
+            
         </form>
     </div>
 </div>
@@ -167,7 +85,8 @@
         <option value="@option.Value">@option.Text</option>
     }
 </select>
-
+<script src="~/lib/jquery-validation/jquery.validate.min.js"></script>
+<script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
 <script src="~/js/inputLabel.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/tom-select/dist/js/tom-select.complete.min.js"></script>
 <script>
@@ -258,13 +177,12 @@
 
             const select = document.createElement("select");
             select.classList.add("ingredient-select");
-            select.required = true;
+            select.required = false;
+            select.setAttribute("data-val", "true");
+            // select.setAttribute("data-val-required", "To pole jest wymagane.");
             // Używamy dynamicznie generowanych nazw dla selectów i inputów
             const currentIndex = container.children.length;
             select.name = `ActiveIngredients[${currentIndex}].ActiveIngredientId`;
-
-            console.log(`Tworzę składnik aktywny - Indeks: ${currentIndex}`);
-            console.log(`Nazwa dla selecta: ${select.name}`);
 
             const selectBar = document.createElement("span");
             selectBar.classList.add("bar");
@@ -287,16 +205,18 @@
             input.type = "number";
             input.min = "0";
             input.step = "1";
-            input.required = true;
+            input.required = false;
             input.name = `ActiveIngredients[${currentIndex}].Concentration`;
 
-            console.log(`Nazwa dla inputa: ${input.name}`);
+            input.setAttribute("data-val", "true");
+            // input.setAttribute("data-val-required", "To pole jest wymagane.");
+            // input.setAttribute("data-val-number", "Wartość musi być liczbą.");
 
             const inputBar = document.createElement("span");
             inputBar.classList.add("bar");
 
             const inputLabel = document.createElement("label");
-            inputLabel.textContent = "Ilość";
+            inputLabel.textContent = "Ilość (g)";
 
             inputWrapper.appendChild(input);
             inputWrapper.appendChild(inputBar);
@@ -309,10 +229,10 @@
             removeButton.textContent = "X";
 
             removeButton.addEventListener("click", function () {
-                console.log(`Usuwam składnik aktywny - Indeks: ${currentIndex}`);
                 wrapper.remove();
                 updateAvailableOptions();
                 updateIndexes();
+                toggleRemoveButtons();
             });
 
             // Dodanie elementów do wrappera i kontenera
@@ -354,6 +274,7 @@
 
             updateIndexes();
             updateAvailableOptions();
+            toggleRemoveButtons();
         }
 
         // Funkcja aktualizująca indeksy (dla poprawnego przypisywania nazw)
@@ -368,192 +289,23 @@
                 input.name = `ActiveIngredients[${idx}].Concentration`;
             });
         }
+            function toggleRemoveButtons() {
+        const removeButtons = container.querySelectorAll(".remove-row");
+        const isOnlyOneLeft = removeButtons.length === 1;
 
+        removeButtons.forEach(btn => {
+            if (isOnlyOneLeft) {
+                btn.style.visibility = "hidden";
+                btn.style.opacity = "0";
+                btn.style.pointerEvents = "none"; 
+            } else {
+                btn.style.visibility = "visible";
+                btn.style.opacity = "1";
+                btn.style.pointerEvents = "auto";
+            }
+        });
+    }
         addIngredientButton.addEventListener("click", createIngredientRow);
         createIngredientRow();
     });
 </script>
-
-@* <script>
-        function updateAvailableOptions() {
-        // Pobieramy wszystkie wybrane wartości
-        const selectedValues = new Set(
-            Array.from(document.querySelectorAll("select.ingredient-select"))
-                .map(select => select.value)
-                .filter(value => value) // Pomijamy puste
-        );
-
-        document.querySelectorAll("select.ingredient-select").forEach(select => {
-            // Pobieramy wszystkie opcje w danym selekcie
-            Array.from(select.options).forEach(option => {
-                // Jeśli opcja jest już wybrana w innym selekcie, ukrywamy ją
-                if (selectedValues.has(option.value) && option.value !== select.value) {
-                    option.hidden = true;
-                } else {
-                    option.hidden = false;
-                }
-            });
-        });
-    }
-
-    // Nasłuchiwanie zmian w selectach
-    document.addEventListener("change", (event) => {
-        if (event.target.matches("select.ingredient-select")) {
-            updateAvailableOptions();
-        }
-    });
-
-    // Wywołaj na starcie i po dodaniu nowego składnika
-    updateAvailableOptions();
-            document.addEventListener("DOMContentLoaded", function () {
-        // Inicjalizacja TomSelect dla dropdownów
-        new TomSelect("#producerSelect", { create: false, sortField: "text", placeholder: "Wybierz producenta" });
-        new TomSelect("#categorySelect", { create: false, sortField: "text", placeholder: "Wyszukaj...", plugins: ['remove_button'] });
-        new TomSelect("#cropSelect", { create: false, sortField: "text", placeholder: "Wyszukaj...", plugins: ['remove_button'] });
-
-        const addIngredientButton = document.getElementById("add-ingredient");
-        const container = document.getElementById("adding-container");
-
-        // Pobieranie opcji składników z ukrytego selecta
-        const componentOptions = document.getElementById("componentOptions").innerHTML;
-
-        // Funkcja tworzenia wiersza składnika
-        function createIngredientRow() {
-            const wrapper = document.createElement("div");
-            wrapper.classList.add("adding-wrapper");
-
-            // Select składnika aktywnego
-            const selectWrapper = document.createElement("div");
-            selectWrapper.classList.add("group");
-            selectWrapper.classList.add("adding-select");
-
-            const select = document.createElement("select");
-            select.classList.add("ingredient-select");
-            select.required = true;
-            // Używamy dynamicznie generowanych nazw dla selectów i inputów
-            const currentIndex = container.children.length;  // Pobieramy aktualny indeks na podstawie liczby dzieci w kontenerze
-            select.name = `ActiveIngredients[${currentIndex}].ActiveIngredientId`; // Zmieniamy indeks na aktualny
-
-            console.log(`Tworzę składnik aktywny - Indeks: ${currentIndex}`);
-            console.log(`Nazwa dla selecta: ${select.name}`);  // Logujemy nazwę pola dla selecta
-
-            const selectBar = document.createElement("span");
-            selectBar.classList.add("bar");
-
-            const selectLabel = document.createElement("label");
-            selectLabel.textContent = "Składnik aktywny";
-
-            // Wstawienie opcji składników z ukrytego elementu
-            select.innerHTML = componentOptions;
-
-            selectWrapper.appendChild(select);
-            selectWrapper.appendChild(selectBar);
-            selectWrapper.appendChild(selectLabel);
-
-            // Input ilości składnika
-            const inputWrapper = document.createElement("div");
-            inputWrapper.classList.add("group");
-            inputWrapper.classList.add("adding-input");
-
-            const input = document.createElement("input");
-            input.type = "number";
-            input.min = "0";
-            input.step = "1";
-            input.required = true;
-
-            // Dynamiczne nadawanie nazw dla inputów
-            input.name = `ActiveIngredients[${currentIndex}].Concentration`; // Zmieniamy indeks na aktualny
-
-            console.log(`Nazwa dla inputa: ${input.name}`);  // Logujemy nazwę pola dla inputa
-
-            const inputBar = document.createElement("span");
-            inputBar.classList.add("bar");
-
-            const inputLabel = document.createElement("label");
-            inputLabel.textContent = "Ilość";
-
-            inputWrapper.appendChild(input);
-            inputWrapper.appendChild(inputBar);
-            inputWrapper.appendChild(inputLabel);
-
-            // Przycisk usuwania
-            const removeButton = document.createElement("button");
-            removeButton.type = "button";
-            removeButton.classList.add("remove-row");
-            removeButton.textContent = "X";
-
-            removeButton.addEventListener("click", function () {
-                console.log(`Usuwam składnik aktywny - Indeks: ${currentIndex}`);
-                wrapper.remove();  // Usuwanie składnika z formularza
-                updateIndexes(); // Aktualizujemy indeksy po usunięciu składnika
-            });
-
-            // Dodanie składnika do formularza
-            wrapper.appendChild(selectWrapper);
-            wrapper.appendChild(inputWrapper);
-            wrapper.appendChild(removeButton);
-            container.appendChild(wrapper);
-
-            // Inicjalizacja TomSelect dla nowego selecta
-            new TomSelect(select, {
-                create: false,
-                sortField: "text",
-                placeholder: "Wyszukaj..."
-            }).setValue("");
-
-            // Zaktualizuj indeksy po dodaniu składnika
-            updateIndexes();
-        }
-
-        // Funkcja do aktualizacji indeksów
-            function updateIndexes() {
-        const allSelects = container.querySelectorAll("select.ingredient-select");
-        const allInputs = container.querySelectorAll("input[type='number']");
-
-        console.log("Aktualizuję indeksy...");
-        console.log("Liczba selectów:", allSelects.length);
-        console.log("Liczba inputów:", allInputs.length);
-            console.log("Lista selectów w kontenerze:");
-    allSelects.forEach((select, idx) => {
-        console.log(`Select ${idx}:`, select, "Name:", select.name);
-        console.log("Czy drugi select istnieje w DOM-ie?", document.body.contains(allSelects[1]));
-    });
-
-        allSelects.forEach((select, idx) => {
-            console.log(`Select ${idx}: ${select ? select.name : "undefined"}`);
-        });
-
-        allInputs.forEach((input, idx) => {
-            console.log(`Input ${idx}: ${input ? input.name : "undefined"}`);
-        });
-
-        allSelects.forEach((select, idx) => {
-            if (select) {
-                const oldName = select.name;
-                select.name = `ActiveIngredients[${idx}].ActiveIngredientId`;
-                console.log(`Zmieniam nazwę selecta: ${oldName} → ${select.name}`);
-            } else {
-                console.log(`BŁĄD: Select ${idx} jest undefined!`);
-            }
-        });
-
-        allInputs.forEach((input, idx) => {
-            if (input) {
-                const oldName = input.name;
-                input.name = `ActiveIngredients[${idx}].Concentration`;
-                console.log(`Zmieniam nazwę inputa: ${oldName} → ${input.name}`);
-            } else {
-                console.log(`BŁĄD: Input ${idx} jest undefined!`);
-            }
-        });
-    }
-
-
-        // Obsługa przycisku dodawania składnika
-        addIngredientButton.addEventListener("click", createIngredientRow);
-
-        // Początkowe wywołanie do utworzenia pierwszego składnika
-        createIngredientRow();
-    });
-
-</script> *@

@@ -139,7 +139,7 @@
     .single-dropdown label {
         display: block !important;
         margin-bottom: 5px;
-        color: #999 !important;
+/*        color: #999 !important;*/
         font-size: 18px;
         font-weight: normal;
         position: absolute;

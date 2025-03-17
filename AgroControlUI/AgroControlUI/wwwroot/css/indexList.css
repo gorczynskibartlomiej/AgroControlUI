@@ -170,6 +170,7 @@
 .cancel-btn {
     font-weight: 500;
     display: inline-flex;
+    border:none;
     align-items: center;
     text-decoration: none;
     color: white;

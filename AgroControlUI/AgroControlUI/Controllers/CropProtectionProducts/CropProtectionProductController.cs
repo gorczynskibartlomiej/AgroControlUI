@@ -52,6 +52,17 @@ namespace AgroControlUI.Controllers.CropProtectionProducts
         {
             if (!ModelState.IsValid)
             {
+                var activeIngredientErrors = ModelState
+            .Where(m => m.Key.StartsWith("ActiveIngredients") && m.Value.Errors.Any())
+            .SelectMany(m => m.Value.Errors)
+            .Select(e => e.ErrorMessage)
+            .ToList();
+
+                // Jeżeli są błędy, przekazujemy je do TempData
+                if (activeIngredientErrors.Any())
+                {
+                    TempData["ActiveIngredientErrors"] = "Musisz wybrać składnik aktywny. Ilość składnika musi być liczbą całkowitą większą od zera.";
+                }
                 await LoadSelectLists();
                 return View(productDto);
             }
@@ -105,12 +116,15 @@ namespace AgroControlUI.Controllers.CropProtectionProducts
             }
             catch (Exception ex)
             {
-                TempData["errorMessage"] = "Nie udało się załadować list";
+                TempData["errorMessage"] = "Nie udało się załadować list. Spróbuj ponownie.";
             }
         }
 
         private async Task<List<SelectListItem>> FetchProducers()
         {
+            var token = HttpContext.Request.Cookies["token"]; if (token == null) { token = Request.Headers["Authorization"]; }
+            _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
             var response = await _client.GetAsync("/api/producers");
             response.EnsureSuccessStatusCode();
 
@@ -126,6 +140,9 @@ namespace AgroControlUI.Controllers.CropProtectionProducts
 
         private async Task<List<SelectListItem>> FetchCrops()
         {
+            var token = HttpContext.Request.Cookies["token"]; if (token == null) { token = Request.Headers["Authorization"]; }
+            _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
             var response = await _client.GetAsync("/api/crops");
             response.EnsureSuccessStatusCode();
 
@@ -141,6 +158,9 @@ namespace AgroControlUI.Controllers.CropProtectionProducts
 
         private async Task<List<SelectListItem>> FetchActiveIngredients()
         {
+            var token = HttpContext.Request.Cookies["token"]; if (token == null) { token = Request.Headers["Authorization"]; }
+            _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
             var response = await _client.GetAsync("/api/activeIngredients");
             response.EnsureSuccessStatusCode();
 
@@ -156,6 +176,9 @@ namespace AgroControlUI.Controllers.CropProtectionProducts
 
         private async Task<List<SelectListItem>> FetchCategories()
         {
+            var token = HttpContext.Request.Cookies["token"]; if (token == null) { token = Request.Headers["Authorization"]; }
+            _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
             var response = await _client.GetAsync("/api/cropProtectionProductCategories");
             response.EnsureSuccessStatusCode();
 
@@ -190,17 +213,138 @@ namespace AgroControlUI.Controllers.CropProtectionProducts
             }
             catch (HttpRequestException ex)
             {
-                TempData["errorMessage"] = "Błąd żądania HTTP: " + ex.Message;
+                if (ex.StatusCode == System.Net.HttpStatusCode.Conflict)
+                {
+                    TempData["errorMessage"] = "Nie można usunąć tego obiektu, ponieważ jest powiązany z innymi danymi.";
+                }
+                else
+                {
+                    TempData["errorMessage"] = "Błąd serwera, spróbuj ponownie później.";
+                }
                 return View();
             }
             catch (Exception ex)
             {
-                TempData["errorMessage"] = "Wystąpił nieoczekiwany błąd: " + ex.Message;
+                TempData["errorMessage"] = "Wystąpił nieoczekiwany błąd. Spróbuj ponownie później.";
                 return View();
             }
         }
 
-        
+        // Edit - GET
+        [Authorize(Policy = "AdminOnly")]
+        [HttpGet]
+        public async Task<IActionResult> Edit(int id)
+        {
+            try
+            {
+                var token = HttpContext.Request.Cookies["token"]; if (token == null) { token = Request.Headers["Authorization"]; }
+                _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
+                var endpoint = $"/api/cropProtectionProducts/{id}";
+                var result = await _client.GetAsync(endpoint);
+
+                if (!result.IsSuccessStatusCode)
+                {
+                    TempData["errorMessage"] = "Nie udało się pobrać danych środka ochrony roślin.";
+                    return RedirectToAction("Index");
+                }
+
+                var content = await result.Content.ReadAsStringAsync();
+                var product = JsonConvert.DeserializeObject<CropProtectionProductDto>(content);
+
+                var createProduct = new CreateCropProtectionProductDto
+                {
+                    Id = product.Id,
+                    Name = product.Name,
+                    ProducerId = product.Producer.Id,
+                    CropIds = product.cropProtectionProductCrops?.Select(crop => crop.Id).ToList(),
+
+                    ActiveIngredients = product.cropProtectionProductComponents?.Select(component => new CreateCropProtectionProductComponent
+                    {
+                        ActiveIngredientId = component.ComponentId,
+                        Concentration = component.Concentration
+                    }).ToList(),
+
+                    CategoryIds = product.cropProtectionProductCategories?.Select(category => category.Id).ToList()
+                };
+
+                await LoadSelectLists();
+                return View(createProduct);
+            }
+            catch (HttpRequestException ex)
+            {
+                TempData["errorMessage"] = "Błąd serwera, spróbuj ponownie później.";
+                return View();
+            }
+            catch (Exception ex)
+            {
+                TempData["errorMessage"] = "Wystąpił nieoczekiwany błąd. Spróbuj ponownie później.";
+                return View();
+            }
+        }
+
+        // Edit - POST
+        [Authorize(Policy = "AdminOnly")]
+        [HttpPost]
+        public async Task<IActionResult> Edit(CreateCropProtectionProductDto productDto)
+        {
+            if (!ModelState.IsValid)
+            {
+                var activeIngredientErrors = ModelState
+                   .Where(m => m.Key.StartsWith("ActiveIngredients") && m.Value.Errors.Any())
+                   .SelectMany(m => m.Value.Errors)
+                   .Select(e => e.ErrorMessage)
+                   .ToList();
+
+                if (activeIngredientErrors.Any())
+                {
+                    TempData["ActiveIngredientErrors"] = "Musisz wybrać składnik aktywny. Ilość składnika musi być liczbą całkowitą większą od zera.";
+                }
+                await LoadSelectLists();
+                return View(productDto);
+            }
+
+            try
+            {
+                var token = HttpContext.Request.Cookies["token"]; if (token == null) { token = Request.Headers["Authorization"]; }
+                _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
+                var endpoint = $"/api/cropProtectionProducts/{productDto.Id}";
+                var content = JsonConvert.SerializeObject(productDto);
+                var stringContent = new StringContent(content, Encoding.UTF8, "application/json");
+
+                var response = await _client.PutAsync(endpoint, stringContent);
+
+                if (!response.IsSuccessStatusCode)
+                {
+                    TempData["errorMessage"] = "Błąd podczas aktualizacji środka ochrony roślin.";
+                    await LoadSelectLists();
+                    return View(productDto);
+                }
+
+                TempData["successMessage"] = "Środek ochrony roślin został pomyślnie zaktualizowany!";
+                return RedirectToAction("Index");
+            }
+            catch (HttpRequestException ex)
+            {
+                if (ex.StatusCode == System.Net.HttpStatusCode.Conflict)
+                {
+                    TempData["errorMessage"] = "Środek ochrony roślin o tej nazwie już istnieje!";
+                }
+                else
+                {
+                    TempData["errorMessage"] = "Błąd serwera, spróbuj ponownie później.";
+                }
+            }
+            catch (Exception ex)
+            {
+                TempData["errorMessage"] = "Wystąpił nieoczekiwany błąd. Spróbuj ponownie później.";
+            }
+
+            await LoadSelectLists();
+            return View(productDto);
+        }
+
 
         protected override void Dispose(bool disposing)
         {

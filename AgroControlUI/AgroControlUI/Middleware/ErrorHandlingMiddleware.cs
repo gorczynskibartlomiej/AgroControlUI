@@ -55,6 +55,7 @@ namespace AgroControlUI.Middleware
                 context.Response.Redirect("/Account/Login");
                 return;
             }
+            context.Response.Redirect("/Home");
             return;
         }
     }

@@ -3,7 +3,7 @@
     public class CreateCropProtectionProductComponent
     {
 
-        public int ActiveIngredientId { get; set; }
-        public int Concentration { get; set; }
+        public int? ActiveIngredientId { get; set; }
+        public int? Concentration { get; set; }
     }
 }

@@ -30,7 +30,7 @@
             <div class="group">
                 <textarea asp-for="Description" value="@Model.Description" class="description-field"></textarea>
                 <span class="bar"></span>
-                <label asp-for="Description">Opis</label>
+                <label asp-for="Description">Opis*</label>
                 <span asp-validation-for="Description" class="text-danger"></span>
             </div>
             <div class="single-dropdown">
@@ -44,7 +44,7 @@
             <div class="group">
                 <input asp-for="YearOfManufacture" value="@Model.YearOfManufacture" type="number" data-val-number="Rok produkcji musi być liczbą." />
                 <span class="bar"></span>
-                <label asp-for="YearOfManufacture">Rok produkcji</label>
+                <label asp-for="YearOfManufacture">Rok produkcji*</label>
                 <span asp-validation-for="YearOfManufacture" class="text-danger"></span>
             </div>
             <div class="single-dropdown">
@@ -52,66 +52,66 @@
                     <option value=""></option>
                 </select>
                 <span class="bar"></span>
-                <label asp-for="FuelId">Rodzaj paliwa</label>
+                <label asp-for="FuelId">Rodzaj paliwa*</label>
             </div>
             <div class="group">
                 <input asp-for="FuelCapacity" type="number" value="@Model.FuelCapacity" data-val-number="Pojemność zbiornika musi być liczbą." />
                 <span class="bar"></span>
-                <label asp-for="FuelCapacity">Zbiornik paliwa (l)</label>
+                <label asp-for="FuelCapacity">Zbiornik paliwa (l)*</label>
                 <span asp-validation-for="FuelCapacity" class="text-danger"></span>
             </div>
             <div class="group">
                 <input asp-for="EnginePower" value="@Model.EnginePower" type="number" data-val-number="Moc silnika musi być liczbą." />
                 <span class="bar"></span>
-                <label asp-for="EnginePower">Moc silnika (KM)</label>
+                <label asp-for="EnginePower">Moc silnika (KM)*</label>
                 <span asp-validation-for="EnginePower" class="text-danger"></span>
             </div>
             <div class="group">
                 <input asp-for="Weight" type="number" value="@Model.Weight" data-val-number="Waga musi być liczbą." />
                 <span class="bar"></span>
-                <label asp-for="Weight">Waga (kg)</label>
+                <label asp-for="Weight">Waga (kg)*</label>
                 <span asp-validation-for="Weight" class="text-danger"></span>
             </div>
             <div class="group">
                 <input asp-for="Width" type="number" value="@Model.Width" data-val-number="Szerokość musi być liczbą." />
                 <span class="bar"></span>
-                <label asp-for="Width">Szerokość (m)</label>
+                <label asp-for="Width">Szerokość (m)*</label>
                 <span asp-validation-for="Width" class="text-danger"></span>
             </div>
             <div class="group">
                 <input asp-for="WorkingWidth" type="number" value="@Model.WorkingWidth"  data-val-number="Szerkość robocza musi być liczbą." />
                 <span class="bar"></span>
-                <label asp-for="WorkingWidth">Szerokość robocza (m)</label>
+                <label asp-for="WorkingWidth">Szerokość robocza (m)*</label>
                 <span asp-validation-for="WorkingWidth" class="text-danger"></span>
             </div>
             <div class="group">
                 <input asp-for="Height" type="number" value="@Model.Height"  data-val-number="Wysokość musi być liczbą." />
                 <span class="bar"></span>
-                <label asp-for="Height">Wysokość (m)</label>
+                <label asp-for="Height">Wysokość (m)*</label>
                 <span asp-validation-for="Height" class="text-danger"></span>
             </div>
             <div class="group">
                 <input asp-for="WorkingSpeed" value="@Model.WorkingSpeed" type="number" data-val-number="Prędkość robocza musi być liczbą." />
                 <span class="bar"></span>
-                <label asp-for="WorkingSpeed">Prędkość robocza (km/h)</label>
+                <label asp-for="WorkingSpeed">Prędkość robocza (km/h)*</label>
                 <span asp-validation-for="WorkingSpeed" class="text-danger"></span>
             </div>
             <div class="group">
                 <input asp-for="TransportSpeed" value="@Model.TransportSpeed" type="number" data-val-number="Prędkość musi być liczbą." />
                 <span class="bar"></span>
-                <label asp-for="TransportSpeed">Prędkość transportowa (km/h)</label>
+                <label asp-for="TransportSpeed">Prędkość transportowa (km/h)*</label>
                 <span asp-validation-for="TransportSpeed" class="text-danger"></span>
             </div>
             <div class="group">
                 <input asp-for="LastServiceDate" value="@Model.LastServiceDate" type="date" />
                 <span class="bar"></span>
-                <label asp-for="LastServiceDate">Ostatni serwis</label>
+                <label asp-for="LastServiceDate">Ostatni serwis*</label>
                 <span asp-validation-for="LastServiceDate" class="text-danger"></span>
             </div>
             <div class="group">
                 <input asp-for="NextServiceDate" value="@Model.NextServiceDate" type="date" />
                 <span class="bar"></span>
-                <label asp-for="NextServiceDate">Następny serwis</label>
+                <label asp-for="NextServiceDate">Następny serwis*</label>
                 <span asp-validation-for="NextServiceDate" class="text-danger"></span>
             </div>
 
