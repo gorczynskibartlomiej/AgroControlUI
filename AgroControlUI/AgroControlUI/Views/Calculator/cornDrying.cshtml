@@ -95,9 +95,13 @@
                 hasError = true;
             }
 
-            if (!isNaN(finalMoisture) && finalMoisture >= 0 && finalMoisture < initialMoisture) {
+            if (!isNaN(finalMoisture) && finalMoisture >= 0 && finalMoisture < initialMoisture && finalMoisture<=99) {
                 showError("errorFinalMoisture", "");
-            } else if (document.getElementById("finalMoisture").value !== "") {
+            }
+            else if(finalMoisture <= 0 || finalMoisture > 99){
+                showError("errorFinalMoisture", "Podaj wilgotność między 1 a 99%.");
+            }
+            else if (document.getElementById("finalMoisture").value !== "") {
                 showError("errorFinalMoisture", "Wilgotność końcowa musi być mniejsza niż początkowa.");
                 hasError = true;
             }

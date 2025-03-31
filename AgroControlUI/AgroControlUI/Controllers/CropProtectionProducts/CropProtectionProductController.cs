@@ -258,6 +258,7 @@ namespace AgroControlUI.Controllers.CropProtectionProducts
                     Name = product.Name,
                     ProducerId = product.Producer.Id,
                     CropIds = product.cropProtectionProductCrops?.Select(crop => crop.Id).ToList(),
+                    Description = product.Description,
 
                     ActiveIngredients = product.cropProtectionProductComponents?.Select(component => new CreateCropProtectionProductComponent
                     {

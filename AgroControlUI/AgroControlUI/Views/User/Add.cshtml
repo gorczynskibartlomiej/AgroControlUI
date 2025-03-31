@@ -9,17 +9,15 @@
         <form asp-action="Add" method="post">
             <h1>Zaproś użytkownika</h1>
 
-            <!-- Email -->
             <div class="group">
-                <input asp-for="Email" type="email" required />
+                <input asp-for="Email" type="email"  />
                 <span class="bar"></span>
                 <label asp-for="Email">Adres e-mail</label>
                 <span asp-validation-for="Email" class="text-danger"></span>
             </div>
 
-            <!-- Wybór roli -->
             <div class="single-dropdown">
-                <select asp-for="RoleId" asp-items="ViewBag.Roles" id="roleSelect" required>
+                <select asp-for="RoleId" asp-items="ViewBag.Roles" id="roleSelect" >
                     <option value=""></option>
                 </select>
                 <span class="bar"></span>

@@ -88,7 +88,7 @@
             return RedirectToAction("Index", "Home");
         }
         //Get
-        [Authorize(Policy = "OwnerOrCoOwner")]
+        [Authorize(Policy = "OwnerOrWorker")]
         [HttpGet]
         public async Task<IActionResult> Index()
         {

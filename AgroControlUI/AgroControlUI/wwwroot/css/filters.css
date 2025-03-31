@@ -1,0 +1,48 @@
+﻿.custom-dropdown {
+    position: relative;
+    display: inline-block;
+    width: 250px;
+    margin-bottom: 20px;
+}
+
+    .custom-dropdown select {
+        width: 100%;
+        padding: 12px 16px;
+        font-size: 16px;
+        border: 2px solid #ccc;
+        border-radius: 8px;
+        background: white;
+        appearance: none;
+        outline: none;
+        cursor: pointer;
+        transition: 0.3s ease;
+    }
+
+        /* Efekt focus jak w Tom Select */
+        .custom-dropdown select:focus {
+            border-color: #4CAF50;
+            box-shadow: 0 0 5px rgba(76, 175, 80, 0.5);
+        }
+
+    /* Etykieta (label) nad dropdownem */
+    .custom-dropdown label {
+        position: absolute;
+        top: -10px;
+        left: 12px;
+        font-size: 14px;
+        background: white;
+        padding: 0 5px;
+        color: #4CAF50;
+    }
+
+    /* Strzałka wewnątrz dropdowna */
+    .custom-dropdown::after {
+        content: '▼';
+        position: absolute;
+        right: 12px;
+        top: 50%;
+        transform: translateY(-50%);
+        font-size: 16px;
+        color: #757575;
+        pointer-events: none;
+    }

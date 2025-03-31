@@ -4,13 +4,45 @@
 @await Html.PartialAsync("_DeleteConfirmationModal")
 <link rel="stylesheet" href="~/css/indexList.css">
 <link rel="stylesheet" href="~/css/listOperations.css">
-
+<link rel="stylesheet" href="~/css/filters.css">
+<style>
+    .name
+    {
+        max-width:30%;
+    }
+     
+</style>
 <h1 class="blue">Środki ochrony roślin</h1>
 
 <div id="categories" class="wrapper">
-    <p>
-        <a asp-action="Create" class="add-btn"><img src="~/images/plus-solid.svg" />Dodaj środek ochrony roślin</a>
-    </p>
+    @if (User.IsInRole("Admin"))
+    {
+        <p>
+            <a asp-action="Create" class="add-btn"><img src="~/images/plus-solid.svg" />Dodaj środek ochrony roślin</a>
+        </p>
+    }
+    <div class="custom-dropdown">
+        <select id="filterCategory" name="Category">
+            <option value="" selected>Wszystkie kategorie</option>
+            @foreach (var category in Model.SelectMany(p => p.cropProtectionProductCategories).Select(c => c.Name).Distinct())
+            {
+                <option value="@category">@category</option>
+            }
+        </select>
+        <label for="filterCategory">Wybierz kategorię</label>
+    </div>
+
+    <div class="custom-dropdown">
+        <select id="filterCrop" name="Crop">
+            <option value="" selected>Wszystkie uprawy</option>
+            @foreach (var crop in Model.SelectMany(p => p.cropProtectionProductCrops).Select(c => c.Name).Distinct())
+            {
+                <option value="@crop">@crop</option>
+            }
+        </select>
+        <label for="filterCrop">Wybierz uprawy</label>
+    </div>
+
     <div class="table">
         <div class="row header blue" id="headerRow">
             <div class="cell" data-sort="name" onclick="sortByColumn(this)">
@@ -55,53 +87,56 @@
             </div>
         </div>
         <div class="list">
-        @foreach (var cropProtectionProduct in Model)
-        {
-            <div class="row">
-                <div class="cell name" data-title="Nazwa środka ochrony roślin">
-                    @cropProtectionProduct.Name
-                </div>
-                <div class="cell producer" data-title="Producent">
-                    @cropProtectionProduct.Producer.Name
-                </div>
-                <div class="cell cppcategory" data-title="Kategorie">
-                    @foreach (var cropProtectionProductCategory in cropProtectionProduct.cropProtectionProductCategories)
-                    {
-                        @($"{cropProtectionProductCategory.Name}")
-                        @if (cropProtectionProductCategory != cropProtectionProduct.cropProtectionProductCategories.Last())
-                        {
-                            @(", ")
-                        }
-                    }
-                </div>
-                <div class="cell activeIngredients" data-title="Skład">
-                    @foreach (var cropProtectionProductComponent in cropProtectionProduct.cropProtectionProductComponents)
-                    {
-                        @($"{cropProtectionProductComponent.ActiveIngredientName}({cropProtectionProductComponent.Concentration}g)")
-                        @if (cropProtectionProductComponent != cropProtectionProduct.cropProtectionProductComponents.Last())
-                        {
-                            @(", ")
-                        }
-                    }
-                </div>
-                <div class="cell crops" data-title="Rośliny">
-                    @foreach (var cropProtectionProductCrop in cropProtectionProduct.cropProtectionProductCrops)
-                    {
-                        @($"{cropProtectionProductCrop.Name}")
-                        @if (cropProtectionProductCrop != cropProtectionProduct.cropProtectionProductCrops.Last())
-                        {
-                            @(", ")
-                        }
-                    }
-                </div>
-                <div class="cell" data-title="Akcje">
-                    <div class="action-buttons">
-                            <a href="javascript:void(0);" class="cancel-btn" data-bs-toggle="modal" data-bs-target="#descriptionModal" onclick="showDescriptionModal('@cropProtectionProduct.Description')">Opis</a>
-                        <a asp-action="Edit" asp-route-id="@cropProtectionProduct.Id" class="edit-btn"><img src="~/images/edit.svg" />Edytuj</a>
-                        <button type="button" class="delete-btn" data-bs-toggle="modal" data-bs-target="#deleteModal" onclick="setDeleteUrl('@Url.Action("DeleteConfirmed", new { id = cropProtectionProduct.Id })')">
-                            <img src="~/images/delete.svg" />Usuń
-                        </button>
+            @foreach (var cropProtectionProduct in Model)
+            {
+                <div class="row">
+                    <div class="cell name" data-title="Nazwa środka ochrony roślin">
+                        @cropProtectionProduct.Name
                     </div>
+                    <div class="cell producer" data-title="Producent">
+                        @cropProtectionProduct.Producer.Name
+                    </div>
+                    <div class="cell cppcategory" data-title="Kategorie">
+                        @foreach (var cropProtectionProductCategory in cropProtectionProduct.cropProtectionProductCategories)
+                        {
+                            @($"{cropProtectionProductCategory.Name}")
+                            @if (cropProtectionProductCategory != cropProtectionProduct.cropProtectionProductCategories.Last())
+                            {
+                                @(", ")
+                            }
+                        }
+                    </div>
+                    <div class="cell activeIngredients" data-title="Skład">
+                        @foreach (var cropProtectionProductComponent in cropProtectionProduct.cropProtectionProductComponents)
+                        {
+                            @($"{cropProtectionProductComponent.ActiveIngredientName}({cropProtectionProductComponent.Concentration}g)")
+                            @if (cropProtectionProductComponent != cropProtectionProduct.cropProtectionProductComponents.Last())
+                            {
+                                @(", ")
+                            }
+                        }
+                    </div>
+                    <div class="cell crops" data-title="Rośliny">
+                        @foreach (var cropProtectionProductCrop in cropProtectionProduct.cropProtectionProductCrops)
+                        {
+                            @($"{cropProtectionProductCrop.Name}")
+                            @if (cropProtectionProductCrop != cropProtectionProduct.cropProtectionProductCrops.Last())
+                            {
+                                @(", ")
+                            }
+                        }
+                    </div>
+                    <div class="cell" data-title="Akcje">
+                        <div class="action-buttons">
+                            <a href="javascript:void(0);" class="cancel-btn" data-bs-toggle="modal" data-bs-target="#descriptionModal" data-description="@cropProtectionProduct.Description">Opis</a>
+                            @if (User.IsInRole("Admin"))
+                            {
+                                <a asp-action="Edit" asp-route-id="@cropProtectionProduct.Id" class="edit-btn"><img src="~/images/edit.svg" />Edytuj</a>
+                                <button type="button" class="delete-btn" data-bs-toggle="modal" data-bs-target="#deleteModal" onclick="setDeleteUrl('@Url.Action("DeleteConfirmed", new { id = cropProtectionProduct.Id })')">
+                                    <img src="~/images/delete.svg" />Usuń
+                                </button>
+                            }
+                        </div>
                 </div>
             </div>
         }
@@ -114,3 +149,28 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/list.js/2.3.1/list.min.js"></script>
 <script src="~/js/listOperations.js"></script>
 <script src="~/js/deleteModal.js"></script>
+<script>
+        document.addEventListener("DOMContentLoaded", function () {
+        const filterCategory = document.getElementById("filterCategory");
+        const filterCrop = document.getElementById("filterCrop");
+
+        function filterTable() {
+            const selectedCategory = filterCategory.value.toLowerCase();
+            const selectedCrop = filterCrop.value.toLowerCase();
+
+            document.querySelectorAll(".list .row").forEach(row => {
+                const categoryText = row.querySelector(".cppcategory")?.textContent.toLowerCase() || "";
+                const cropText = row.querySelector(".crops")?.textContent.toLowerCase() || "";
+
+                const categoryMatch = !selectedCategory || categoryText.includes(selectedCategory);
+                const cropMatch = !selectedCrop || cropText.includes(selectedCrop);
+
+                row.style.display = categoryMatch && cropMatch ? "" : "none";
+            });
+        }
+
+        filterCategory.addEventListener("change", filterTable);
+        filterCrop.addEventListener("change", filterTable);
+    });
+
+</script>

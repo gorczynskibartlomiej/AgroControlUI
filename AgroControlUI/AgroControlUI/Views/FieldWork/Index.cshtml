@@ -1,57 +1,285 @@
-﻿@model IEnumerable<AgroControlUI.DTOs.FieldWorks.FieldWorkDto>
+﻿@model List<AgroControlUI.DTOs.FieldWorks.FieldWorkDto>
 
-<h1>Prace Polowe</h1>
+@await Html.PartialAsync("_DeleteConfirmationModal")
+@await Html.PartialAsync("_FinishWorkModal")
+<!-- Podłączenie zewnętrznych plików CSS -->
+<link rel="stylesheet" href="~/css/indexList.css">
+<link rel="stylesheet" href="~/css/listOperations.css">
+<link rel="stylesheet" href="~/css/fieldWorks.css"> 
+<link rel="stylesheet" href="~/css/filters.css">
+<style>
+    .custom-dropdown label {
+    color: var(--category1-color);}
 
-<div>
-    <form method="get">
-        <div>
-            <label>Filtruj według typu:</label>
-            <select name="filterType">
-                <option value="">Wszystkie</option>
-                <option value="fertilizing">Nawożenie</option>
-                <option value="spraying">Oprysk</option>
-                <option value="harvesting">Zbiory</option>
-                <option value="other">Inne</option>
-            </select>
+    .change-status-btn {
+    background-color: var(--main-app-color);
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    cursor: pointer;
+    border-radius: 5px;
+    font-size: 14px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease;
+    }
+
+    .change-status-btn:hover {
+    color: white;
+    box-shadow: 0px 0px 10px 3px var(--add-btn-color);
+    transform: translateY(-3px);
+    transition: transform 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease;
+    }
+
+</style>
+<h1 class="green">Prace Polowe</h1>
+
+<div id="categories" class="wrapper">
+    <p>
+        <a asp-action="Create" class="add-btn"><img src="~/images/plus-solid.svg" />Dodaj nową pracę polową</a>
+    </p>
+    <div class="custom-dropdown">
+        <select id="filterWorkType" name="WorkType">
+            <option value="" selected>Wszystkie rodzaje pracy</option>
+            @foreach (var workType in Model.Select(w => w.WorkType).Distinct())
+            {
+                <option value="@workType">@workType</option>
+            }
+        </select>
+        <label for="filterWorkType">Rodzaj pracy</label>
+    </div>
+
+    <div class="custom-dropdown">
+        <select id="filterField" name="Field">
+            <option value="" selected>Wszystkie pola</option>
+            @foreach (var field in Model.Select(w => w.Field).GroupBy(f => f.Name).Select(g => g.First()))
+            {
+                <option value="@field.Name">@field.Name (@field.Area ha)</option>
+            }
+        </select>
+        <label for="filterField">Pole</label>
+    </div>
+    <div class="table">
+        <div class="row header green" id="headerRow">
+            <div class="cell" data-sort="isPlanned" onclick="sortByColumn(this)">
+                <div class="sort-wrapper">
+                    <span class="sort-text">Status</span>
+                    <span class="sort-arrow">▼</span>
+                </div>
+            </div>
+            <div class="cell">
+                Rodzaj pracy
+            </div>
+            <div class="cell" data-sort="startTime" onclick="sortByColumn(this)">
+                <div class="sort-wrapper">
+                    <span class="sort-text">Data rozpoczęcia</span>
+                    <span class="sort-arrow">▼</span>
+                </div>
+            </div>
+            <div class="cell" data-sort="endTime" onclick="sortByColumn(this)">
+                <div class="sort-wrapper">
+                    <span class="sort-text">Data zakończenia</span>
+                    <span class="sort-arrow">▼</span>
+                </div>
+            </div>
+            <div class="cell" data-sort="field" onclick="sortByColumn(this)">
+                <div class="sort-wrapper">
+                    <span class="sort-text">Pole</span>
+                    <span class="sort-arrow">▼</span>
+                </div>
+            </div>
+            <div class="cell" data-sort="employeeName" onclick="sortByColumn(this)">
+                <div class="sort-wrapper">
+                    <span class="sort-text">Wykonawca</span>
+                    <span class="sort-arrow">▼</span>
+                </div>
+            </div>
+            <div class="cell">
+                Akcje
+            </div>
         </div>
-        <div>
-            <label>Filtruj według zaplanowane:</label>
-            <select name="isPlanned">
-                <option value="">Wszystkie</option>
-                <option value="true">Zaplanowane</option>
-                <option value="false">Wykonane</option>
-            </select>
+
+        <div class="row">
+            <div class="cell">
+            </div>
+            <div class="cell">
+            </div>
+            <div class="cell">
+                <input type="text" class="search-input" data-search="startTime" placeholder="Szukaj..." oninput="searchByColumn()" />
+            </div>
+            <div class="cell">
+                <input type="text" class="search-input" data-search="endTime" placeholder="Szukaj..." oninput="searchByColumn()" />
+            </div>
+            <div class="cell">
+            </div>
+            <div class="cell">
+                <input type="text" class="search-input" data-search="employeeName" placeholder="Szukaj..." oninput="searchByColumn()" />
+            </div>
+            <div class="cell">
+
+            </div>
+
         </div>
-        <button type="submit">Filtruj</button>
-    </form>
+
+        <div class="list">
+            @foreach (var fieldWork in Model)
+            {
+                <div class="row">
+                    <div class="cell isActive" data-title="Status">
+                        @if (fieldWork.IsPlanned)
+                        {
+                            <span>Zaplanowane</span>
+                            <button type="button" class="change-status-btn" data-bs-toggle="modal" data-bs-target="#finishWorkModal"
+                            onclick="setFieldWorkDetails(@fieldWork.Id, '@fieldWork.StartTime.ToString("yyyy-MM-ddTHH:mm")')">
+                                Zakończ
+                            </button>
+                        }
+                        else
+                        {
+                            <span>Wykonane</span> 
+                        }
+                    </div>
+                    <div class="cell" data-title="Typ pracy">
+                        @fieldWork.WorkType
+                    </div>
+                    <div class="cell startTime" data-title="Data rozpoczęcia">
+                        @if (fieldWork.IsPlanned == true && fieldWork.StartTime<DateTime.Now)
+                        {
+                            <span class="text-danger">
+                                @fieldWork.StartTime.ToString("dd-MM-yyyy HH:mm")
+                            </span>
+                        }
+                        else
+                        {
+                            @fieldWork.StartTime.ToString("dd-MM-yyyy HH:mm")
+                        }
+                    </div>
+                    <div class="cell endTime" data-title="Data zakończenia">
+                        @(fieldWork.EndTime?.ToString("dd-MM-yyyy HH:mm") ?? "Brak")
+                    </div>
+                    <div class="cell" data-title="Pole">
+                        @fieldWork.Field.Name (@(fieldWork.Field.Area)ha)
+                    </div>
+                    <div class="cell employeeName" data-title="Wykonawca">
+                        @(string.IsNullOrEmpty(fieldWork.EmployeeName) ? fieldWork.AgroControlUserName : fieldWork.EmployeeName)
+                    </div>
+
+                    <div class="cell" data-title="Akcje">
+                        <div class="action-buttons">
+                            @if (fieldWork.WorkType == "Nawożenie")
+                            {
+                                @if(!User.IsInRole("Pracownik"))
+                                {
+                                    <a asp-action="EditFertilizingWork" asp-route-id="@fieldWork.Id" class="edit-btn">
+                                        <img src="~/images/edit.svg" />Edytuj
+                                    </a>
+                                }
+                                <a asp-action="FertilizingWorkDetails" asp-route-id="@fieldWork.Id" class="cancel-btn">
+                                    <img src="~/images/details.svg" />Szczegóły
+                                </a>
+                            }
+                            else if (fieldWork.WorkType == "Opryski")
+                            {
+                                @if (!User.IsInRole("Pracownik"))
+                                {
+                                    <a asp-action="EditSprayingWork" asp-route-id="@fieldWork.Id" class="edit-btn">
+                                        <img src="~/images/edit.svg" />Edytuj
+                                    </a>}
+                                    <a asp-action="SprayingWorkDetails" asp-route-id="@fieldWork.Id" class="cancel-btn">
+                                        <img src="~/images/details.svg" />Szczegóły
+                                    </a>
+                                }
+                                else if (fieldWork.WorkType == "Zbiory")
+                                {
+                                    @if (!User.IsInRole("Pracownik"))
+                                    {
+                                        <a asp-action="EditHarvestingWork" asp-route-id="@fieldWork.Id" class="edit-btn">
+                                            <img src="~/images/edit.svg" />Edytuj
+                                        </a>}
+                                        <a asp-action="HarvestingWorkDetails" asp-route-id="@fieldWork.Id" class="cancel-btn">
+                                            <img src="~/images/details.svg" />Szczegóły
+                                        </a>
+                                    }
+                                    else if (fieldWork.WorkType == "Inne")
+                                    {
+                                        @if (!User.IsInRole("Pracownik"))
+                                        {
+                                            <a asp-action="EditOtherWork" asp-route-id="@fieldWork.Id" class="edit-btn">
+                                                <img src="~/images/edit.svg" />Edytuj
+                                </a>}
+                                <a asp-action="OtherWorkDetails" asp-route-id="@fieldWork.Id" class="cancel-btn">
+                                    <img src="~/images/details.svg" />Szczegóły
+                                </a>
+                            }
+                                        @if (!User.IsInRole("Pracownik"))
+                                        {
+                            <button type="button" class="delete-btn" data-bs-toggle="modal" data-bs-target="#deleteModal" onclick="setDeleteUrl('@Url.Action("DeleteConfirmed", new { id = fieldWork.Id })')">
+                                <img src="~/images/delete.svg" />Usuń
+                            </button>
+                                        }
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+    <ul class="pagination"></ul>
 </div>
 
-<table class="table">
-    <thead>
-        <tr>
-            <th>Id</th>
-            <th>Typ</th>
-            <th>Opis</th>
-            <th>Czas rozpoczęcia</th>
-            <th>Zaplanowane</th>
-            <th>Opcje</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var fieldWork in Model)
-        {
-            <tr>
-                <td>@fieldWork.Id</td>
-                <td>@fieldWork.Description</td>
-                <td>@fieldWork.StartTime</td>
-                <td>@fieldWork.IsPlanned</td>
-                <td>
-                    <a href="@Url.Action("Details", "FieldWork", new { id = fieldWork.Id })">Szczegóły</a> |
-                    <a href="@Url.Action("Delete", "FieldWork", new { id = fieldWork.Id })" onclick="return confirm('Czy na pewno chcesz usunąć?')">Usuń</a>
-                </td>
-            </tr>
-        }
-    </tbody>
-</table>
+<!-- Skrypty JS -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/list.js/2.3.1/list.min.js"></script>
+<script src="~/js/listOperations.js"></script>
+<script src="~/js/deleteModal.js"></script>
+<script>
 
-<a href="@Url.Action("Create", "FieldWork")" class="btn btn-primary">Dodaj pracę</a>
+                function setFieldWorkDetails(id, startDateText) {
+        // Ustawienie wartości ID
+        document.getElementById("fieldWorkId").value = id;
+
+        // Przekazanie daty w formacie lokalnym
+        const startDate = new Date(startDateText + ":00"); // Dodajemy sekundy, aby uniknąć problemów z UTC
+        console.log("Przekazana data:", startDate);
+
+        if (!isNaN(startDate.getTime())) {
+            const localDateTime = startDate.getFullYear() + "-" +
+                String(startDate.getMonth() + 1).padStart(2, '0') + "-" +
+                String(startDate.getDate()).padStart(2, '0') + "T" +
+                String(startDate.getHours()).padStart(2, '0') + ":" +
+                String(startDate.getMinutes()).padStart(2, '0');
+
+            document.getElementById("startDate").value = localDateTime;
+        } else {
+            alert("Błąd w przetwarzaniu daty!");
+        }
+
+    }
+    function submitForm(checkbox) {
+        let form = checkbox.closest("form");
+        form.submit();
+    }
+     document.addEventListener("DOMContentLoaded", function () {
+        const filterWorkType = document.getElementById("filterWorkType");
+     const filterField = document.getElementById("filterField");
+
+     function filterTable() {
+         const selectedWorkType = filterWorkType.value.toLowerCase();
+         const selectedField = filterField.value.toLowerCase();
+
+         document.querySelectorAll(".list .row").forEach(row => {
+             // Popraw te selektory - tutaj szukamy w kolumnach odpowiednich danych
+             const workTypeText = row.querySelector(".cell[data-title='Typ pracy']")?.textContent.toLowerCase() || "";
+             const fieldText = row.querySelector(".cell[data-title='Pole']")?.textContent.toLowerCase() || "";
+
+             // Zmieniamy na porównanie, które działa w zależności od filtrów
+             const workTypeMatch = !selectedWorkType || workTypeText.includes(selectedWorkType);
+             const fieldMatch = !selectedField || fieldText.includes(selectedField);
+
+             // Wyświetl lub ukryj wiersz w zależności od dopasowania
+             row.style.display = workTypeMatch && fieldMatch ? "" : "none";
+         });
+     }
+
+     // Upewnij się, że zdarzenie jest przypisane
+     filterWorkType.addEventListener("change", filterTable);
+     filterField.addEventListener("change", filterTable);
+    });
+
+</script>

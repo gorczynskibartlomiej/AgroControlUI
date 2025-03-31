@@ -1,0 +1,162 @@
+﻿@model AgroControlUI.DTOs.FieldWorks.FertilizingWorkDto
+
+@await Html.PartialAsync("_DeleteConfirmationModal")
+<link rel="stylesheet" href="~/css/Details.css" />
+<link rel="stylesheet" href="~/css/colors.css" />
+<style>
+    .details-btn {
+    background-color: var(--cancel-btn-color);
+    color: white;
+    padding: 4px 12px;
+    font-size: 14px;
+    border: none;
+    border-radius: 5px;
+    text-decoration: none;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
+    margin-bottom: 7px; /* Zwiększony margines */
+    margin-top: 7px; /* Zwiększony margines */
+    white-space: nowrap; /* Zapobiega zawijaniu tekstu w małych elementach */
+    align-items: center;
+    display:flex;
+    }
+
+    .details-btn:hover {
+    color: white;
+    box-shadow: 0px 0px 10px 3px var(--cancel-btn-color);
+    transform: translateY(-3px);
+    }
+
+    .info-content {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    flex-wrap: wrap; /* Zapobiega nachodzeniu na siebie elementów */
+    gap: 10px; /* Dodaje odstęp między nazwą a przyciskiem */
+    }
+
+</style>
+
+<div class="details-container">
+    <h1>Szczegóły pracy</h1>
+
+    <div class="info-section">
+        <p class="info-title">Rodzaj pracy:</p>
+        <h2 class="info-name">@Model.WorkType</h2>
+    </div>
+
+    <div class="info-section">
+        <p class="info-title">Status</p>
+        <p>@(Model.IsPlanned ? "Zaplanowana" : "Wykonana")</p>
+    </div>
+
+    <div class="info-section">
+        <p class="info-title">Pole:</p>
+        <div class="info-content">
+            <span>@Model.Field.Name (@Model.Field.Area ha)</span>
+            @if(!User.IsInRole("Pracownik"))
+            {
+                <a asp-action="Details" asp-controller="Field" asp-route-id="@Model.Field.Id" class="details-btn">Szczegóły pola</a>
+            }
+        </div>
+    </div>
+
+    <div class="info-section">
+        <p class="info-title">Data rozpoczęcia:</p>
+        <p>@Model.StartTime.ToString("yyyy-MM-dd HH:mm")</p>
+    </div>
+
+    <div class="info-section">
+        <p class="info-title">Data zakończenia:</p>
+        <p>@(Model.EndTime.HasValue ? Model.EndTime?.ToString("yyyy-MM-dd HH:mm") : "Brak danych")</p>
+    </div>
+
+    <div class="info-section">
+        <p class="info-title">Wykonawca pracy:</p>
+        <p>@(Model.EmployeeName ?? Model.AgroControlUserName)</p>
+    </div>
+
+    <div class="info-section">
+        <p class="info-title">Opis:</p>
+        @if (!string.IsNullOrEmpty(Model.Description))
+        {
+            <p>@Model.Description</p>
+        }
+        else
+        {
+            <p>Brak</p>
+        }
+    </div>
+    @if(!User.IsInRole("Pracownik"))
+    {
+        <div class="info-section">
+            <p class="info-title">Utworzono:</p>
+            <p class="timestamp">@Model.CreatedOn.ToString("yyyy-MM-dd HH:mm") przez @Model.CreatedBy</p>
+        </div>
+
+        <div class="info-section">
+            <p class="info-title">Ostatnia aktualizacja:</p>
+            <p class="timestamp">@Model.UpdatedOn.ToString("yyyy-MM-dd HH:mm") przez @Model.UpdatedBy</p>
+        </div>
+    }
+    <div class="info-section">
+        <p class="info-title">Wykorzystane nawozy:</p>
+        @if (Model.FertilizingWorkFertilizers.Any())
+        {
+            <ul>
+                @foreach (var fertilizer in Model.FertilizingWorkFertilizers)
+                {
+                    <li>@fertilizer.Fertilizer.Name - @fertilizer.Quantity @fertilizer.Unit.Name</li>
+                }
+            </ul>
+        }
+        else
+        {
+            <p>Brak danych</p>
+        }
+    </div>
+
+    <div class="info-section">
+        <p class="info-title">Wykorzystane maszyny:</p>
+        @if (Model.FieldWorkAgriculturalEquipment.Any())
+        {
+            <ul>
+                @foreach (var equipment in Model.FieldWorkAgriculturalEquipment)
+                {
+                    <li>
+                        <div class="info-content">
+                            <span>@equipment.AgriculturalEquipment.Name (@equipment.AgriculturalEquipment.AgriculturalEquipmentTypeName)</span>
+                            @if (!User.IsInRole("Pracownik"))
+                            {
+                                <a asp-action="Details" asp-controller="AgriculturalEquipment" asp-route-id="@equipment.AgriculturalEquipment.Id" class="details-btn">Szczegóły maszyny</a>
+                            }
+                        </div>
+                    </li>
+                }
+            </ul>
+        }
+        else
+        {
+            <p>Brak danych</p>
+        }
+    </div>
+
+    <div class="action-buttons">
+        @if(!User.IsInRole("Pracownik"))
+        {
+            <a asp-action="EditFertilizingWork" asp-route-id="@Model.Id" class="edit-btn">Edytuj</a>
+            <button type="button" class="delete-btn" data-bs-toggle="modal" data-bs-target="#deleteModal"
+            onclick="setDeleteUrl('@Url.Action("DeleteConfirmed", new { id = Model.Id })')">
+                Usuń
+            </button>
+            <a href="javascript:history.back()" class="cancel-btn" style="align-content:end">Powrót</a>
+        }
+        else
+        {
+            <a href="javascript:history.back()" class="cancel-btn" style="width:100%">Powrót</a>
+        }
+    </div>
+</div>
+
+<script src="~/js/deleteModal.js"></script>

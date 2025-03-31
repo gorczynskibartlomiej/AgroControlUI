@@ -54,8 +54,8 @@
         <button type="button" class="delete-btn" data-bs-toggle="modal" data-bs-target="#deleteModal" onclick="setDeleteUrl('@Url.Action("DeleteConfirmed", new { id = Model.Id })')">Usuń
         </button>
         <a asp-controller="CropRotationPlanner" asp-action="Index" asp-route-fieldId="@Model.Id" class="add-btn">Historia upraw</a>
-        <a asp-action="Edit" asp-route-id="@Model.Id" class="add-btn">Prace polowe</a>
-        <a asp-action="Index" class="cancel-btn">Powrót do listy</a>
+        <a asp-controller="FieldWork" asp-action="Index" class="add-btn">Prace polowe</a>
+        <a href="javascript:history.back()" class="cancel-btn">Powrót</a>
     </div>
 </div>
 
@@ -66,7 +66,7 @@
         var fieldBorder = @Html.Raw(Model.FieldBorder);
 
         var map = L.map('fieldMap').setView([52.2297, 21.0122], 13);
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
             attribution: '&copy; OpenStreetMap contributors'
         }).addTo(map);
 

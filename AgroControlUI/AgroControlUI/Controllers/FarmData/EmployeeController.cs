@@ -34,14 +34,6 @@ namespace AgroControlUI.Controllers.FarmData
             var content = await result.Content.ReadAsStringAsync();
             var employees = JsonConvert.DeserializeObject<List<EmployeeDto>>(content);
 
-            endpoint = "/api/farms/users";
-            result = await _client.GetAsync(endpoint);
-            result.EnsureSuccessStatusCode();
-            var usersContent = await result.Content.ReadAsStringAsync();
-            var usersWithAccounts = JsonConvert.DeserializeObject<List<AgroControlUserDto>>(usersContent);
-
-            ViewBag.UsersWithAccounts = usersWithAccounts;
-
             return View(employees);
         }
 
@@ -186,7 +178,42 @@ namespace AgroControlUI.Controllers.FarmData
                 return View(employeeDto);
             }
         }
+        [Authorize(Policy = "OwnerOrCoOwner")]
+        [HttpPost]
+        public async Task<IActionResult> UpdateIsActive(int id, bool isActive)
+        {
+            try
+            {
+                var token = HttpContext.Request.Cookies["token"];
+                if (token == null)
+                {
+                    token = Request.Headers["Authorization"];
+                }
+                _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
+                var endpoint = $"/api/employees/{id}/updateIsActive";
+
+                var content = JsonConvert.SerializeObject(isActive);
+                var stringContent = new StringContent(content, Encoding.UTF8, "application/json");
+
+                var response = await _client.PatchAsync(endpoint, stringContent);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    TempData["successMessage"] = "Stan aktywności pracownika został zaktualizowany!";
+                }
+                else
+                {
+                    TempData["errorMessage"] = "Wystąpił problem z aktualizacją stanu pracownika.";
+                }
+            }
+            catch (Exception ex)
+            {
+                TempData["errorMessage"] = "Wystąpił nieoczekiwany błąd. Spróbuj ponownie później.";
+            }
+
+            return RedirectToAction("Index");
+        }
         protected override void Dispose(bool disposing)
         {
             if (disposing)

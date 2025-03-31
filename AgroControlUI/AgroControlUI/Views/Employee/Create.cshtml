@@ -3,19 +3,19 @@
 <link rel="stylesheet" href="~/css/add.css">
 
 <div class="form-container">
-    <div class="green-form">
+    <div class="blue-form">
         <form asp-action="Create" method="post">
             <h1>Dodaj pracownika</h1>
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
             <div class="group">
-                <input asp-for="FirstName" required />
+                <input asp-for="FirstName"  />
                 <span class="bar"></span>
                 <label asp-for="FirstName">Imię</label>
                 <span asp-validation-for="FirstName" class="text-danger"></span>
             </div>
             <div class="group">
-                <input asp-for="LastName" required />
+                <input asp-for="LastName"  />
                 <span class="bar"></span>
                 <label asp-for="LastName">Nazwisko</label>
                 <span asp-validation-for="LastName" class="text-danger"></span>

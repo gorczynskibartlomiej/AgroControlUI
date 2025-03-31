@@ -9,56 +9,56 @@
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
             <div class="group">
-                <input asp-for="Name" required value="@Model.Name"/>
+                <input asp-for="Name"  value="@Model.Name"/>
                 
                 <span class="bar"></span>
                 <label asp-for="Name">Nazwa gospodarstwa</label>
                 <span asp-validation-for="Name" class="text-danger"></span>
             </div>
             <div class="group">
-                <input asp-for="FarmNumber" required value="@Model.FarmNumber"/>
+                <input asp-for="FarmNumber"  value="@Model.FarmNumber"/>
                 
                 <span class="bar"></span>
                 <label asp-for="FarmNumber">Numer gospodarstwa*</label>
                 <span asp-validation-for="FarmNumber" class="text-danger"></span>
             </div>
             <div class="group">
-                <input asp-for="YearEstablished" required value="@Model.YearEstablished"/>
+                <input asp-for="YearEstablished"  value="@Model.YearEstablished"/>
                 
                 <span class="bar"></span>
                 <label asp-for="YearEstablished">Rok założenia</label>
                 <span asp-validation-for="YearEstablished" class="text-danger"></span>
             </div>
             <div class="group">
-                <input asp-for="Adress" required value="@Model.Adress"/>
+                <input asp-for="Adress"  value="@Model.Adress"/>
                 
                 <span class="bar"></span>
                 <label asp-for="Adress">Adres</label>
                 <span asp-validation-for="Adress" class="text-danger"></span>
             </div>
             <div class="group">
-                <input asp-for="PostalCode" required value="@Model.PostalCode"/>
+                <input asp-for="PostalCode"  value="@Model.PostalCode"/>
                 
                 <span class="bar"></span>
                 <label asp-for="PostalCode">Kod pocztowy</label>
                 <span asp-validation-for="PostalCode" class="text-danger"></span>
             </div>
             <div class="group">
-                <input asp-for="City" required value="@Model.City"/>
+                <input asp-for="City" value="@Model.City"/>
                 
                 <span class="bar"></span>
                 <label asp-for="City">Miejscowość</label>
                 <span asp-validation-for="City" class="text-danger"></span>
             </div>
             <div class="group">
-                <textarea asp-for="Description" class="description-field" required value="@Model.Description"></textarea>
+                <textarea asp-for="Description" class="description-field" value="@Model.Description"></textarea>
                 
                 <span class="bar"></span>
                 <label asp-for="Description">Opis*</label>
                 <span asp-validation-for="Description" class="text-danger"></span>
             </div>
             <input type="hidden" id="TotalArea" name="TotalArea" value="@Model.TotalArea" />
-            <input type="hidden" asp-for="Id" required value="@Model.Id" />
+            <input type="hidden" asp-for="Id" value="@Model.Id" />
             <div style="margin-bottom:20px;margin-top:-35px">
                 <span>* - pole opcjonalne</span>
             </div>

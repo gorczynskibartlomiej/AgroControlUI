@@ -36,7 +36,6 @@
   <ItemGroup>
     <Folder Include="Areas\" />
     <Folder Include="Models\Account\" />
-    <Folder Include="Validators\UserManagement\" />
   </ItemGroup>
 
   <ItemGroup>

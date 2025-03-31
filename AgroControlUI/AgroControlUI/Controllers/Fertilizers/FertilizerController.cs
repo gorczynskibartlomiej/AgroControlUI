@@ -51,7 +51,8 @@ namespace AgroControlUI.Controllers.Fertilizers
         [Authorize(Policy = "AdminOnly")]
         [HttpPost]
         public async Task<IActionResult> Create(CreateFertilizerDto fertilizerDto)
-        {
+        { 
+
             if (!ModelState.IsValid)
             {
                 var componentsErrors = ModelState
@@ -166,9 +167,10 @@ namespace AgroControlUI.Controllers.Fertilizers
                     Name = fertilizer.Name,
                     ProducerId = fertilizer.Producer.Id,
                     CategoryId = fertilizer.FertilizerCategory.Id,
+                    Description = fertilizer.Description,
                     FertilizerComponents = fertilizer.FertilizerComponents.Select(component => new CreateFertilizerComponentDto
                     {
-                        ElementPercentage = component.ElementPercentage.ToString(),
+                        ElementPercentage = component.ElementPercentage.ToString(CultureInfo.InvariantCulture),
                         ChemicalElementId = component.ChemicalElement.Id
                     }).ToList()
                 };

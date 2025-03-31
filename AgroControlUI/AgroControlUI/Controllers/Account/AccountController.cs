@@ -139,9 +139,14 @@ public class AccountController : Controller
             {
                 var loginModel = new LoginModelDto { Email = register.Email, Password = register.Password};
                 LoginAsync(loginModel,null);
+                TempData["successMessage"] = "Konto zostało utworzone.";
                 return RedirectToAction("Select", "Farm");
             }
-
+            else if (response.StatusCode == HttpStatusCode.Conflict)
+            {
+                TempData["errorMessage"] = "Użytkownik z tym adresem e-mail już istnieje.";
+                return View(register);
+            }
             TempData["errorMessage"] = "Wystąpił błąd podczas rejestracji użytkownika. Spróbuj ponownie później.";
             return View(register);
         }
@@ -151,11 +156,33 @@ public class AccountController : Controller
             return View(register);
         }
     }
+    [HttpGet]
+    public IActionResult Details()
+    {
+        return View();
+    }
+    [HttpPost]
+    public IActionResult Delete()
+    {
 
+        return View();
+    }
+    //[HttpGet]
+    //public IActionResult ChangePassword()
+    //{
+
+    //    return View();
+    //}
+    //[HttpPost]
+    //public IActionResult ChangePassword()
+    //{
+
+    //    return View();
+    //}
     public IActionResult AccessDenied()
     {
         TempData["errorMessage"] = "Nie masz uprawnień do tej strony. Zaloguj się na odpowiednie konto.";
-        return View();
+        return RedirectToAction("Index", "Home");
     }
     [HttpGet]
     public async Task<IActionResult> Logout()

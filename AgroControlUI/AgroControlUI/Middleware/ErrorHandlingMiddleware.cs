@@ -50,7 +50,7 @@ namespace AgroControlUI.Middleware
                 statusCode = HttpStatusCode.Unauthorized;
                 message = "Authentication failed. Please log in.";
                 await context.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
-                var tempData = context.Items["TempData"] as ITempDataDictionary;
+                //var tempData = context.Items["TempData"] as ITempDataDictionary;
                 //tempData.Add("errorMessage", "You are not authorized to view this page. Please log in.");
                 context.Response.Redirect("/Account/Login");
                 return;

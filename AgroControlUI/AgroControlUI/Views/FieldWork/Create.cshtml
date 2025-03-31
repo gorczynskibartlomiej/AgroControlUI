@@ -1,60 +1,157 @@
-﻿@{
-    ViewData["Title"] = "Wybierz typ pracy";
-}
-
-<h1>@ViewData["Title"]</h1>
-
-<div class="row">
-    <div class="col-3">
-        <a href="@Url.Action("CreateFertilizingWork", "FieldWork")" class="work-tile">
-            <div class="tile-content">
-                <h3>Nawożenie</h3>
-            </div>
-        </a>
-    </div>
-    <div class="col-3">
-        <a href="@Url.Action("CreateSprayingWork", "FieldWork")" class="work-tile">
-            <div class="tile-content">
-                <h3>Opryski</h3>
-            </div>
-        </a>
-    </div>
-    <div class="col-3">
-        <a href="@Url.Action("CreateHarvestingWork", "FieldWork")" class="work-tile">
-            <div class="tile-content">
-                <h3>Zbiory</h3>
-            </div>
-        </a>
-    </div>
-    <div class="col-3">
-        <a href="@Url.Action("CreateOtherWork", "FieldWork")" class="work-tile">
-            <div class="tile-content">
-                <h3>Inne</h3>
-            </div>
-        </a>
-    </div>
-</div>
-
-<style>
-    .work-tile {
-        display: block;
-        text-decoration: none;
-        padding: 20px;
-        background-color: #f8f9fa;
-        border: 1px solid #ccc;
+﻿<style>
+    /* Nagłówek */
+    .header-title {
+        font-size: 2.5rem;
+        font-weight: 700;
+        color: #6576E0;
         text-align: center;
-        border-radius: 8px;
-        transition: transform 0.2s, background-color 0.2s;
-        margin: 10px 0;
+        margin-bottom: 2rem;
     }
 
-        .work-tile:hover {
-            background-color: #e2e6ea;
-            transform: scale(1.05);
+    /* Styl kafelków */
+    .card {
+        border-radius: 20px;
+        height: 250px;
+        transition: transform 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease;
+        text-decoration: none;
+        overflow: hidden;
+        box-shadow: 0px 4px 6px rgba(0, 0, 0.1, 0.2);
+        cursor: pointer;
+    }
+
+        .card:hover {
+            box-shadow: 0 0 30px #6576E0;
+            transform: translateY(-10px);
+            background-color: #f4f6fa;
         }
 
-    .tile-content h3 {
-        margin: 0;
-        color: #333;
+    /* Górna część kafelka */
+    .card-header {
+        background-color: #6576E0;
+        color: white;
+        text-align: center;
+        font-size: 1.5rem;
+        font-weight: 700;
+        padding: 1rem;
+        border-radius: 20px 20px 0 0;
+    }
+
+    /* Kontener na ikony */
+    .icon-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100px; /* Możesz dostosować */
+    }
+
+        /* Stylowanie obrazków */
+        .icon-container img {
+            max-width: 80px; /* Maksymalna szerokość ikony */
+            max-height: 80px; /* Maksymalna wysokość ikony */
+            width: auto;
+            height: auto;
+        }
+
+    /* Treść w dolnej części kafelka */
+    .card-body {
+        text-align: center;
+        display: flex;
+        flex-wrap: wrap;
+        flex-direction: column;
+        justify-content: center;
+    }
+
+        /* Tekst informacyjny */
+        .card-body p {
+            margin: 0.5rem 0;
+            font-size: 1rem;
+            color: #6c757d;
+        }
+
+    /* Responsywność */
+    @@media (max-width: 768px) {
+        .card
+
+    {
+        height: auto;
+    }
+
+    .card-header {
+        font-size: 1.3rem;
+    }
+
+    .card-body p {
+        font-size: 0.9rem;
+    }
+
+    .icon-container img {
+        max-width: 60px; /* Zmniejszenie ikon na mniejszych ekranach */
+        max-height: 60px;
+    }
+
     }
 </style>
+<div class="container mt-5">
+    <h1 class="header-title">Stwórz lub zaplanuj pracę polową</h1>
+    <div class="row justify-content-center">
+        <!-- Kafelek dla nawożenia -->
+        <div class="col-lg-3 col-md-4 mb-4">
+            <a href="@Url.Action("CreateFertilizingWork", "FieldWork")" class="card text-decoration-none">
+                <div class="card-header">
+                    <h3>Nawożenie</h3>
+                </div>
+                <div class="card-body">
+                    <div class="icon-container">
+                        <img src="~/images/fertilizer.png" />
+                    </div>
+                    <p class="info-text">Wybierz, aby dodać nowe nawożenie.</p>
+                </div>
+            </a>
+        </div>
+
+        <!-- Kafelek dla oprysków -->
+        <div class="col-lg-3 col-md-4 mb-4">
+            <a href="@Url.Action("CreateSprayingWork", "FieldWork")" class="card text-decoration-none">
+                <div class="card-header">
+                    <h3>Opryski</h3>
+                </div>
+                <div class="card-body">
+                    <div class="icon-container">
+                        <img src="~/images/sprayingPlanner.png" />
+                    </div>
+                    <p class="info-text">Wybierz, aby dodać nowe opryski.</p>
+                </div>
+            </a>
+        </div>
+
+        <!-- Kafelek dla zbiorów -->
+        <div class="col-lg-3 col-md-4 mb-4">
+            <a href="@Url.Action("CreateHarvestingWork", "FieldWork")" class="card text-decoration-none">
+                <div class="card-header">
+                    <h3>Zbiory</h3>
+                </div>
+                <div class="card-body">
+                    <div class="icon-container">
+                        <img src="~/images/harvester.png" />
+                    </div>
+                    <p class="info-text">Wybierz, aby dodać nowe zbiory.</p>
+                </div>
+            </a>
+        </div>
+
+        <!-- Kafelek dla innych prac -->
+        <div class="col-lg-3 col-md-4 mb-4">
+            <a href="@Url.Action("CreateOtherWork", "FieldWork")" class="card text-decoration-none">
+                <div class="card-header">
+                    <h3>Inne</h3>
+                </div>
+                <div class="card-body">
+                    <div class="icon-container">
+                        <img src="~/images/fieldWork.png"/>
+                    </div>
+                    <p class="info-text">Dodaj inną prace polową, klikając tutaj.</p>
+                </div>
+            </a>
+        </div>
+    </div>
+</div>

@@ -1,5 +1,6 @@
 ﻿using AgroControlUI.DTOs.Fertilizers;
 using FluentValidation;
+using System.Globalization;
 using System.Text.RegularExpressions;
 
 namespace AgroControlUI.Validators.Fertilizers
@@ -15,11 +16,14 @@ namespace AgroControlUI.Validators.Fertilizers
     .NotNull().WithMessage("Składnik nawozu musi mieć przypisaną zawartość.")
     .Must(value =>
     {
+        if (string.IsNullOrWhiteSpace(value))
+            return false;
+
         decimal elementPercentage;
-        // Sprawdzamy, czy można przekonwertować string na decimal
-        return decimal.TryParse(value, out elementPercentage) && elementPercentage <= 100;
+        return decimal.TryParse(value, NumberStyles.Any, CultureInfo.InvariantCulture, out elementPercentage)
+               && elementPercentage > 0 && elementPercentage <= 100;
     })
-    .WithMessage("Składnik nawozu nie może przekraczać 100.");
+    .WithMessage("Składnik nawozu nie może przekraczać 100%.");
         }
     }
 }

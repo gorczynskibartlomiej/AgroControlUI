@@ -77,7 +77,6 @@ namespace AgroControlUI.Controllers.FarmData
                     Text = c.Name
                 }).ToList() ?? new List<SelectListItem>();
 
-                // If fieldId is passed, set the selected field
                 var model = new CreateCropRotationPlannerDto();
                 if (fieldId.HasValue)
                 {
@@ -143,11 +142,29 @@ namespace AgroControlUI.Controllers.FarmData
             }
             catch (HttpRequestException ex)
             {
+                var cropsResponse = await _client.GetAsync("/api/crops");
+                cropsResponse.EnsureSuccessStatusCode();
+                var cropsContent = await cropsResponse.Content.ReadAsStringAsync();
+                var crops = JsonConvert.DeserializeObject<List<CropDto>>(cropsContent);
+                ViewBag.Crops = crops?.Select(c => new SelectListItem
+                {
+                    Value = c.Id.ToString(),
+                    Text = c.Name
+                }).ToList() ?? new List<SelectListItem>();
                 TempData["errorMessage"] = "Błąd serwera, spróbuj ponownie później.";
                 return View(planDto);
             }
             catch (Exception ex)
             {
+                var cropsResponse = await _client.GetAsync("/api/crops");
+                cropsResponse.EnsureSuccessStatusCode();
+                var cropsContent = await cropsResponse.Content.ReadAsStringAsync();
+                var crops = JsonConvert.DeserializeObject<List<CropDto>>(cropsContent);
+                ViewBag.Crops = crops?.Select(c => new SelectListItem
+                {
+                    Value = c.Id.ToString(),
+                    Text = c.Name
+                }).ToList() ?? new List<SelectListItem>();
                 TempData["errorMessage"] = "Wystąpił nieoczekiwany błąd. Spróbuj ponownie później. ";
                 return View(planDto);
             }

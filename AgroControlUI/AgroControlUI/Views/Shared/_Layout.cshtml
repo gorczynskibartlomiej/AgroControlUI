@@ -105,7 +105,7 @@
                                 <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button">Uprawa roślin</a>
                                 <div class="dropdown-menu">
                                     <a class="dropdown-item" asp-area="" asp-controller="FieldWork" asp-action="Index">Prace polowe</a>
-                                    <a class="dropdown-item" asp-area="" asp-controller="CropRotationPlanner" asp-action="Index">Planowanie płodozmian</a>
+                                    <a class="dropdown-item" asp-area="" asp-controller="CropRotationPlanner" asp-action="Index">Planowanie płodozmianu</a>
                                     @* <a class="dropdown-item" asp-area="" asp-controller="Fertilizer" asp-action="Index">Planowanie nawożenia</a>
                                     <a class="dropdown-item" asp-area="" asp-controller="CropProtectionProduct" asp-action="Index">Planowanie ochrony roślin</a> *@
                                     <a class="dropdown-item" asp-area="" asp-controller="Fertilizer" asp-action="Index">Nawozy</a>
@@ -142,9 +142,11 @@
                         }
                         else if(User.IsInRole("Pracownik"))
                         {
-                            //zastanowic sie
                             <li class="nav-item">
-                                <a class="dropdown-item" asp-area="" asp-controller="FieldWork" asp-action="Index">Prace polowe</a>
+                                <a class="nav-link d-sm-none d-lg-inline-block" asp-area="" asp-controller="Farm" asp-action="Index">Gospodarstwo</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link d-sm-none d-lg-inline-block" asp-area="" asp-controller="FieldWork" asp-action="Index"> Prace polowe</a>
                             </li>
                         }
                         </ul>
@@ -163,6 +165,9 @@
                                     <a class="nav-link" asp-area="" asp-controller="Farm" asp-action="Select">Wybierz gopsodarstwo</a>
                                 </li>
                             }
+                            <li class="nav-item">
+                                <a class="nav-link" asp-area="" asp-controller="Account" asp-action="Details">Konto</a>
+                            </li>
                             <li class="nav-item">
                                 <a class="nav-link" asp-area="" asp-controller="Account" asp-action="Logout">Wyloguj</a>
                             </li>

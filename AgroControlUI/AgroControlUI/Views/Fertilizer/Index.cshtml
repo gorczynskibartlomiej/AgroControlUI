@@ -4,13 +4,93 @@
 @await Html.PartialAsync("_DeleteConfirmationModal")
 <link rel="stylesheet" href="~/css/indexList.css">
 <link rel="stylesheet" href="~/css/listOperations.css">
+<style>
+    .custom-dropdown {
+        position: relative;
+        display: inline-block;
+        width: 250px;
+        margin-bottom: 20px;
+    }
 
+        .custom-dropdown select {
+            width: 100%;
+            padding: 12px 16px;
+            font-size: 16px;
+            border: 2px solid #ccc;
+            border-radius: 8px;
+            background: white;
+            appearance: none;
+            outline: none;
+            cursor: pointer;
+            transition: 0.3s ease;
+        }
+
+            /* Efekt focus jak w Tom Select */
+            .custom-dropdown select:focus {
+                border-color: #4CAF50;
+                box-shadow: 0 0 5px rgba(76, 175, 80, 0.5);
+            }
+
+        /* Etykieta (label) nad dropdownem */
+        .custom-dropdown label {
+            position: absolute;
+            top: -10px;
+            left: 12px;
+            font-size: 14px;
+            background: white;
+            padding: 0 5px;
+            color: #4CAF50;
+        }
+
+        /* Strzałka wewnątrz dropdowna */
+        .custom-dropdown::after {
+            content: '▼';
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 16px;
+            color: #757575;
+            pointer-events: none;
+        }
+
+</style>
 <h1 class="blue">Nawozy</h1>
 
 <div id="categories" class="wrapper">
-    <p>
-        <a asp-action="Create" class="add-btn"><img src="~/images/plus-solid.svg" />Dodaj nawóz</a>
-    </p>
+    @if (User.IsInRole("Admin"))
+    {
+        <p>
+            <a asp-action="Create" class="add-btn"><img src="~/images/plus-solid.svg" />Dodaj nawóz</a>
+        </p>
+    }
+
+    <!-- Filtry -->
+    <div class="custom-dropdown">
+        <select id="filterType" name="FertilizerCategory" class="tomselected ts-hidden-accessible">
+            <option value="">Wszystkie kategorie nawozu</option>
+            @foreach (var category in Model.Select(p => p.FertilizerCategory.Name).Distinct())
+            {
+                <option value="@category">@category</option>
+            }
+        </select>
+        <label for="filterType">Wybierz kategorię nawozu</label>
+        <span class="bar"></span>
+    </div>
+
+    <div class="custom-dropdown">
+        <select id="filterProducer" name="Producer" class="tomselected ts-hidden-accessible">
+            <option value="">Wszyscy producenci</option>
+            @foreach (var producer in Model.Select(p => p.Producer.Name).Distinct())
+            {
+                <option value="@producer">@producer</option>
+            }
+        </select>
+        <label for="filterProducer">Wybierz producenta</label>
+        <span class="bar"></span>
+    </div>
+
+    <!-- Tabela -->
     <div class="table">
         <div class="row header blue" id="headerRow">
             <div class="cell" data-sort="name" onclick="sortByColumn(this)">
@@ -19,17 +99,14 @@
                     <span class="sort-arrow">▼</span>
                 </div>
             </div>
-            <div class="cell" data-sort="producer" onclick="sortByColumn(this)">
-                <div class="sort-wrapper">
-                    <span class="sort-text">Producent</span>
-                    <span class="sort-arrow">▼</span>
-                </div>
+            <div class="cell" data-sort="producer">
+                Producent
             </div>
             <div class="cell" data-sort="fertilizerCategory">
                 Kategoria nawozu
             </div>
             <div class="cell" data-sort="fertilizerComponents">
-                Skład
+                Skład (rozpuszczalne w wodzie)
             </div>
             <div class="cell">
                 Akcje
@@ -40,7 +117,6 @@
                 <input type="text" class="search-input" data-search="name" placeholder="Szukaj..." oninput="searchByColumn()" />
             </div>
             <div class="cell">
-                <input type="text" class="search-input" data-search="producer" placeholder="Szukaj..." oninput="searchByColumn()" />
             </div>
             <div class="cell">
             </div>
@@ -74,11 +150,14 @@
                     </div>
                     <div class="cell" data-title="Akcje">
                         <div class="action-buttons">
-                            <a href="javascript:void(0);" class="cancel-btn" data-bs-toggle="modal" data-bs-target="#descriptionModal" onclick="showDescriptionModal('@fertilizer.Description')">Opis</a>
-                            <a asp-action="Edit" asp-route-id="@fertilizer.Id" class="edit-btn"><img src="~/images/edit.svg" />Edytuj</a>
-                            <button type="button" class="delete-btn" data-bs-toggle="modal" data-bs-target="#deleteModal" onclick="setDeleteUrl('@Url.Action("DeleteConfirmed", new { id = fertilizer.Id })')">
-                                <img src="~/images/delete.svg" />Usuń
-                            </button>
+                            <a href="javascript:void(0);" class="cancel-btn" data-bs-toggle="modal" data-bs-target="#descriptionModal" data-description="@fertilizer.Description"> Opis </a>
+                            @if (User.IsInRole("Admin"))
+                            {
+                                <a asp-action="Edit" asp-route-id="@fertilizer.Id" class="edit-btn"><img src="~/images/edit.svg" />Edytuj</a>
+                                <button type="button" class="delete-btn" data-bs-toggle="modal" data-bs-target="#deleteModal" onclick="setDeleteUrl('@Url.Action("DeleteConfirmed", new { id = fertilizer.Id })')">
+                                    <img src="~/images/delete.svg" />Usuń
+                                </button>
+                            }
                         </div>
                     </div>
                 </div>
@@ -92,3 +171,29 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/list.js/2.3.1/list.min.js"></script>
 <script src="~/js/listOperations.js"></script>
 <script src="~/js/deleteModal.js"></script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+
+        const filterType = document.getElementById("filterType");
+        const filterProducer = document.getElementById("filterProducer");
+
+        function filterTable() {
+            const selectedType = filterType.value.toLowerCase();
+            const selectedProducer = filterProducer.value.toLowerCase();
+
+            document.querySelectorAll(".list .row").forEach(row => {
+                const typeText = row.querySelector(".fertilizerCategory")?.textContent.toLowerCase() || "";
+                const producerText = row.querySelector(".producer")?.textContent.toLowerCase() || "";
+
+                const typeMatch = !selectedType || typeText.includes(selectedType);
+                const producerMatch = !selectedProducer || producerText.includes(selectedProducer);
+
+                row.style.display = typeMatch && producerMatch ? "" : "none";
+            });
+        }
+
+        filterType.addEventListener("change", filterTable);
+        filterProducer.addEventListener("change", filterTable);
+    });
+</script>

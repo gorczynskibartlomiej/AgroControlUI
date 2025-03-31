@@ -7,8 +7,9 @@ namespace AgroControlUI.DTOs.FarmData
     public class EmployeeDto
     {
         public int Id { get; set; }
-        public required string FirstName { get; set; }
-        public required string LastName { get; set; }
+        public string? FirstName { get; set; }
+        public string? LastName { get; set; }
+        public string? PhoneNumber { get; set; }
         public string? CostUnitName { get; set; }
         public decimal? Cost { get; set; }
         public bool IsActive { get; set; }

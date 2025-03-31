@@ -7,74 +7,108 @@
 <div class="details-container">
     <h1>Szczegóły gospodarstwa</h1>
 
-    <div class="info-section">
-        <p class="info-title">Nazwa gospodarstwa:</p>
-        <h2 class="info-name">@Model.Name</h2>
-    </div>
+    @if (User.IsInRole("Pracownik"))
+    {
+        <div class="info-section">
+            <p class="info-title">Nazwa gospodarstwa:</p>
+            <h2 class="info-name">@Model.Name</h2>
+        </div>
+        <div class="info-section">
+            <p class="info-title">Opis:</p>
+            <p>@(string.IsNullOrEmpty(Model.Description) ? "Brak" : Model.Description)</p>
+        </div>
+        <div class="info-section">
+            <p class="info-title">Adres:</p>
+            <p>@Model.Adress</p>
+        </div>
 
-    <div class="info-section">
-        <p class="info-title">Numer gospodarstwa:</p>
-        <p>@(string.IsNullOrEmpty(Model.FarmNumber) ? "Brak danych" : Model.FarmNumber)</p>
-    </div>
+        <div class="info-section">
+            <p class="info-title">Kod pocztowy:</p>
+            <p>@Model.PostalCode</p>
+        </div>
 
-    <div class="info-section">
-        <p class="info-title">Opis:</p>
-        <p>@(string.IsNullOrEmpty(Model.Description) ? "Brak" : Model.Description)</p>
-    </div>
-
- @*    <div class="info-section">
-        <p class="info-title">Całkowita powierzchnia:</p>
-        <p>@(Model.TotalArea > 0 ? $"{Model.TotalArea} ha" : "Brak danych")</p>
-    </div> *@
-
-    <div class="info-section">
-        <p class="info-title">Rok założenia:</p>
-        <p>@(Model.YearEstablished > 0 ? Model.YearEstablished.ToString() : "Brak danych")</p>
-    </div>
-
-    <div class="info-section">
-        <p class="info-title">Adres:</p>
-        <p>@Model.Adress</p>
-    </div>
-
-    <div class="info-section">
-        <p class="info-title">Kod pocztowy:</p>
-        <p>@Model.PostalCode</p>
-    </div>
-
-    <div class="info-section">
-        <p class="info-title">Miasto:</p>
-        <p>@Model.City</p>
-    </div>
-
-    <div class="info-section">
-        <p class="info-title">Utworzono:</p>
-        <p class="timestamp">@Model.CreatedOn.ToString("yyyy-MM-dd HH:mm") przez @Model.CreatedBy</p>
-    </div>
-
-    <div class="info-section">
-        <p class="info-title">Ostatnia aktualizacja:</p>
-        <p class="timestamp">@Model.UpdatedOn.ToString("yyyy-MM-dd HH:mm") przez @Model.UpdatedBy</p>
-    </div>
-
-    <div class="action-buttons">
-        <a asp-action="Edit" asp-route-id="@Model.Id" class="edit-btn">Edytuj</a>
-        @if (User.IsInRole("Właściciel"))
-        {
-        <button type="button" class="delete-btn" data-bs-toggle="modal" data-bs-target="#deleteModal"
-                onclick="setDeleteUrl('@Url.Action("DeleteConfirmed", new { id = Model.Id })')">
-            Usuń
-        </button>
-        }
-        else if (User.IsInRole("Współwłaściciel"))
-        {
+        <div class="info-section">
+            <p class="info-title">Miasto:</p>
+            <p>@Model.City</p>
+        </div>
+        <div class="action-buttons">
             <button type="button" class="delete-btn" data-bs-toggle="modal" data-bs-target="#leaveModal"
                     onclick="setLeaveUrl('@Url.Action("LeaveFarm", "Farm")')">
                 Opuść
             </button>
-        }
-        <a asp-controller="Home" asp-action="Index" class="cancel-btn">Powrót</a>
-    </div>
+            <a asp-controller="Home" asp-action="Index" class="cancel-btn">Powrót</a>
+        </div>
+    }
+    else
+    {
+        <div class="info-section">
+            <p class="info-title">Nazwa gospodarstwa:</p>
+            <h2 class="info-name">@Model.Name</h2>
+        </div>
+        <div class="info-section">
+            <p class="info-title">Numer gospodarstwa:</p>
+            <p>@(string.IsNullOrEmpty(Model.FarmNumber) ? "Brak danych" : Model.FarmNumber)</p>
+        </div>
+
+        <div class="info-section">
+            <p class="info-title">Opis:</p>
+            <p>@(string.IsNullOrEmpty(Model.Description) ? "Brak" : Model.Description)</p>
+        </div>
+
+        @*    <div class="info-section">
+        <p class="info-title">Całkowita powierzchnia:</p>
+        <p>@(Model.TotalArea > 0 ? $"{Model.TotalArea} ha" : "Brak danych")</p>
+    </div> *@
+
+        <div class="info-section">
+            <p class="info-title">Rok założenia:</p>
+            <p>@(Model.YearEstablished > 0 ? Model.YearEstablished.ToString() : "Brak danych")</p>
+        </div>
+
+        <div class="info-section">
+            <p class="info-title">Adres:</p>
+            <p>@Model.Adress</p>
+        </div>
+
+        <div class="info-section">
+            <p class="info-title">Kod pocztowy:</p>
+            <p>@Model.PostalCode</p>
+        </div>
+
+        <div class="info-section">
+            <p class="info-title">Miasto:</p>
+            <p>@Model.City</p>
+        </div>
+
+        <div class="info-section">
+            <p class="info-title">Utworzono:</p>
+            <p class="timestamp">@Model.CreatedOn.ToString("yyyy-MM-dd HH:mm") przez @Model.CreatedBy</p>
+        </div>
+
+        <div class="info-section">
+            <p class="info-title">Ostatnia aktualizacja:</p>
+            <p class="timestamp">@Model.UpdatedOn.ToString("yyyy-MM-dd HH:mm") przez @Model.UpdatedBy</p>
+        </div>
+
+        <div class="action-buttons">
+            <a asp-action="Edit" asp-route-id="@Model.Id" class="edit-btn">Edytuj</a>
+            @if (User.IsInRole("Właściciel"))
+            {
+                <button type="button" class="delete-btn" data-bs-toggle="modal" data-bs-target="#deleteModal"
+                        onclick="setDeleteUrl('@Url.Action("DeleteConfirmed", new { id = Model.Id })')">
+                    Usuń
+                </button>
+            }
+            else if (User.IsInRole("Współwłaściciel"))
+            {
+                <button type="button" class="delete-btn" data-bs-toggle="modal" data-bs-target="#leaveModal"
+                        onclick="setLeaveUrl('@Url.Action("LeaveFarm", "Farm")')">
+                    Opuść
+                </button>
+            }
+            <a asp-controller="Home" asp-action="Index" class="cancel-btn">Powrót</a>
+        </div>
+    }
 </div>
 
 <script src="~/js/deleteModal.js"></script>

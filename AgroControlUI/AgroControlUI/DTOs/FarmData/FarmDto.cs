@@ -6,14 +6,14 @@ namespace AgroControlUI.DTOs.FarmData
     public class FarmDto
     {
         public int Id { get; set; }
-        public required string Name { get; set; }
+        public string? Name { get; set; }
         public string? FarmNumber { get; set; }
         public string? Description { get; set; }
         public decimal TotalArea { get; set; }
         public int YearEstablished { get; set; }
-        public required string Adress { get; set; }
-        public required string PostalCode { get; set; }
-        public required string City { get; set; }
+        public  string? Adress { get; set; }
+        public  string? PostalCode { get; set; }
+        public string? City { get; set; }
 
         public DateTime CreatedOn { get; set; }
         public string? CreatedBy { get; set; }

@@ -17,12 +17,14 @@
         width:18%;
     }
 </style>
+
 <div class="form-container">
     <div class="green-form">
-        <form asp-action="CreateFertilizingWork" method="post">
-            <h1>Dodaj pracę nawożenia</h1>
+        <form asp-action="EditFertilizingWork" method="post">
+            <h1>Edytuj pracę nawożenia</h1>
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
+            <!-- Pole do wyboru pola -->
             <div class="single-dropdown">
                 <select asp-for="FieldId" asp-items="ViewBag.Fields" id="fieldSelect">
                     <option value="">Wybierz pole</option>
@@ -32,56 +34,72 @@
                 <span asp-validation-for="FieldId" class="text-danger"></span>
             </div>
 
+            <!-- Wybór pracownika -->
             <div class="single-dropdown">
                 <select id="workerSelect" name="workerSelect">
                     <option value="">Wybierz pracownika</option>
                     <optgroup label="Pracownicy">
                         @foreach (var employee in ViewBag.Employees)
                         {
-                            <option value="@employee.Value" data-type="employee">@employee.Text</option>
+                            <option value="@employee.Value" data-type="employee"
+                                    selected="@(Model.EmployeeId.HasValue && Model.EmployeeId.Value.ToString() == employee.Value ? "selected" : null)">
+                                @employee.Text
+                            </option>
                         }
                     </optgroup>
                     <optgroup label="Użytkownicy systemowi">
                         @foreach (var user in ViewBag.Users)
                         {
-                            <option value="@user.Value" data-type="user">@user.Text</option>
+                            <option value="@user.Value" data-type="user"
+                                    selected="@(Model.AgroControlUserId.HasValue && Model.AgroControlUserId.Value.ToString() == user.Value ? "selected" : null)">
+                                @user.Text
+                            </option>
                         }
                     </optgroup>
                 </select>
                 <span class="bar"></span>
                 <label>Pracownik</label>
             </div>
-            <input type="hidden" id="EmployeeId" name="EmployeeId" />
-            <input type="hidden" id="AgroControlUserId" name="AgroControlUserId" />
+            <input type="hidden" id="EmployeeId" name="EmployeeId" value="@Model.EmployeeId" />
+            <input type="hidden" id="AgroControlUserId" name="AgroControlUserId" value="@Model.AgroControlUserId" />
 
             <div class="multi-dropdown">
-                <select asp-for="FieldWorkAgriculturalEquipmentIds" required asp-items="ViewBag.AgriculturalEquipment" id="agricultrualEquipmentSelect" multiple></select>
+                <select asp-for="FieldWorkAgriculturalEquipmentIds" required asp-items="ViewBag.AgriculturalEquipment" id="agricultrualEquipmentSelect" multiple>
+                </select>
                 <span class="bar"></span>
                 <label asp-for="FieldWorkAgriculturalEquipmentIds">Użyte maszyny</label>
                 <span asp-validation-for="FieldWorkAgriculturalEquipmentIds" class="text-danger"></span>
             </div>
-            
+
+
             <div class="group">
-                <input asp-for="StartTime" type="datetime-local" />
+                <input asp-for="StartTime" type="datetime-local" value="@Model.StartTime.ToString("yyyy-MM-ddTHH:mm")" />
                 <span class="bar"></span>
                 <label asp-for="StartTime">Data rozpoczęcia</label>
                 <span asp-validation-for="StartTime" class="text-danger"></span>
             </div>
 
+
             <div class="group">
-                <input asp-for="EndTime" type="datetime-local" />
+                <input asp-for="EndTime" type="datetime-local" 
+                       value="@Model.EndTime?.ToString("yyyy-MM-ddTHH:mm")"/>
                 <span class="bar"></span>
                 <label asp-for="EndTime">Data zakończenia*</label>
                 <span asp-validation-for="EndTime" class="text-danger"></span>
             </div>
 
+
+            <!-- Dodawanie nawozów -->
             <div class="single-dropdown">
-                <div id="adding-container" class="adding-container"></div>
+                <div id="adding-container" class="adding-container">
+
+                </div>
                 <button type="button" id="add-ingredient">Dodaj nawóz</button>
             </div>
 
+            <!-- Opis -->
             <div class="group">
-                <textarea asp-for="Description" class="description-field"></textarea>
+                <textarea asp-for="Description" class="description-field">@Model.Description</textarea>
                 <span class="bar"></span>
                 <label asp-for="Description">Opis*</label>
                 <span asp-validation-for="Description" class="text-danger"></span>
@@ -93,12 +111,12 @@
 
             <div class="action-buttons">
                 <a asp-action="Index" class="cancel-btn">Anuluj</a>
-                <button type="submit" class="add-btn">Dodaj</button>
+                <button type="submit" class="add-btn">Zapisz</button>
             </div>
+
         </form>
     </div>
 </div>
-
 <select id="unitOptions" style="display:none">
     @foreach (var unit in ViewBag.Units)
     {
@@ -112,14 +130,12 @@
         <option value="@fertilizer.Value">@fertilizer.Text</option>
     }
 </select>
-
 <script src="~/js/inputLabel.js"></script>
 <script src="~/js/listOperations.js"></script>
 <script src="~/lib/jquery-validation/jquery.validate.min.js"></script>
 <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/tom-select/dist/js/tom-select.complete.min.js"></script>
 <script>
-
     let isUpdatingOptions = false;
 
     function getOriginalOptions() {
@@ -131,7 +147,6 @@
     }
 
     function updateAvailableOptions() {
-        // Jeśli już trwa aktualizacja, kończymy
         if (isUpdatingOptions) return;
         isUpdatingOptions = true;
 
@@ -181,7 +196,7 @@
         }
     });
 
-    // Wywołaj updateAvailableOptions() na starcie
+
     updateAvailableOptions();
 
     document.addEventListener("DOMContentLoaded", function () {
@@ -196,7 +211,7 @@
         const fertilizerOptions = document.getElementById("fertilizerOptions").innerHTML;
 
         // Funkcja tworzenia wiersza składnika
-        function createIngredientRow() {
+        function createIngredientRow(fertilizerId =null, quantity =null, unitId=null) {
             const wrapper = document.createElement("div");
             wrapper.classList.add("adding-wrapper");
 
@@ -218,7 +233,9 @@
 
             // Wstawiamy oryginalne opcje wraz z domyślną pustą opcją
             select.innerHTML = `<option value="" selected disabled>Wybierz składnik nawozu</option>` + fertilizerOptions;
-
+            if (fertilizerId) {
+            select.value = fertilizerId;
+            }
             selectWrapper.appendChild(select);
             selectWrapper.appendChild(selectBar);
             selectWrapper.appendChild(selectLabel);
@@ -236,8 +253,8 @@
             inputBar.classList.add("bar");
 
             const inputLabel = document.createElement("label");
-            inputLabel.textContent = "Ilość(/ha)";
-
+            inputLabel.textContent = "Ilość";
+            input.value = quantity || "";
             inputWrapper.appendChild(input);
             inputWrapper.appendChild(inputBar);
             inputWrapper.appendChild(inputLabel);
@@ -257,6 +274,9 @@
             const unitLabel = document.createElement("label");
             unitLabel.textContent = "Jedn.";
 
+            if (unitId) {
+            unitSelect.value = unitId;
+            }
             unitWrapper.appendChild(unitSelect);
             unitWrapper.appendChild(unitBar);
             unitWrapper.appendChild(unitLabel);
@@ -279,16 +299,26 @@
             container.appendChild(wrapper);
 
             // Inicjalizacja TomSelect dla nowego selecta
-            new TomSelect(select, {
+            const tomSelectInstance = new TomSelect(select, {
                 create: false,
                 sortField: "text",
                 placeholder: "Wyszukaj..."
             });
 
-            new TomSelect(unitSelect, {
+            const tomSelectInstanceUnit = new TomSelect(unitSelect, {
             create: false,
             sortField: "text"
             });
+
+            if (fertilizerId) {
+        tomSelectInstance.setValue(fertilizerId);
+        }if (input.value.trim() !== "") {
+        input.classList.add("filled");}
+        if (unitId) {
+        tomSelectInstanceUnit.setValue(unitId);
+    }
+            // Nasłuch zmiany w tym selectie
+            select.addEventListener("change", updateAvailableOptions);
 
             input.addEventListener("input", function () {
         if (input.value.trim() !== "") {
@@ -347,9 +377,14 @@
             }
         });
     }
-
+    const existingIngredients = @Html.Raw(Json.Serialize(Model.FertilizingWorkFertilizers));
+    //console.log(existingIngredients);
+        // Załaduj istniejące składniki do formularza
+               existingIngredients.forEach(ingredient => {
+        //console.log("Adding ingredient:", ingredient);
+        createIngredientRow(ingredient.fertilizerId, ingredient.quantity, ingredient.unitId); // Zmienione nazwy!
+    });
         addIngredientButton.addEventListener("click", createIngredientRow);
-        createIngredientRow(); // Początkowy wiersz składnika
     });
                 document.getElementById('workerSelect').addEventListener('change', function() {
         var selectedOption = this.options[this.selectedIndex];

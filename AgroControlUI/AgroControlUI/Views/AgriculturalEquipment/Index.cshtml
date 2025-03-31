@@ -3,6 +3,7 @@
 @await Html.PartialAsync("_DeleteConfirmationModal")
 <link rel="stylesheet" href="~/css/indexList.css">
 <link rel="stylesheet" href="~/css/listOperations.css">
+<link rel="stylesheet" href="~/css/filters.css">
 <style>
     .switch {
         font-size: 17px;
@@ -95,6 +96,10 @@
     input:checked + .slider:before {
         transform: translateX(1em);
     }
+
+    .custom-dropdown label {
+        color: var(--category2-color);
+    }
 </style>
 <h1 class="blue">Moje maszyny</h1>
 
@@ -102,6 +107,16 @@
     <p>
         <a asp-action="Create" class="add-btn"><img src="~/images/plus-solid.svg" />Dodaj nową maszynę</a>
     </p>
+    <div class="custom-dropdown">
+        <select id="filterMachineType" name="MachineType">
+            <option value="" selected>Wszystkie typy maszyn</option>
+            @foreach (var type in Model.Select(m => m.AgriculturalEquipmentTypeName).Distinct())
+            {
+                <option value="@type">@type</option>
+            }
+        </select>
+        <label for="filterMachineType">Wybierz typ maszyny</label>
+    </div>
     <div class="table">
         <div class="row header blue" id="headerRow">
             <div class="cell" data-sort="isActive" onclick="sortByColumn(this)">
@@ -142,7 +157,6 @@
                 <input type="text" class="search-input" data-search="brand" placeholder="Szukaj..." oninput="searchByColumn()" />
             </div>
             <div class="cell">
-                <input type="text" class="search-input" data-search="type" placeholder="Szukaj..." oninput="searchByColumn()" />
             </div>
             
             <div class="cell">
@@ -194,4 +208,27 @@
         let form = checkbox.closest("form");
         form.submit();
     }
+</script>
+<script>
+            document.addEventListener("DOMContentLoaded", function () {
+        const filterMachineType = document.getElementById("filterMachineType");  // Nowy filtr
+
+        function filterTable() {
+            const selectedMachineType = filterMachineType.value.toLowerCase();  // Wartość z filtru maszyn
+
+            document.querySelectorAll(".list .row").forEach(row => {
+                // Wartości z poszczególnych kolumn
+                const typeText = row.querySelector(".type")?.textContent.toLowerCase() || "";  // Zmienna dla typu maszyny
+
+                // Sprawdzenie dopasowania
+                const typeMatch = !selectedMachineType || typeText.includes(selectedMachineType);  // Filtracja po typie maszyny
+
+                // Ukrywanie lub pokazywanie wierszy w zależności od filtrów
+                row.style.display = typeMatch ? "" : "none";
+            });
+        }
+
+        // Ustawienie nasłuchiwania na zmiany w filtrze maszyny
+        filterMachineType.addEventListener("change", filterTable);
+    });
 </script>

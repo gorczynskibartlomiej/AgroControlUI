@@ -9,8 +9,7 @@ namespace AgroControlUI.Validators.ReferenceData
         {
             RuleFor(agriculturalEquipmentType => agriculturalEquipmentType.Name)
                .NotEmpty().WithMessage("Nazwa jednostki jest wymagana.")
-               .MaximumLength(50).WithMessage("Nazwa jednostki nie może przekraczać 50 znaków.")
-               .MinimumLength(2).WithMessage("Nazwa jednostki musi zawierać co najmniej 2 znaki.");
+               .MaximumLength(50).WithMessage("Nazwa jednostki nie może przekraczać 50 znaków.");
         }
     }
 }

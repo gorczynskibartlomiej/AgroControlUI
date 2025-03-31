@@ -70,8 +70,8 @@
             </div>
             
             <div class="action-buttons">
-                <a asp-action="Index" class="cancel-btn btn">Anuluj</a>
-                <button type="submit" class="add-btn btn">Dodaj</button>
+                <a asp-action="Index" class="cancel-btn">Anuluj</a>
+                <button type="submit" class="add-btn">Dodaj</button>
             </div>
             
         </form>
@@ -203,8 +203,8 @@
 
             const input = document.createElement("input");
             input.type = "number";
-            input.min = "0";
-            input.step = "1";
+            // input.min = "0";
+            // input.step = "1";
             input.required = false;
             input.name = `ActiveIngredients[${currentIndex}].Concentration`;
 

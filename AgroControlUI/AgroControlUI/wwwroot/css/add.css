@@ -339,6 +339,17 @@ input[type="date"]:focus::-webkit-datetime-edit-fields-wrapper {
 input[type="date"].filled:not(:focus)::-webkit-datetime-edit-fields-wrapper {
     color: inherit;
 }
+input[type="datetime-local"]:not(:focus):not(.filled)::-webkit-datetime-edit-fields-wrapper {
+    color: transparent;
+}
+
+input[type="datetime-local"]:focus::-webkit-datetime-edit-fields-wrapper {
+    color: inherit;
+}
+
+input[type="datetime-local"].filled:not(:focus)::-webkit-datetime-edit-fields-wrapper {
+    color: inherit;
+}
 .switch {
     font-size: 17px;
     position: relative;

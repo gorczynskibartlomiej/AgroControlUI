@@ -13,7 +13,7 @@
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
             <div class="group">
-                <input asp-for="Name" required value="@Model.Name"/>
+                <input asp-for="Name" value="@Model.Name"/>
                 <span class="bar"></span>
                 <label asp-for="Name">Nazwa</label>
                 <span asp-validation-for="Name" class="text-danger"></span>
@@ -23,6 +23,7 @@
                 </select>
                 <span class="bar"></span>
                 <label asp-for="SoilTypesIds">Klasa gleby</label>
+                <span asp-validation-for="SoilTypesIds" class="text-danger"></span>
             </div>
             <div class="group">
                 <textarea asp-for="Description" class="description-field" value="@Model.Description"></textarea>

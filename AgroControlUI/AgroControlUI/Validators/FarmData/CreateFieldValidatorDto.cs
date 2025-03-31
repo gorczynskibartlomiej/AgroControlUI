@@ -20,8 +20,9 @@ namespace AgroControlUI.Validators.FarmData
                 .Must(x => x != null && decimal.TryParse(x.ToString(), out _))
                     .WithMessage("Powierzchnia musi być liczbą!")
                 .NotEmpty().WithMessage("Powierzchnia jest wymagana.")
-                .GreaterThan(0).WithMessage("Powierzchnia musi być większa niż 0.")
-                .LessThanOrEqualTo(10000).WithMessage("Powierzchnia nie może być większa niż 10 000 ha.");
+                .GreaterThanOrEqualTo(0).WithMessage("Powierzchnia musi być większa niż 0.")
+                .LessThanOrEqualTo(10000).WithMessage("Powierzchnia nie może być większa niż 10 000 ha.")
+                .Must(x => x != 0).WithMessage("Powierzchnia nie może być równa 0.");
 
             RuleFor(x => x.SoilTypesIds)
                 .NotEmpty().WithMessage("Pole musi mieć przypisany co najmniej jeden typ gleby.");

@@ -14,11 +14,12 @@ namespace AgroControlUI.DTOs.FieldWorks
         public int? EmployeeId { get; set; }
         public int? AgroControlUserId { get; set; }
         public string? Description { get; set; }
+        public required string WorkType { get; set; }
 
         public DateTime CreatedOn { get; set; }
-        public int CreatedBy { get; set; }
+        public string CreatedBy { get; set; }
         public DateTime UpdatedOn { get; set; }
-        public int UpdatedBy { get; set; }
+        public string UpdatedBy { get; set; }
 
         public ICollection<FieldWorkAgriculturalEquipmentDto> FieldWorkAgriculturalEquipment { get; set; } = new List<FieldWorkAgriculturalEquipmentDto>();
         public required FieldDto Field { get; set; }
@@ -38,7 +39,6 @@ namespace AgroControlUI.DTOs.FieldWorks
         public decimal TotalYield { get; set; }
         public decimal? Moisture { get; set; }
         public required CropDto Crop { get; set; }
-        public required string unitName { get; set; }
     }
     public class OtherWorkDto : FieldWorkDto
     {

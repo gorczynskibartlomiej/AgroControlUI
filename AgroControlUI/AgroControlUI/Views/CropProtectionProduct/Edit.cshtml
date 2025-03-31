@@ -9,7 +9,7 @@
 <div class="form-container">
     <div class="green-form">
         <form asp-action="Edit" method="post">
-            <h1>Dodaj środek ochrony roślin</h1>
+            <h1>Edytuj środek ochrony roślin</h1>
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
             <!-- Nazwa środka -->
@@ -69,7 +69,7 @@
             </div>
             <div class="action-buttons">
                 <a asp-action="Index" class="cancel-btn btn">Anuluj</a>
-                <button type="submit" class="add-btn btn">Dodaj</button>
+                <button type="submit" class="add-btn btn">Zapisz</button>
             </div>
 
         </form>
@@ -150,7 +150,7 @@
         }
     });
 
-    // Wywołaj updateAvailableOptions() na starcie
+
     updateAvailableOptions();
 
     document.addEventListener("DOMContentLoaded", function () {

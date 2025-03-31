@@ -1,5 +1,6 @@
 ﻿using AgroControlUI.DTOs.Fertilizers;
 using FluentValidation;
+using System.Globalization;
 
 namespace AgroControlUI.Validators.Fertilizers
 {
@@ -27,7 +28,7 @@ namespace AgroControlUI.Validators.Fertilizers
              .Must(components => components.Sum(c =>
              {
                  decimal elementPercentage;
-                 if (decimal.TryParse(c.ElementPercentage, out elementPercentage))
+                 if (decimal.TryParse(c.ElementPercentage, NumberStyles.Any, CultureInfo.InvariantCulture, out elementPercentage))
                  {
                      return elementPercentage;
                  }
