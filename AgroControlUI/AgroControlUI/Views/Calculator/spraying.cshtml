@@ -1,0 +1,246 @@
+﻿<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kalkulator oprysku</title>
+    <link rel="stylesheet" href="~/css/add.css">
+    <style>
+        .error {
+            color: red;
+            font-size: 14px;
+            margin-top: 5px;
+            display: none; /* Ukrywamy błędy na starcie */
+        }
+
+        .group input:focus + .bar + label,
+        .group input:not(:placeholder-shown) + .bar + label {
+            top: -20px;
+            font-size: 14px;
+            color: black;
+        }
+
+        table {
+            width: 100%;
+            margin-top: 20px;
+            border-collapse: collapse;
+        }
+
+        table, th, td {
+            border: 1px solid #ddd;
+        }
+
+        th, td {
+            padding: 8px;
+            text-align: center;
+        }
+
+        th {
+            background-color: #f4f4f4;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="form-container">
+        <div class="yellow-form">
+            <h1>Kalkulator oprysku</h1>
+
+            <form id="calculatorForm">
+                <div class="group">
+                    <input type="number" id="pesticideDose" min="0" step="0.01" required placeholder=" ">
+                    <span class="bar"></span>
+                    <label for="pesticideDose">Dawka ŚOR (l/ha)</label>
+                    <span class="error" id="errorPesticideDose"></span>
+                </div>
+
+                <div class="group">
+                    <input type="number" id="fieldArea" min="0" step="0.01" required placeholder=" ">
+                    <span class="bar"></span>
+                    <label for="fieldArea">Areał pola (ha)</label>
+                    <span class="error" id="errorFieldArea"></span>
+                </div>
+
+                <div class="group">
+                    <input type="number" id="waterDose" min="0" step="0.01" required placeholder=" ">
+                    <span class="bar"></span>
+                    <label for="waterDose">Dawka wody (l/ha)</label>
+                    <span class="error" id="errorWaterDose"></span>
+                </div>
+
+                <div class="group">
+                    <input type="number" id="sprayerCapacity" min="0" step="1" required placeholder=" ">
+                    <span class="bar"></span>
+                    <label for="sprayerCapacity">Pojemność opryskiwacza (l)</label>
+                    <span class="error" id="errorSprayerCapacity"></span>
+                </div>
+            </form>
+
+            <div class="result-group" id="resultGroup" style="display: none;">
+                <h4><strong>Przykładowe napełnienia opryskiwacza:</strong></h4>
+                <table id="fillingTable" style="width: 100%; border-collapse: collapse;">
+                    <thead>
+                        <tr>
+                            <th style="width: 25%; text-align: center;">Napełnienie</th>
+                            <th style="width: 25%; text-align: center;">Woda (l)</th>
+                            <th style="width: 25%; text-align: center;">ŚOR (l)</th>
+                            <th style="width: 25%; text-align: center;">Areał (ha)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Dynamicznie generowane napełnienia -->
+                    </tbody>
+                </table>
+                <div style="display:none">
+                    <h3><strong><span id="sumaText">Suma:</span></strong></h3>
+                    <p><strong>Woda:</strong> <span id="totalWaterAmount">---</span> l</p>
+                    <p><strong>ŚOR:</strong> <span id="totalPesticideAmountFinal">---</span> l</p>
+                    <p><strong>Areał:</strong> <span id="totalArea">---</span> ha</p>
+                </div>
+            </div>
+
+            <div class="action-buttons">
+                <a asp-action="Index" asp-controller="Home" class="cancel-btn">Strona główna</a>
+                <button type="reset" class="add-btn" onclick="resetCalculator()">Reset</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+                function showError(element, message) {
+            let errorElement = document.getElementById(element);
+            if (message) {
+                errorElement.textContent = message;
+                errorElement.style.display = "block"; // Pokazujemy błąd
+            } else {
+                errorElement.textContent = "";
+                errorElement.style.display = "none"; // Ukrywamy błąd
+            }
+        }
+
+        function validateInputs() {
+            let pesticideDose = parseFloat(document.getElementById("pesticideDose").value) || 0;
+            let fieldArea = parseFloat(document.getElementById("fieldArea").value) || 0;
+            let waterDose = parseFloat(document.getElementById("waterDose").value) || 0;
+            let sprayerCapacity = parseFloat(document.getElementById("sprayerCapacity").value) || 0;
+
+            let hasError = false;
+
+            // Walidacja dla "Dawka ŚOR"
+            if (!isNaN(pesticideDose) && pesticideDose > 0) {
+                showError("errorPesticideDose", "");
+            } else if (document.getElementById("pesticideDose").value !== "") {
+                showError("errorPesticideDose", "Dawka ŚOR musi być większa niż 0.");
+                hasError = true;
+            }
+            // Walidacja dla "Areał pola"
+            if (!isNaN(fieldArea) && fieldArea > 0) {
+                showError("errorFieldArea", "");
+            } else if (document.getElementById("fieldArea").value !== "") {
+                showError("errorFieldArea", "Podaj poprawną wielkość pola.");
+                hasError = true;
+            }
+
+            // Walidacja dla "Dawka wody"
+            if (!isNaN(waterDose) && waterDose > 0) {
+                showError("errorWaterDose", "");
+            } else if (document.getElementById("waterDose").value !== "") {
+                showError("errorWaterDose", "Dawka wody musi być większa niż 0.");
+                hasError = true;
+            }
+            // Walidacja dla "Pojemność opryskiwacza"
+
+            if (!isNaN(sprayerCapacity) && sprayerCapacity > 0) {
+                showError("errorSprayerCapacity", "");
+            } else if (document.getElementById("sprayerCapacity").value !== "") {
+                showError("errorSprayerCapacity", "Pojemność opryskiwacza musi być większa niż 0.");
+                hasError = true;
+            }
+            return !hasError; // Jeśli nie ma błędów, zwróć true
+        }
+
+        function calculate() {
+            if (!validateInputs()) {
+                document.getElementById("resultGroup").style.display = "none";
+                return;
+            }
+
+            let pesticideDose = parseFloat(document.getElementById("pesticideDose").value);
+            let fieldArea = parseFloat(document.getElementById("fieldArea").value);
+            let waterDose = parseFloat(document.getElementById("waterDose").value);
+            let sprayerCapacity = parseFloat(document.getElementById("sprayerCapacity").value);
+
+            let totalPesticideAmount = pesticideDose * fieldArea;
+            let totalWaterAmount = waterDose * fieldArea;
+            let remainingWater = totalWaterAmount;
+            let remainingPesticide = totalPesticideAmount;
+            let fillNumber = 1;
+
+            let fillingTableBody = document.getElementById("fillingTable").getElementsByTagName('tbody')[0];
+            fillingTableBody.innerHTML = "";
+
+            let groupedData = [];
+
+            while (remainingWater > 0) {
+                let waterInFill = Math.min(remainingWater, sprayerCapacity);
+                let pesticideInFill = (waterInFill / totalWaterAmount) * totalPesticideAmount;
+                let areaInFill = (waterInFill / waterDose);
+
+                remainingWater -= waterInFill;
+                remainingPesticide -= pesticideInFill;
+
+                let lastGroup = groupedData[groupedData.length - 1];
+
+                if (lastGroup && lastGroup.waterInFill.toFixed(2) === waterInFill.toFixed(2)) {
+                    lastGroup.count++;
+                } else {
+                    groupedData.push({
+                        startFill: fillNumber,
+                        waterInFill,
+                        pesticideInFill,
+                        areaInFill,
+                        count: 1
+                    });
+                }
+
+                fillNumber++;
+            }
+
+            groupedData.forEach(group => {
+                let row = fillingTableBody.insertRow();
+                let fillRange = (group.count === 1) ? `${group.startFill}` : `${group.startFill} - ${group.startFill + group.count - 1}`;
+
+                    row.innerHTML = `
+                <td style="text-align: center;">${fillRange}</td>
+                <td style="text-align: center;">${isNaN(group.waterInFill) ? "---" : group.waterInFill.toFixed(2)}</td>
+                <td style="text-align: center;">${isNaN(group.pesticideInFill) ? "---" : group.pesticideInFill.toFixed(2)}</td>
+                <td style="text-align: center;">${isNaN(group.areaInFill) ? "---" : group.areaInFill.toFixed(2)}</td>
+            `;
+        });
+
+        let sumRow = fillingTableBody.insertRow();
+        sumRow.innerHTML = `
+            <td style="text-align: center; font-weight: bold;">Suma</td>
+            <td style="text-align: center; font-weight: bold;">${isNaN(totalWaterAmount) ? "---" : totalWaterAmount.toFixed(2)}</td>
+            <td style="text-align: center; font-weight: bold;">${isNaN(totalPesticideAmount) ? "---" : totalPesticideAmount.toFixed(2)}</td>
+            <td style="text-align: center; font-weight: bold;">${isNaN(fieldArea) ? "---" : fieldArea.toFixed(2)}</td>
+        `;
+
+            document.getElementById("resultGroup").style.display = "block";
+        }
+
+        // Nasłuchiwanie na zmiany w polach formularza
+        document.getElementById("pesticideDose").addEventListener("input", calculate);
+        document.getElementById("fieldArea").addEventListener("input", calculate);
+        document.getElementById("waterDose").addEventListener("input", calculate);
+        document.getElementById("sprayerCapacity").addEventListener("input", calculate);
+
+        // Resetowanie formularza
+        function resetCalculator() {
+            document.getElementById("calculatorForm").reset();
+            document.getElementById("resultGroup").style.display = "none";
+        }
+    </script>
+
+</body>
+</html>

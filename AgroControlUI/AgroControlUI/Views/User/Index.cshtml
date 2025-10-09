@@ -1,0 +1,90 @@
+﻿@model List<AgroControlUI.DTOs.UserManagement.AgroControlUserDto>
+
+@await Html.PartialAsync("_DeleteConfirmationModal")
+<link rel="stylesheet" href="~/css/indexList.css">
+<link rel="stylesheet" href="~/css/listOperations.css">
+
+<h1 class="blue">Członkowie gospodarstwa</h1>
+
+<div id="categories" class="wrapper">
+    <p>
+        <a asp-action="Add" class="add-btn"><img src="~/images/plus-solid.svg" />Zaproś nowego członka</a>
+    </p>
+
+    <div class="table">
+        <div class="row header blue" id="headerRow">
+            <div class="cell" data-sort="name" onclick="sortByColumn(this)">
+                <div class="sort-wrapper">
+                    <span class="sort-text">Imię i nazwisko</span>
+                    <span class="sort-arrow">▼</span>
+                </div>
+            </div>
+            <div class="cell" data-sort="email" onclick="sortByColumn(this)">
+                <div class="sort-wrapper">
+                    <span class="sort-text">Email</span>
+                    <span class="sort-arrow">▼</span>
+                </div>
+            </div>
+            <div class="cell" data-sort="roleName" onclick="sortByColumn(this)">
+                <div class="sort-wrapper">
+                    <span class="sort-text">Rola</span>
+                    <span class="sort-arrow">▼</span>
+                </div>
+            </div>
+            <div class="cell">
+                Akcje
+            </div>
+        </div>
+        <div class="row">
+
+            <div class="cell">
+                <input type="text" class="search-input" data-search="name" placeholder="Szukaj..." oninput="searchByColumn()" />
+            </div>
+            <div class="cell">
+                <input type="text" class="search-input" data-search="email" placeholder="Szukaj..." oninput="searchByColumn()" />
+            </div>
+            <div class="cell"></div>
+            <div class="cell"></div>
+        </div>
+        <div class="list">
+            @foreach (var user in Model)
+            {
+                <div class="row">
+                    <div class="cell name" data-title="Imię i nazwisko">
+                        @user.FirstName @user.LastName
+                    </div>
+                    <div class="cell email" data-title="Email">
+                        @user.Email
+                    </div>
+                    <div class="cell roleName" data-title="Rola">
+                        @user.RoleName
+                    </div>
+                    <div class="cell" data-title="Akcje">
+                        <div class="action-buttons">
+                            @* <a asp-action="EditUser" asp-route-id="@user.Id" class="btn edit-btn">
+                                <img src="~/images/edit.svg" />Zmień rolę
+                            </a> *@
+                            @if(user.RoleName!="Właściciel")
+                            {
+                                <a asp-action="Edit" asp-route-id="@user.Id" class="edit-btn" style=" white-space: nowrap;"><img src="~/images/edit.svg" />Zmień rolę</a>
+                                <button type="button" class="delete-btn" data-bs-toggle="modal" data-bs-target="#deleteModal" onclick="setDeleteUrl('@Url.Action("DeleteConfirmed", new { id = user.Id })')">
+                                    <img src="~/images/delete.svg" />Usuń
+                                </button>
+                            }
+                            else
+                            {
+                                <button style="opacity:0;pointer-events: none; " class="delete-btn" type="button">
+                                    <img src="~/images/delete.svg" />Usuń
+                                </button>
+                            }
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+    <ul class="pagination"></ul>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/list.js/2.3.1/list.min.js"></script>
+<script src="~/js/listOperations.js"></script>
+<script src="~/js/deleteModal.js"></script>

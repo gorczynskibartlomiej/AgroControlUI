@@ -1,0 +1,163 @@
+﻿@model List<AgroControlUI.DTOs.Fertilizers.FertilizerDto>
+
+@await Html.PartialAsync("_DescriptionModal")
+@await Html.PartialAsync("_DeleteConfirmationModal")
+<link rel="stylesheet" href="~/css/indexList.css">
+<link rel="stylesheet" href="~/css/listOperations.css">
+<link rel="stylesheet" href="~/css/filters.css">
+
+<h1 class="green">Nawozy</h1>
+
+<div id="categories" class="wrapper">
+    @if (User.IsInRole("Admin"))
+    {
+        <p>
+            <a asp-action="Create" class="add-btn"><img src="~/images/plus-solid.svg" />Dodaj nawóz</a>
+        </p>
+    }
+
+    <div class="custom-dropdown green-filter">
+        <select id="filterType" name="FertilizerCategory" class="tomselected ts-hidden-accessible">
+            <option value="">Wszystkie kategorie nawozu</option>
+            @foreach (var category in Model.Select(p => p.FertilizerCategory.Name).Distinct())
+            {
+                <option value="@category">@category</option>
+            }
+        </select>
+        <label for="filterType">Wybierz kategorię nawozu</label>
+        <span class="bar"></span>
+    </div>
+
+    <div class="custom-dropdown green-filter">
+        <select id="filterProducer" name="roducer" class="tomselected ts-hidden-accessible">
+            <option value="">Wszyscy producenci</option>
+            @foreach (var producer in Model.Select(p => p.Producer.Name).Distinct())
+            {
+                <option value="@producer">@producer</option>
+            }
+        </select>
+        <label for="filterProducer">Wybierz producenta</label>
+        <span class="bar"></span>
+    </div>
+
+    <div class="table">
+        <div class="row header green" id="headerRow">
+            <div class="cell" data-sort="name" onclick="sortByColumn(this)">
+                <div class="sort-wrapper">
+                    <span class="sort-text">Nazwa nawozu</span>
+                    <span class="sort-arrow">▼</span>
+                </div>
+            </div>
+            <div class="cell" data-sort="producer" onclick="sortByColumn(this)">
+                <div class="sort-wrapper">
+                    <span class="sort-text">Producent</span>
+                    <span class="sort-arrow">▼</span>
+                </div>
+            </div>
+            <div class="cell" data-sort="fertilizerCategory" onclick="sortByColumn(this)">
+                <div class="sort-wrapper">
+                    <span class="sort-text">Kategoria nawozu</span>
+                    <span class="sort-arrow">▼</span>
+                </div>
+            </div>
+            @* <div class="cell" data-sort="producer">
+                Producent
+            </div>
+            <div class="cell" data-sort="fertilizerCategory">
+                Kategoria nawozu
+            </div> *@
+            <div class="cell" data-sort="fertilizerComponents">
+                Skład (rozpuszczalne w wodzie)
+            </div>
+            <div class="cell">
+                Akcje
+            </div>
+        </div>
+        <div class="row">
+            <div class="cell">
+                <input type="text" class="search-input" data-search="name" placeholder="Szukaj..." oninput="searchByColumn()" />
+            </div>
+            <div class="cell">
+                <input type="hidden" class="search-input" data-search="producer" placeholder="Szukaj..." oninput="searchByColumn()" />
+            </div>
+            <div class="cell">
+                <input type="hidden" class="search-input" data-search="fertilizerCategory" placeholder="Szukaj..." oninput="searchByColumn()" />
+            </div>
+          
+            <div class="cell">
+            </div>
+            <div class="cell">
+            </div>
+        </div>
+        <div class="list">
+            @foreach (var fertilizer in Model)
+            {
+                <div class="row">
+                    <div class="cell name" data-title="Nazwa nawozu">
+                        @fertilizer.Name
+                    </div>
+                    <div class="cell producer" data-title="Producent">
+                        @fertilizer.Producer.Name
+                    </div>
+                    <div class="cell fertilizerCategory" data-title="Kategoria nawozu">
+                        @fertilizer.FertilizerCategory.Name
+                    </div>
+                    <div class="cell fertilizerComponents" data-title="Skład">
+                        @foreach (var component in fertilizer.FertilizerComponents)
+                        {
+                            @($"{component.ChemicalElement.Name}({component.ElementPercentage}%)")
+                            @if (component != fertilizer.FertilizerComponents.Last())
+                            {
+                                @(", ")
+                            }
+                        }
+                    </div>
+                    <div class="cell" data-title="Akcje">
+                        <div class="action-buttons">
+                            <a href="javascript:void(0);" class="cancel-btn" data-bs-toggle="modal" data-bs-target="#descriptionModal" data-description="@fertilizer.Description"> Opis </a>
+                            @if (User.IsInRole("Admin"))
+                            {
+                                <a asp-action="Edit" asp-route-id="@fertilizer.Id" class="edit-btn"><img src="~/images/edit.svg" />Edytuj</a>
+                                <button type="button" class="delete-btn" data-bs-toggle="modal" data-bs-target="#deleteModal" onclick="setDeleteUrl('@Url.Action("DeleteConfirmed", new { id = fertilizer.Id })')">
+                                    <img src="~/images/delete.svg" />Usuń
+                                </button>
+                            }
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+    <ul class="pagination"></ul>
+</div>
+
+<script src="~/js/description.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/list.js/2.3.1/list.min.js"></script>
+<script src="~/js/listOperations.js"></script>
+<script src="~/js/deleteModal.js"></script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+
+        const filterType = document.getElementById("filterType");
+        const filterProducer = document.getElementById("filterProducer");
+
+        filterType.addEventListener("change", function () {
+            let value = filterType.value.toLowerCase();
+
+            document.querySelectorAll('.search-input[data-search="fertilizerCategory"]').forEach(input => {
+                input.value = value;
+            });
+            searchByColumn();
+        });
+
+        filterProducer.addEventListener("change", function () {
+            let value = filterProducer.value.toLowerCase();
+
+            document.querySelectorAll('.search-input[data-search="producer"]').forEach(input => {
+                input.value = value;
+            });
+            searchByColumn();
+        });
+    });
+</script>

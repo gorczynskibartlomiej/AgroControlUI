@@ -1,0 +1,33 @@
+﻿@model AgroControlUI.DTOs.Account.LoginModelDto
+
+<link rel="stylesheet" href="~/css/loginAndRegister.css">
+<div class="login-container">
+    <div class="login-form">
+        <h1>Logowanie</h1>
+
+        <form asp-action="Login" method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="group">
+                <input asp-for="Email" required />
+                
+                <span class="bar"></span>
+                <label asp-for="Email">Email</label>
+                <span asp-validation-for="Email" class="text-danger"></span>
+            </div>
+
+            <div class="group">
+                <input asp-for="Password" required type="password" />
+                
+                <span class="bar"></span>
+                <label asp-for="Password">Hasło</label>
+                <span asp-validation-for="Password" class="text-danger"></span>
+            </div>
+            <input type="hidden" name="ReturnUrl" value="@ViewData["ReturnUrl"]" />
+            <button type="submit" class="btn-log">Zaloguj</button>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

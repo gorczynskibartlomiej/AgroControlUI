@@ -1,0 +1,544 @@
+﻿<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Strona Główna</title>
+    <link rel="stylesheet" href="~/css/home.css" >
+
+</head>
+<body>
+    @if(User.IsInRole("Pracownik"))
+    {
+   <div class="container">
+            <div class="row g-5 justify-content-center">
+                <div class="category-wrapper"></div>
+                <div class="col-md-12 col-lg-6 category-wraper">
+                    <div class="category">
+                        <h3>Panel pracownika</h3>
+                        <div class="tiles row g-4 justify-content-center">
+                            <div class="col-6 col-md-4 col-lg-6 col-xxl-4">
+                                <div class="tile">
+                                    <a asp-area="" asp-controller="Farm" asp-action="Index">
+                                        <img src="~/images/farmHouse.png" alt="Gospodarstwo">
+                                        <h4>Gospodarstwo</h4>
+                                    </a>
+                                </div>
+                            </div>
+                            <div class="col-6 col-md-4 col-lg-6 col-xxl-4">
+                                <div class="tile">
+                                    <a asp-area="" asp-controller="FieldWork" asp-action="Index">
+                                        <img src="~/images/fieldWork.png" alt="Prace polowe">
+                                        <h4>Prace polowe</h4>
+                                    </a>
+                                </div>
+                            </div>
+                            <div class="col-6 col-md-4 col-lg-6 col-xxl-4">
+                                <div class="tile">
+                                    <a asp-area="" asp-controller="FieldWork" asp-action="Create">
+                                        <img src="~/images/fieldWorkAdd.png" alt="Prace polowe">
+                                        <h4>Dodaj pracę polową</h4>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-12 col-lg-6 category-wraper">
+                    <div class="category">
+                        <h3>Kalkulatory</h3>
+                        <div class="tiles row g-4 justify-content-center">
+                            <div class="col-6 col-md-4 col-lg-6 col-xxl-4">
+                                <div class="tile">
+                                    <a asp-area="" asp-controller="Calculator" asp-action="seedRate">
+                                        <img src="~/images/seedRateCalculator.png" alt="Kalkulator wysiewu nasion">
+                                        <h4>Kalkulator wysiewu nasion</h4>
+                                    </a>
+                                </div>
+                            </div>
+                            <div class="col-6 col-md-4 col-lg-6 col-xxl-4">
+                                <div class="tile">
+                                    <a asp-area="" asp-controller="Calculator" asp-action="plantPopulation">
+                                        <img src="~/images/plantPopulationCalculator.png" alt="Kalkulator obsady roślin">
+                                        <h4>Kalkulator obsady roślin</h4>
+                                    </a>
+                                </div>
+                            </div>
+                            <div class="col-6 col-md-4 col-lg-6 col-xxl-4">
+                                <div class="tile">
+                                    <a asp-area="" asp-controller="Calculator" asp-action="Spraying">
+                                        <img src="~/images/sprayingCalculator.png" alt="Kalkulator oprysków">
+                                        <h4>Kalkulator oprysków</h4>
+                                    </a>
+                                </div>
+                            </div>
+                            <div class="col-6 col-md-4 col-lg-6 col-xxl-4">
+                                <div class="tile">
+                                    <a asp-area="" asp-controller="Calculator" asp-action="CornDrying">
+                                        <img src="~/images/cornCalculator.png" alt="Kalkulator suszenia kukurydzy">
+                                        <h4>Kalkulator suszenia kukurydzy</h4>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+     </div>
+    }
+    else if(User.IsInRole("Admin"))
+    {
+        <div class="container">
+            <div class="row g-5 justify-content-center">
+                <div class="col-md-12 col-lg-6 category-wraper">
+                    <div class="category">
+                        <h3>Środki ochrony roślin</h3>
+                        <div class="tiles row g-4 justify-content-center">
+                            <div class="col-6 col-md-4 col-lg-6 col-xxl-4">
+                                <div class="tile">
+                                    <a asp-area="" asp-controller="ActiveIngredient" asp-action="Index">
+                                        <img src="~/images/activeIngrednient.png" alt="Substancje aktywne">
+                                        <h4>Substancje aktywne</h4>
+                                    </a>
+                                </div>
+                            </div>
+                            <div class="col-6 col-md-4 col-lg-6 col-xxl-4">
+                                <div class="tile">
+                                    <a asp-area="" asp-controller="CropProtectionProductCategory" asp-action="Index">
+                                        <img src="~/images/category.png" alt="Kategorie środków">
+                                        <h4>Kategorie środków</h4>
+                                    </a>
+                                </div>
+                            </div>
+                            <div class="col-6 col-md-4 col-lg-6 col-xxl-4">
+                                <div class="tile">
+                                    <a asp-area="" asp-controller="CropProtectionProduct" asp-action="Index">
+                                        <img src="~/images/cropProtectionProduct.png" alt="Środki ochrony roślin">
+                                        <h4>Środki ochrony roślin</h4>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-12 col-lg-6 category-wraper">
+                    <div class="category">
+                        <h3>Nawozy</h3>
+                        <div class="tiles row g-4 justify-content-center">
+                            <div class="col-6 col-md-4 col-lg-6 col-xxl-4">
+                                <div class="tile">
+                                    <a asp-area="" asp-controller="ChemicalElement" asp-action="Index">
+                                        <img src="~/images/chemicalElement.png" alt="Składniki chemiczne">
+                                        <h4>Składniki chemiczne</h4>
+                                    </a>
+                                </div>
+                            </div>
+                            <div class="col-6 col-md-4 col-lg-6 col-xxl-4">
+                                <div class="tile">
+                                    <a asp-area="" asp-controller="FertilizerCategory" asp-action="Index">
+                                        <img src="~/images/category.png" alt="Kategorie nawozów">
+                                        <h4>Kategorie nawozów</h4>
+                                    </a>
+                                </div>
+                            </div>
+                            <div class="col-6 col-md-4 col-lg-6 col-xxl-4">
+                                <div class="tile">
+                                    <a asp-area="" asp-controller="Fertilizer" asp-action="Index">
+                                        <img src="~/images/fertilizer.png" alt="Nawozy">
+                                        <h4>Nawozy</h4>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 category-wraper">
+                    <div class="category">
+                        <h3>Inne</h3>
+                        <div class="tiles row g-4 justify-content-center">
+                            <div class="col-6 col-sm-4 col-md-4 col-lg-3 col-xxl-2">
+                                <div class="tile">
+                                    <a asp-area="" asp-controller="Crop" asp-action="Index">
+                                        <img src="~/images/cropType.png" alt="Rodzaje upraw">
+                                        <h4>Rodzaje upraw</h4>
+                                    </a>
+                                </div>
+                            </div>
+                            <div class="col-6 col-sm-4 col-md-4 col-lg-3 col-xxl-2">
+                                <div class="tile">
+                                    <a asp-area="" asp-controller="AgriculturalEquipmentType" asp-action="Index">
+                                        <img src="~/images/tractor.png" alt="Rodzaje maszyn">
+                                        <h4>Rodzaje maszyn</h4>
+                                    </a>
+
+                                </div>
+                            </div>
+                            @* <div class="col-6 col-sm-4 col-md-4 col-lg-3 col-xxl-2">
+                                <div class="tile">
+                                    <a asp-area="" asp-controller="CostUnit" asp-action="Index">
+                                        <img src="~/images/costUnit.png" alt="Jednostki kosztów">
+                                        <h4>Jednostki kosztów</h4>
+                                    </a>
+
+                                </div>
+                            </div>
+                             *@
+                            <div class="col-6 col-sm-4 col-md-4 col-lg-3 col-xxl-2">
+                                <div class="tile">
+                                    <a asp-area="" asp-controller="Unit" asp-action="Index">
+                                        <img src="~/images/unit.png" alt="Jednostki miar">
+                                        <h4>Jednostki miar</h4>
+                                    </a>
+
+                                </div>
+                            </div>
+                            <div class="col-6 col-sm-4 col-md-4 col-lg-3 col-xxl-2">
+                                <div class="tile">
+                                    <a asp-area="" asp-controller="Producer" asp-action="Index">
+                                        <img src="~/images/producer.png" alt="Producenci">
+                                        <h4>Producenci</h4>
+                                    </a>
+
+                                </div>
+                            </div>
+                            <div class="col-6 col-sm-4 col-md-4 col-lg-3 col-xxl-2">
+                                <div class="tile">
+                                    <a asp-area="" asp-controller="Fuel" asp-action="Index">
+                                        <img src="~/images/fuel.png" alt="Paliwo">
+                                        <h4>Paliwo</h4>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+    else if(User.IsInRole("Właściciel")||User.IsInRole("Współwłaściciel"))
+    {
+        <div class="container">
+            <div class="row g-5 justify-content-center">
+                <div class="col-md-12 col-lg-6 category-wraper">
+                    <div class="category">
+                        <h3>Gospodarstwo</h3>
+                        <div class="tiles row g-4 justify-content-center">
+                            <div class="col-6 col-md-4 col-lg-6 col-xxl-4">
+                                <div class="tile">                              
+                                    <a asp-area="" asp-controller="Farm" asp-action="Index">
+                                        <img src="~/images/farmHouse.png" alt="Gospodarstwo">
+                                        <h4>Gospodarstwo</h4>
+                                    </a>
+                                </div>
+                            </div>
+                            <div class="col-6 col-md-4 col-lg-6 col-xxl-4">
+                                <div class="tile">
+                                    <a asp-area="" asp-controller="User" asp-action="Select">
+                                        <img src="~/images/people.png" alt="Osoby">
+                                        <h4>Członkowie</h4>
+                                    </a>
+                                </div>
+                            </div>
+                            <div class="col-6 col-md-4 col-lg-6 col-xxl-4">
+                                <div class="tile">
+                                    <a asp-area="" asp-controller="AgriculturalEquipment" asp-action="Index">
+                                        <img src="~/images/tractor.png" alt="Maszyny">
+                                        <h4>Maszyny</h4>
+                                    </a>
+                                </div>
+                            </div>
+                            <div class="col-6 col-md-4 col-lg-6 col-xxl-4">
+                                <div class="tile">
+                                    <a asp-area="" asp-controller="Field" asp-action="Index">
+                                        <img src="~/images/fields.png" alt="Pola">
+                                        <h4>Pola</h4>
+                                    </a>
+                                </div>
+                            </div>
+                            @* <div class="col-6 col-md-4 col-lg-6 col-xxl-4">
+                                <div class="tile">
+                                    <a asp-area="" asp-controller="GrainSilo" asp-action="Index">
+                                        <img src="~/images/storage.png" alt="Silosy">
+                                        <h4>Silosy</h4>
+                                    </a>
+                                </div>
+                            </div>      *@   
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-12 col-lg-6 category-wraper">
+                    <div class="category">
+                        <h3>Uprawa roślin</h3>
+                        <div class="tiles row g-4 justify-content-center">
+                            <div class="col-6 col-md-4 col-lg-6 col-xxl-4">
+                                <div class ="tile">
+                                    <a asp-area="" asp-controller="CropRotationPlanner" asp-action="Index">
+                                        <img src="~/images/cropRotation.png" alt="Płodozmian">
+                                        <h4>Planowanie płodozmianu</h4>
+                                    </a>
+                                </div>
+                            </div>
+                            <div class="col-6 col-md-4 col-lg-6 col-xxl-4">
+                                <div class="tile">
+                                    <a asp-area="" asp-controller="FieldWork" asp-action="Index">
+                                        <img src="~/images/fieldWork.png" alt="Prace polowe">
+                                        <h4>Prace polowe</h4>
+                                    </a>
+                                </div>
+                            </div>
+                            @* <div class="col-6 col-md-4 col-lg-6 col-xxl-4">
+                                 <div class="tile">
+                                    <a asp-area="" asp-controller="Nawozenie" asp-action="Index">
+                                        <img src="~/images/npk.png" alt="Nawożenie">
+                                        <h4>Planner nawożenia</h4>
+                                    </a>
+                                </div>
+                            </div>
+                            <div class="col-6 col-md-4 col-lg-6 col-xxl-4">
+                                <div class="tile">
+                                    <a asp-area="" asp-controller="Opryski" asp-action="Index">
+                                        <img src="~/images/sprayingPlanner.png" alt="Opryski">
+                                        <h4>Planner oprysków</h4>
+                                    </a>
+                                </div>
+                            </div> *@
+                            <div class="col-6 col-md-4 col-lg-6 col-xxl-4">
+                                <div class="tile">
+                                    <a asp-area="" asp-controller="Fertilizer" asp-action="Index">
+                                        <img src="~/images/fertilizer.png" alt="Nawozy">
+                                        <h4>Nawozy</h4>
+                                    </a>
+                                </div>
+                            </div>
+                            <div class="col-6 col-md-4 col-lg-6 col-xxl-4">
+                                <div class="tile">
+                                    <a asp-area="" asp-controller="CropProtectionProduct" asp-action="Index">
+                                        <img src="~/images/cropProtectionProduct.png" alt="Środki ochrony roślin">
+                                        <h4>Środki ochrony roślin</h4>
+                                    </a>
+                                </div>
+                            </div>
+                            @* <div class="col-6 col-md-4 col-lg-6 col-xxl-4">
+                                <div class="tile">
+                                    <a asp-area="" asp-controller="Nasiona" asp-action="Index">
+                                        <img src="~/images/" alt="Nasiona">
+                                        <h4>Nasiona</h4>
+                                    </a>
+                                </div>
+                            </div> *@
+                        </div>
+                    </div>
+                </div>
+                @* <div class="col-md-12 col-lg-6 category-wraper">
+                    <div class="category">
+                        <h3>Magazyn i finanse</h3>
+                        <div class="tiles row g-4 justify-content-center">
+                            <div class="col-6 col-md-4 col-lg-6 col-xl-4">
+                                <div class="tile">
+                                    <a asp-area="" asp-controller="Magazyn" asp-action="Index">
+                                        <img src="placeholder13.jpg" alt="Magazyn">
+                                        <h4>Magazyn</h4>
+                                    </a>
+                                </div>
+                            </div>
+                            <div class="col-6 col-md-4 col-lg-6 col-xl-4">
+                                <div class="tile">
+                                    <a asp-area="" asp-controller="Purchase" asp-action="Index">
+                                        <img src="placeholder14.jpg" alt="Zakupy">
+                                        <h4>Zakupy</h4>
+                                    </a>
+                                </div>
+                            </div>
+                            <div class="col-6 col-md-4 col-lg-6 col-xl-4">
+                                <div class="tile">
+                                    <a asp-area="" asp-controller="SprzedazPlonow" asp-action="Index">
+                                        <img src="placeholder15.jpg" alt="Sprzedaż plonów">
+                                        <h4>Sprzedaż plonów</h4>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div> *@
+                <div class="col-md-12 col-lg-6 category-wraper">
+                    <div class="category">
+                        <h3>Kalkulatory</h3>
+                        <div class="tiles row g-4 justify-content-center">
+                            <div class="col-6 col-md-4 col-lg-6 col-xxl-4">
+                                <div class="tile">
+                                    <a asp-area="" asp-controller="Calculator" asp-action="seedRate">
+                                        <img src="~/images/seedRateCalculator.png" alt="Kalkulator wysiewu nasion">
+                                        <h4>Kalkulator wysiewu nasion</h4>
+                                    </a>
+                                </div>
+                            </div>
+                            <div class="col-6 col-md-4 col-lg-6 col-xxl-4">
+                                <div class="tile">
+                                    <a asp-area="" asp-controller="Calculator" asp-action="plantPopulation">
+                                        <img src="~/images/plantPopulationCalculator.png" alt="Kalkulator obsady roślin">
+                                        <h4>Kalkulator obsady roślin</h4>
+                                    </a>
+                                </div>
+                            </div>
+                            <div class="col-6 col-md-4 col-lg-6 col-xxl-4">
+                                <div class="tile">
+                                    <a asp-area="" asp-controller="Calculator" asp-action="Spraying">
+                                        <img src="~/images/sprayingCalculator.png" alt="Kalkulator oprysków">
+                                        <h4>Kalkulator oprysków</h4>
+                                    </a>
+                                </div>
+                            </div>
+                            <div class="col-6 col-md-4 col-lg-6 col-xxl-4">
+                                <div class="tile">
+                                    <a asp-area="" asp-controller="Calculator" asp-action="CornDrying">
+                                        <img src="~/images/cornCalculator.png" alt="Kalkulator suszenia kukurydzy">
+                                        <h4>Kalkulator suszenia kukurydzy</h4>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            @* 
+
+                 <div class="col-6 col-md-4 col-lg-6 col-xl-4">
+                        <div class="tile">
+                        </div>
+                    </div>
+                <!-- Czwarta kategoria: Analizy -->
+                <div class="category">
+                    <h3>Analizy</h3>
+                    <div class="tiles">
+                        <a class="tile" asp-area="" asp-controller="KartotekaPola" asp-action="Index">
+                            <img src="placeholder16.jpg" alt="Kartoteka pola">
+                            <h4>Kartoteka pola</h4>
+                        </a>
+                        <a class="tile" asp-area="" asp-controller="ZestawienieUpraw" asp-action="Index">
+                            <img src="placeholder17.jpg" alt="Zestawienie upraw">
+                            <h4>Zestawienie upraw</h4>
+                        </a>
+                        <a class="tile" asp-area="" asp-controller="AnalizaMaszyn" asp-action="Index">
+                            <img src="placeholder18.jpg" alt="Analiza maszyn">
+                            <h4>Analiza maszyn</h4>
+                        </a>
+                        <a class="tile" asp-area="" asp-controller="PodsumowanieSezonu" asp-action="Index">
+                            <img src="placeholder19.jpg" alt="Podsumowanie sezonu">
+                            <h4>Podsumowanie sezonu</h4>
+                        </a>
+                        <a class="tile" asp-area="" asp-controller="RaportyMagazynowe" asp-action="Index">
+                            <img src="placeholder20.jpg" alt="Raporty magazynowe">
+                            <h4>Raporty magazynowe</h4>
+                        </a>
+                    </div>
+                </div> 
+            </div>*@
+
+        </div>
+
+    }
+    else
+    {
+        <div class="app-description">
+            <h1>AgroControl – Nowoczesne Zarządzanie Gospodarstwem</h1>
+            <p>AgroControl to innowacyjna aplikacja, która ułatwia codzienną pracę rolników.</p>
+            <p>Przyspiesz swoje działania, zwiększ wydajność i podejmuj lepsze decyzje dzięki intuicyjnemu interfejsowi i zaawansowanym narzędziom analitycznym.</p>
+        </div>
+        <div class="slideshow-container">
+            <div class="mySlides show">
+                <img src="images/baner1.jpg">
+            </div>
+
+            <div class="mySlides">
+                <img src="images/baner2.jpg">
+            </div>
+
+            <div class="mySlides">
+                <img src="images/baner3.jpg">
+            </div>
+
+            <a class="prev" onclick="plusSlides(-1); resetTimer();">❮</a>
+            <a class="next" onclick="plusSlides(1); resetTimer();">❯</a>
+        </div>
+        <br />
+        <div style="text-align:center">
+            <span class="dot" onclick="currentSlide(1); resetTimer();"></span>
+            <span class="dot" onclick="currentSlide(2); resetTimer();"></span>
+            <span class="dot" onclick="currentSlide(3); resetTimer();"></span>
+        </div>
+        <br />
+        <div class="features-container container">
+            <div class="row g-3">
+                <div class="col-xl-3 col-md-6 col-sm-12">
+                    <div class="feature">
+                        <img src="images/fieldWorkManagement.png" alt="Zarządzanie Pracami Polowymi">
+                        <h3>Zarządzanie Pracami Polowymi</h3>
+                        <p>Twórz i ewidencjonuj zadania polowe, takie jak orka, nawożenie czy zbiory, aby łatwo monitorować ich realizację.</p>
+                    </div>
+                </div>
+                <div class="col-xl-3 col-md-6 col-sm-12">
+                    <div class="feature">
+                        <img src="images/npk.png" alt="Planowanie Nawożenia i Ochrony Roślin">
+                        <h3>Planowanie Nawożenia i Ochrony Roślin</h3>
+                        <p>Planowanie zabiegów takich jak nawożenie i opryski, zapewniając odpowiednią ochronę Twoich upraw.</p>
+                    </div>
+                </div>
+                <div class="col-xl-3 col-md-6 col-sm-12">
+                    <div class="feature">
+                        <img src="images/cropRotation.png" alt="Planer Płodozmianu">
+                        <h3>Planer Płodozmianu</h3>
+                        <p>Zarządzaj cyklem upraw na swoich polach, aby zwiększyć wydajność i dbać o żyzność gleby.</p>
+                    </div>
+                </div>
+                <div class="col-xl-3 col-md-6 col-sm-12">
+                    <div class="feature">
+                        <img src="images/analysis.png" alt="Analizy i Raporty">
+                        <h3>Analizy i Raporty</h3>
+                        <p>Generuj szczegółowe analizy i raporty, które pomogą podejmować lepsze decyzje w zarządzaniu gospodarstwem.</p>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    }
+  
+    <script>
+        let slideIndex = 1;
+        let slideInterval;
+        showSlides(slideIndex);
+
+        function plusSlides(n) {
+            showSlides(slideIndex += n);
+        }
+
+        function currentSlide(n) {
+            showSlides(slideIndex = n);
+        }
+
+        function showSlides(n) {
+            let i;
+            let slides = document.getElementsByClassName("mySlides");
+            let dots = document.getElementsByClassName("dot");
+            if (n > slides.length) { slideIndex = 1 }
+            if (n < 1) { slideIndex = slides.length }
+            for (i = 0; i < slides.length; i++) {
+                slides[i].className = slides[i].className.replace(" show", "");
+            }
+            for (i = 0; i < dots.length; i++) {
+                dots[i].className = dots[i].className.replace(" active", "");
+            }
+            slides[slideIndex - 1].className += " show";
+            dots[slideIndex - 1].className += " active";
+        }
+
+        function resetTimer() {
+            clearInterval(slideInterval);
+            slideInterval = setInterval(() => {
+                plusSlides(1);
+            }, 10000); 
+        }
+        resetTimer();
+    </script>
+</body>
+</html>

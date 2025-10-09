@@ -1,0 +1,112 @@
+﻿.list {
+    display: table-row-group;
+}
+@media screen and (max-width: 580px) {
+    .list {
+        display: block;
+    }
+    
+}
+    .pagination {
+        display: flex;
+        justify-content: center;
+        list-style: none;
+        padding: 10px 0;
+        margin-top: 20px;
+    }
+
+        .pagination li {
+            margin: 0 5px;
+        }
+
+            .pagination li a {
+                display: block;
+                padding: 8px 12px;
+                background-color: var(--main-app-color);
+                color: white;
+                border-radius: 5px;
+                text-decoration: none;
+                font-weight: bold;
+                transition: background 0.3s;
+                transition: transform 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease;
+            }
+
+                .pagination li a:hover {
+                    box-shadow: 0px 0px 10px 3px var(--main-app-color);
+                    transform: translateY(-3px);
+                    transition: transform 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease;
+                }
+
+        .pagination .active a {
+            transform: translateY(-3px);
+            box-shadow: 0px 0px 7px 2px var(--main-app-color);
+        }
+
+.header .cell {
+    cursor: pointer;
+    transition: background 0.3s, backdrop-filter 0.3s;
+}
+
+        .header .cell:hover {
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(5px);
+        }
+        
+    .sort-arrow {
+        white-space:nowrap;
+        display:inline-block;
+        padding: 0px!important;
+        margin-left: 5px;
+        margin-top:0px;
+        font-size: 11px;
+        align-items: center;
+        transition: transform 0.3s ease-in-out;
+        justify-content: center;
+        margin-left: 5px;
+        font-size: 11px;
+        transform-origin: center;
+        transition: transform 0.3s ease-in-out;
+        vertical-align: middle;
+        height: 100%;
+    }
+
+    .search-input {
+        width: 100%;
+        max-width: 200px;
+        padding: 5px;
+        margin-top: 5px;
+        font-size: 12px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        box-sizing: border-box;
+    }
+
+        .search-input:focus {
+            outline: none;
+            border-color: var(--main-app-color);
+            box-shadow: 0 0 3px rgba(0, 123, 255, 0.5);
+        }
+.sort-wrapper {
+    display: inline-flex;
+    justify-content: flex-start;
+    align-items: center;
+    min-width: 0;
+    padding:0px;
+    margin:0px;
+}
+
+.sort-text {
+    white-space: normal;
+}
+
+.sort-wrapper.sort-arrow-visible .sort-arrow {
+    visibility: visible !important;
+}
+
+.sort-arrow.asc {
+    transform: rotate(180deg);
+}
+
+.sort-arrow.desc {
+    transform: rotate(0deg);
+}

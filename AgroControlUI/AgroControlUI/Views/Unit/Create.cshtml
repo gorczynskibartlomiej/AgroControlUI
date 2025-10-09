@@ -1,0 +1,25 @@
+﻿@model AgroControlUI.DTOs.ReferenceData.UnitDto
+
+<link rel="stylesheet" href="~/css/add.css">
+
+<div class="form-container">
+    <div class="yellow-form">
+        <form asp-action="Create" method="post">
+            <h1>Dodaj jednostkę</h1>
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+            <div class="group">
+                <input asp-for="Name" />
+                
+                <span class="bar"></span>
+                <label asp-for="Name">Skrót jednostki</label>
+                <span asp-validation-for="Name" class="text-danger"></span>
+            </div>
+            <div class="action-buttons">
+                <a asp-action="Index" class="cancel-btn">Anuluj</a>
+                <button type="submit" class="add-btn">Dodaj</button>
+            </div>
+        </form>
+    </div>
+</div>
+<script src="~/js/inputLabel.js"></script>

@@ -1,0 +1,26 @@
+﻿@model AgroControlUI.DTOs.Fertilizers.FertilizerCategoryDto
+
+<link rel="stylesheet" href="~/css/add.css">
+
+<div class="form-container">
+    <div class="green-form">
+        <form asp-action="Edit" method="post">
+            <h1>Edytuj kategorię nawozów</h1>
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+            <div class="group">
+                <input type="hidden" name="Id" value="@Model.Id" />
+                <input asp-for="Name" required value="@Model.Name"/>
+                
+                <span class="bar"></span>
+                <label asp-for="Name">Nazwa kategorii</label>
+                <span asp-validation-for="Name" class="text-danger"></span>
+            </div>
+            <div class="action-buttons">
+                <a asp-action="Index" class="cancel-btn">Anuluj</a>
+                <button type="submit" class="add-btn">Zapisz</button>
+            </div>
+        </form>
+    </div>
+</div>
+<script src="~/js/inputLabel.js"></script>

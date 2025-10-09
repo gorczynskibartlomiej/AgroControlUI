@@ -1,0 +1,21 @@
+﻿@model int  
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Akceptacja zaproszenia</title>
+</head>
+<body>
+    <h3>Trwa akceptowanie zaproszenia...</h3>
+
+    <!-- Formularz wysyłający POST do akcji AcceptInvitation -->
+    <form id="acceptForm" method="POST" action="@Url.Action("AcceptInvitation", "Invitation", new { invitationId = Model })">
+        <button type="submit" style="display:none">Akceptuj zaproszenie</button>
+    </form>
+
+    <script>
+        // Automatyczne wysłanie formularza po załadowaniu strony
+        document.getElementById("acceptForm").submit();
+    </script>
+</body>
+</html>

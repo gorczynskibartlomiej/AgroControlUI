@@ -1,0 +1,360 @@
+﻿@model AgroControlUI.DTOs.FarmData.CreateFieldDto
+
+<link rel="stylesheet" href="~/css/add.css">
+<style>
+    .area-label {
+        color: white; /* Czerwony kolor dla lepszej widoczności */
+        font-weight: bold;
+        text-align: center;
+        background-color: transparent; /* Brak tła */
+        padding: 0; /* Bez paddingu */
+        max-width: 150px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        font-size: 16px; /* Lekko większa czcionka */
+    }
+
+    .legend {
+        margin-top: 20px;
+        font-size: 14px;
+    }
+
+        .legend h6 {
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+
+        .legend ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .legend li {
+            display: flex;
+            align-items: center;
+            margin-bottom: 5px;
+        }
+
+    .legend-icon {
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        margin-right: 10px;
+    }
+</style>
+
+<div class="form-container">
+    <div class="green-form">
+        <form asp-action="Create" method="post">
+            <h1>Dodaj pole</h1>
+
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+            <div class="group">
+                <input asp-for="Name" required />
+                <span class="bar"></span>
+                <label asp-for="Name">Nazwa</label>
+                <span asp-validation-for="Name" class="text-danger"></span>
+            </div>
+
+            <div class="group">
+                <textarea asp-for="Description" class="description-field" required></textarea>
+                <span class="bar"></span>
+                <label asp-for="Description">Opis</label>
+                <span asp-validation-for="Description" class="text-danger"></span>
+            </div>
+            @* <div class="group">
+                <input asp-for="SoilType" required />
+                <span class="bar"></span>
+                <label asp-for="SoilType">Rodzaj gleby</label>
+                <span asp-validation-for="SoilType" class="text-danger"></span>
+            </div> *@
+
+            <div class="group">
+                <input asp-for="Area" type="number" step="0.01" required />
+                <span class="bar"></span>
+                <label asp-for="Area">Powierzchnia (ha)</label>
+                <span asp-validation-for="Area" class="text-danger"></span>
+            </div>
+
+            <!-- Podgląd mapy -->
+            <div class="group">
+                <div class="map-preview" id="mapPreview" style="height: 200px;"></div>
+            </div>
+            <!-- Ukryte pole, w którym zapiszemy współrzędne -->
+            <input type="hidden" id="FieldBorder" name="FieldBorder" />
+
+            <div class="group">
+                <button type="button" class="btn btn-info" data-bs-toggle="modal" data-bs-target="#mapModal">
+                    Edytuj granice
+                </button>
+                <button type="button" class="btn btn-info" id="clearBorders" data-bs-toggle="modal" data-bs-target="#mapModal">
+                    Usuń granice granice
+                </button>
+            </div>
+
+            <div class="action-buttons">
+                <a asp-action="Index" class="cancel-btn btn">Anuluj</a>
+                <button type="submit" class="add-btn btn">Zapisz</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Modal with Map -->
+<div class="modal fade" id="mapModal" tabindex="-1" aria-labelledby="mapModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="mapModalLabel">Edytuj granice pola</h5>
+            </div>
+            <div class="modal-body">
+                <div id="map" style="height: 500px;"></div>
+            </div>
+
+            <!-- Legenda mapy -->
+            <div class="modal-footer">
+                <div class="legend">
+                    <h6>Legenda:</h6>
+                    <ul>
+                        <li>
+                            <span class="legend-icon" style="background-color: #3388ff;"></span> <strong>Tworzenie granic:</strong> Ikona aktywująca rysowanie granic pola na mapie (poligon).
+                        </li>
+                        <li>
+                            <span class="legend-icon" style="background-color: #ff7800;"></span> <strong>Usuwanie granic:</strong> Ikona do usuwania granic pola z mapy.
+                        </li>
+                        <li>
+                            <span class="legend-icon" style="background-color: #00aaff;"></span> <strong>Edycja granic:</strong> Ikona pozwalająca na edytowanie istniejących granic na mapie.
+                        </li>
+                    </ul>
+                </div>
+                <button type="button" style="width:100%" class="add-btn" data-bs-dismiss="modal">Zapisz</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Leaflet + Leaflet Draw JS/CSS -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/leaflet.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/1.0.4/leaflet.draw.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/leaflet.css" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/1.0.4/leaflet.draw.css" />
+
+<script>
+
+        document.addEventListener("DOMContentLoaded", function () {
+
+
+
+
+
+
+
+
+
+
+
+
+        var areaInput = document.getElementById("Area");
+        var clearBordersBtn = document.getElementById("clearBorders");
+        var fieldBorderInput = document.getElementById("FieldBorder");
+
+        // Funkcja: Blokowanie pola powierzchni
+        function lockAreaInput(value) {
+            areaInput.value = value;
+            areaInput.setAttribute("disabled", true);
+            areaInput.style.backgroundColor = "#e9ecef"; // Wyszarzenie pola
+            areaInput.style.cursor = "not-allowed";
+        }
+
+        // Funkcja: Odblokowanie pola powierzchni
+        function unlockAreaInput() {
+            areaInput.removeAttribute("disabled");
+            areaInput.value = "";
+            areaInput.style.backgroundColor = ""; // Przywrócenie domyślnego wyglądu
+            areaInput.style.cursor = "";
+        }
+
+        var map, previewMap;
+        var drawnItemsPreview = new L.FeatureGroup();
+        var drawnItemsModal = new L.FeatureGroup();
+        var fieldBorderData = null;
+        var areaLabel;
+        var initialLat = 52.2297, initialLng = 21.0122;
+
+        var postalCode = '@ViewBag.PostalCode';
+
+        // Funkcja geokodowania kodu pocztowego
+        function geocodePostalCode(postalCode) {
+            return fetch(`https://nominatim.openstreetmap.org/search?postalcode=${postalCode}&format=json&country=Poland`)
+                .then(response => response.json())
+                .then(data => data.length > 0 ? [parseFloat(data[0].lat), parseFloat(data[0].lon)] : [initialLat, initialLng])
+                .catch(error => {
+                    console.error('Geocoding failed:', error);
+                    return [initialLat, initialLng];
+                });
+        }
+
+        // Inicjalizacja mapy podglądu
+        previewMap = L.map('mapPreview', { zoomControl: false, dragging: true }).setView([initialLat, initialLng], 13);
+        L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+            attribution: '© Esri'
+        }).addTo(previewMap);
+
+        previewMap.addLayer(drawnItemsPreview);
+
+        if (postalCode) {
+            geocodePostalCode(postalCode).then(coords => {
+                initialLat = coords[0];
+                initialLng = coords[1];
+                previewMap.setView([initialLat, initialLng], 13);
+            });
+        }
+
+        // Obsługa kliknięcia na podgląd mapy
+        document.getElementById("mapPreview").addEventListener("click", function () {
+            $('#mapModal').modal('show');
+        });
+
+        // Inicjalizacja mapy w modalu
+        $('#mapModal').on('shown.bs.modal', function () {
+            if (map) {
+                map.invalidateSize();
+                return;
+            }
+
+            map = L.map('map', { zoomControl: true, dragging: true }).setView([initialLat, initialLng], 13);
+            L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+                attribution: '© Esri'
+            }).addTo(map);
+
+            map.addLayer(drawnItemsModal);
+
+            var drawControl = new L.Control.Draw({
+                draw: {
+                    polyline: false,
+                    rectangle: false,
+                    circle: false,
+                    marker: false,
+                    circlemarker: false,
+                    polygon: {
+                        allowIntersection: false, // Zakaz przecięcia granic
+                        showArea: true,
+                        drawError: {
+                            color: '#e1e100',
+                            message: '<strong>Błąd:</strong> Granice nie mogą się przecinać!'
+                        }
+                    }
+                },
+                edit: {
+                    featureGroup: drawnItemsModal,
+                    remove: true
+                }
+            });
+
+            map.addControl(drawControl);
+
+            if (fieldBorderData) {
+                var geoJsonLayer = L.geoJSON(fieldBorderData);
+                drawnItemsModal.clearLayers();
+                drawnItemsModal.addLayer(geoJsonLayer);
+                map.fitBounds(geoJsonLayer.getBounds());
+            }
+
+            map.on(L.Draw.Event.CREATED, function (e) {
+                var layer = e.layer;
+                drawnItemsModal.clearLayers();
+                drawnItemsModal.addLayer(layer);
+
+                fieldBorderData = layer.toGeoJSON().geometry;
+                fieldBorderInput.value = JSON.stringify(fieldBorderData);
+
+                updateAreaLabel(layer);
+                lockAreaInput(areaInput.value);
+                syncPreviewMap(fieldBorderData);
+            });
+
+            map.on(L.Draw.Event.EDITED, function (e) {
+                e.layers.eachLayer(function (layer) {
+                    fieldBorderData = layer.toGeoJSON().geometry;
+                    fieldBorderInput.value = JSON.stringify(fieldBorderData);
+                    updateAreaLabel(layer);
+                    lockAreaInput(areaInput.value);
+                    syncPreviewMap(fieldBorderData);
+                });
+            });
+
+            // Funkcja usuwania granicy
+            map.on(L.Draw.Event.DELETED, function () {
+                fieldBorderData = null;
+                fieldBorderInput.value = "";
+                drawnItemsPreview.clearLayers();
+                unlockAreaInput();
+                if (areaLabel) {
+                    map.removeLayer(areaLabel); // Usuwamy etykietę z powierzchnią
+                }
+            });
+        });
+
+        // Funkcja obliczania powierzchni
+        function calculateArea(geometry) {
+            var areaInMeters = turf.area(geometry);
+            return (areaInMeters / 10000).toFixed(2); // Konwersja na hektary
+        }
+
+        // Funkcja aktualizacji etykiety powierzchni
+    function updateAreaLabel(layer) {
+        var area = calculateArea(layer.toGeoJSON().geometry);
+        document.getElementById("Area").value = area;
+
+        if (areaLabel) {
+            map.removeLayer(areaLabel); // Usuwamy poprzednią etykietę
+        }
+
+        // Użycie L.divIcon bez skalowania
+        areaLabel = L.marker(layer.getBounds().getCenter(), {
+            icon: L.divIcon({
+                className: 'area-label',
+                html: `${area} ha`, // Dodanie jednostki (hektary)
+                iconSize: [120, 30], // Stały rozmiar etykiety (w pikselach)
+                iconAnchor: [60, 15], // Środek etykiety
+                popupAnchor: [0, -15], // Ustawienie punktu zaczepienia
+                // Brak automatycznego skalowania:
+                iconSize: [120, 30],  // Rozmiar etykiety
+                className: 'area-label no-scaling' // Dodanie klasy "no-scaling"
+            })
+        }).addTo(map);
+    }
+
+
+
+        // Funkcja synchronizacji podglądu mapy
+        function syncPreviewMap(geoJsonData) {
+            if (!geoJsonData) return;
+
+            drawnItemsPreview.clearLayers();
+            var geoJsonLayer = L.geoJSON(geoJsonData);
+            drawnItemsPreview.addLayer(geoJsonLayer);
+            previewMap.fitBounds(geoJsonLayer.getBounds());
+        }
+
+        // Obsługa kliknięcia przycisku "Usuń granice"
+        clearBordersBtn.addEventListener("click", function () {
+            fieldBorderData = null;
+            fieldBorderInput.value = "";
+            drawnItemsPreview.clearLayers();
+            drawnItemsModal.clearLayers(); // Usuwamy granice z mapy w modalu
+            unlockAreaInput();
+
+            if (areaLabel) {
+                map.removeLayer(areaLabel); // Usuwamy etykietę z powierzchnią
+            }
+        });
+
+        // Przycisk "Usuń granice" nie otwiera już modala
+        clearBordersBtn.removeAttribute("data-bs-toggle");
+        clearBordersBtn.removeAttribute("data-bs-target");
+    });
+
+</script>

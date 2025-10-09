@@ -1,0 +1,151 @@
+﻿<style>
+
+    .header-title {
+        font-size: 2.5rem;
+        font-weight: 700;
+        color: var(--category1-color);
+        text-align: center;
+        margin-bottom: 2rem;
+    }
+
+
+    .card {
+        border-radius: 20px;
+        height: 250px;
+        transition: transform 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease;
+        text-decoration: none;
+        overflow: hidden;
+        box-shadow: 0px 4px 6px rgba(0, 0, 0.1, 0.2);
+        cursor: pointer;
+    }
+
+        .card:hover {
+            box-shadow: 0 5px 40px var(--category1-color);
+            transform: translateY(-10px);
+            background-color: #f4f6fa;
+        }
+
+
+    .card-header {
+        background-color: var(--category1-color);
+        color: white;
+        text-align: center;
+        font-size: 1.5rem;
+        font-weight: 700;
+        padding: 1rem;
+        border-radius: 20px 20px 0 0;
+    }
+
+
+    .icon-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100px; 
+    }
+
+        .icon-container img {
+            max-width: 80px;
+            max-height: 80px;
+            width: auto;
+            height: auto;
+        }
+
+    .card-body {
+        text-align: center;
+        display: flex;
+        flex-wrap: wrap;
+        flex-direction: column;
+        justify-content: center;
+    }
+
+
+        .card-body p {
+            margin: 0.5rem 0;
+            font-size: 1rem;
+            color: #6c757d;
+        }
+
+
+    @@media (max-width: 768px) {
+        .card
+
+    {
+        height: auto;
+    }
+
+    .card-header {
+        font-size: 1.3rem;
+    }
+
+    .card-body p {
+        font-size: 0.9rem;
+    }
+
+    .icon-container img {
+        max-width: 60px;
+        max-height: 60px;
+    }
+
+    }
+</style>
+<div class="container mt-5">
+    <h1 class="header-title">Stwórz lub zaplanuj pracę polową</h1>
+    <div class="row justify-content-center">
+        <div class="col-lg-3 col-md-4 mb-4">
+            <a href="@Url.Action("CreateFertilizingWork", "FieldWork")" class="card text-decoration-none">
+                <div class="card-header">
+                    <h3>Nawożenie</h3>
+                </div>
+                <div class="card-body">
+                    <div class="icon-container">
+                        <img src="~/images/fertilizer.png" />
+                    </div>
+                    <p class="info-text">Wybierz, aby dodać nowe nawożenie.</p>
+                </div>
+            </a>
+        </div>
+
+        <div class="col-lg-3 col-md-4 mb-4">
+            <a href="@Url.Action("CreateSprayingWork", "FieldWork")" class="card text-decoration-none">
+                <div class="card-header">
+                    <h3>Opryski</h3>
+                </div>
+                <div class="card-body">
+                    <div class="icon-container">
+                        <img src="~/images/sprayingPlanner.png" />
+                    </div>
+                    <p class="info-text">Wybierz, aby dodać nowe opryski.</p>
+                </div>
+            </a>
+        </div>
+
+        <div class="col-lg-3 col-md-4 mb-4">
+            <a href="@Url.Action("CreateHarvestingWork", "FieldWork")" class="card text-decoration-none">
+                <div class="card-header">
+                    <h3>Zbiory</h3>
+                </div>
+                <div class="card-body">
+                    <div class="icon-container">
+                        <img src="~/images/harvester.png" />
+                    </div>
+                    <p class="info-text">Wybierz, aby dodać nowe zbiory.</p>
+                </div>
+            </a>
+        </div>
+
+        <div class="col-lg-3 col-md-4 mb-4">
+            <a href="@Url.Action("CreateOtherWork", "FieldWork")" class="card text-decoration-none">
+                <div class="card-header">
+                    <h3>Inne</h3>
+                </div>
+                <div class="card-body">
+                    <div class="icon-container">
+                        <img src="~/images/fieldWork.png"/>
+                    </div>
+                    <p class="info-text">Dodaj inną prace polową, klikając tutaj.</p>
+                </div>
+            </a>
+        </div>
+    </div>
+</div>

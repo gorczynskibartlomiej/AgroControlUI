@@ -1,0 +1,56 @@
+﻿@model List<AgroControlUI.DTOs.ReferenceData.UnitDto>
+@await Html.PartialAsync("_DeleteConfirmationModal")
+
+<link rel="stylesheet" href="~/css/indexList.css">
+<link rel="stylesheet" href="~/css/listOperations.css">
+
+<h1 class="yellow">Jednostki miar</h1>
+
+<div id="categories" class="wrapper">
+    <p>
+        <a asp-action="Create" class="add-btn"><img src="~/images/plus-solid.svg" />Dodaj jednostkę</a>
+    </p>
+    <div class="table">
+        <div class="row header yellow" id="headerRow">
+            <div class="cell"  data-sort="name" onclick="sortByColumn(this)">
+                <div class="sort-wrapper">
+                    <span class="sort-text">Nazwa jednostki</span>
+                    <span class="sort-arrow">▼</span>
+                </div>
+            </div>
+            <div class="cell">
+                Akcje
+            </div>
+        </div>
+        <div class="row">
+            <div class="cell">
+                <input type="text" class="search-input" data-search="name" placeholder="Szukaj..." oninput="searchByColumn()" />
+            </div>
+            <div class="cell">
+            </div>
+        </div>
+        <div class="list">
+        @foreach (var unit in Model)
+        {
+            <div class="row">
+                <div class="cell name" data-title="Skrót jednostki">
+                    @unit.Name
+                </div>
+                <div class="cell" data-title="Akcje">
+                    <div class="action-buttons">
+                        <a asp-action="Edit" asp-route-id="@unit.Id" class=" edit-btn"><img src="~/images/edit.svg" />Edytuj</a>
+                        <button type="button" class="delete-btn" data-bs-toggle="modal" data-bs-target="#deleteModal" onclick="setDeleteUrl('@Url.Action("DeleteConfirmed", new { id = unit.Id })')">
+                            <img src="~/images/delete.svg" />Usuń
+                        </button>
+                    </div>
+                </div>
+            </div>
+        }
+
+    </div>
+    </div>
+    <ul class="pagination"></ul>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/list.js/2.3.1/list.min.js"></script>
+<script src="~/js/listOperations.js"></script>
+<script src="~/js/deleteModal.js"></script>

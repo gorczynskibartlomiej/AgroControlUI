@@ -1,0 +1,113 @@
+html {
+  font-size: 14px;
+}
+
+@media (min-width: 768px) {
+  html {
+    font-size: 16px;
+  }
+}
+.navbar-nav .nav-link {
+    padding-right: .5rem;
+    padding-left: .5rem;
+}
+.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
+    box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
+}
+
+html {
+  position: relative;
+  min-height: 100%;
+}
+
+body {
+  margin-bottom: 60px;
+}
+.navbar-brand {
+    font-size: 1.8rem;
+    font-weight: 700;
+}
+.navbar-dark .navbar-nav .nav-link {
+    color: #fff;
+    font-size: 1.2rem;
+    font-weight:600;
+    transition: all 0.3s ease;
+}
+.navbar {
+    background: linear-gradient(135deg, var(--main-app-color) 50%, #1e5300 100%);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+.navbar-nav .nav-link:hover {
+    border-radius: 5px;
+    color: #fff;
+    transition: all 0.5s ease;
+    background-color: #218838;
+}
+.navbar-nav .nav-link {
+    font-size: 1.2rem; 
+    font-weight: 600; 
+    transition: all 0.3s ease;
+}
+.dropdown-menu .dropdown-item {
+    background-color: #28a745;
+    padding: 0.5rem 1rem;
+    color: #fff;
+}
+.dropdown-menu .dropdown-item:hover {
+    transition: all 0.5s ease;
+    background-color: #218838;
+    color: #fff;
+}
+.dropdown-menu {
+    padding-top: 0px;
+    padding-bottom: 0px;
+}
+.navbar-nav {
+    flex-wrap: wrap;
+}
+.toast-container {
+    position: fixed;
+    z-index: 1055;
+    width: 25vw;
+    height: auto;
+    padding-top:80px;
+    padding-right:10px;
+}
+
+.toast {
+    width: 100%;
+    height: 100%;
+    border: 2px solid;
+    border-radius: 10px;
+}
+
+.toast-success {
+    background-color: #d1e7dd;
+    color: #0f5132;
+    border-color: #badbcc;
+}
+
+.toast-error {
+    background-color: #f8d7da;
+    color: #842029;
+    border-color: #f5c2c7;
+}
+
+.toast-body {
+    width: 100%;
+    height: 100%;
+}
+
+.toast-content {
+    display: flex;
+    height: 100%;
+    align-items: center;
+    width: 100%;
+    max-width: 100%;
+    font-size: clamp(0.7rem, 1.2vw, 1rem);
+    word-break: break-word;
+    overflow-wrap: anywhere;
+    text-overflow: ellipsis;
+    white-space: normal;
+    max-width: 100%;
+}

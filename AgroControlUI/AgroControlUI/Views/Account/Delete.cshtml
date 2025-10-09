@@ -1,0 +1,36 @@
+﻿<link rel="stylesheet" href="~/css/loginAndRegister.css">
+<link rel="stylesheet" href="~/css/Details.css">
+<style>
+    .warning-box {
+        background-color: #ffe6e6;
+        border: 2px solid #ff4d4d;
+        padding: 20px;
+        border-radius: 8px;
+        color: #a80000;
+        margin-bottom: 20px;
+    }
+
+        .warning-box h2 {
+            margin-top: 0;
+            text-align:center;
+        }
+
+
+</style>
+
+<div class="login-container">
+    <div class="login-form">
+        <h1>Usuń konto</h1>
+
+        <div class="warning-box">
+            <h2>Ostrzeżenie!</h2>
+            <h5>Usunięcie konta jest <strong>nieodwracalne</strong>. Wszystkie Twoje dane zostaną trwale usunięte.</h5>
+            <h4>Czy na pewno chcesz kontynuować?</h4>
+        </div>
+
+        <form asp-action="DeleteConfirmed" method="post" class="action-buttons">
+            <a asp-controller="Home" asp-action="Index" class="cancel-btn">Anuluj</a>
+            <button type="submit" class="delete-btn">Tak, usuń moje konto</button>
+        </form>
+    </div>
+</div>

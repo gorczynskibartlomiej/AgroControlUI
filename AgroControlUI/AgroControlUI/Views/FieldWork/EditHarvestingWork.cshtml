@@ -1,0 +1,141 @@
+﻿@model AgroControlUI.DTOs.FieldWorks.CreateHarvestingWorkDto
+
+<link rel="stylesheet" href="~/css/add.css" />
+<link href="https://cdn.jsdelivr.net/npm/tom-select/dist/css/tom-select.css" rel="stylesheet" />
+<link rel="stylesheet" href="~/css/addWithSelects.css" />
+<link rel="stylesheet" href="~/css/colors.css" />
+<link rel="stylesheet" href="~/css/selectWithInput.css" />
+<style>
+    .adding-input {
+        width: 18%;
+        height: 46px;
+    }
+
+    .adding-select {
+        width: 49%;
+    }
+
+    .adding-unit {
+        width: 18%;
+    }
+</style>
+
+<div class="form-container">
+    <div class="green-form">
+        <form asp-action="EditHarvestingWork" method="post">
+            <h1>Edytuj pracę zbioru</h1>
+
+            <div class="single-dropdown">
+                <select asp-for="FieldId" asp-items="ViewBag.Fields" id="fieldSelect">
+                    <option value="">Wybierz pole</option>
+                </select>
+                <span class="bar"></span>
+                <label asp-for="FieldId">Pole</label>
+                <span asp-validation-for="FieldId" class="text-danger"></span>
+            </div>
+
+            <div class="single-dropdown">
+                <select id="workerSelect" name="workerSelect">
+                    <option value="">Wybierz pracownika</option>
+                    <optgroup label="Pracownicy">
+                        @foreach (var employee in ViewBag.Employees)
+                        {
+                            <option value="@employee.Value" data-type="employee"
+                                    selected="@(Model.EmployeeId.HasValue && Model.EmployeeId.Value.ToString() == employee.Value ? "selected" : null)">
+                                @employee.Text
+                            </option>
+                        }
+                    </optgroup>
+                    <optgroup label="Użytkownicy systemowi">
+                        @foreach (var user in ViewBag.Users)
+                        {
+                            <option value="@user.Value" data-type="user"
+                                    selected="@(Model.AgroControlUserId.HasValue && Model.AgroControlUserId.Value.ToString() == user.Value ? "selected" : null)">
+                                @user.Text
+                            </option>
+                        }
+                    </optgroup>
+                </select>
+                <span class="bar"></span>
+                <label>Pracownik</label>
+            </div>
+            <input type="hidden" id="EmployeeId" name="EmployeeId" value="@Model.EmployeeId" />
+            <input type="hidden" id="AgroControlUserId" name="AgroControlUserId" value="@Model.AgroControlUserId" />
+
+            <div class="multi-dropdown">
+                <select asp-for="FieldWorkAgriculturalEquipmentIds" required asp-items="ViewBag.AgriculturalEquipment" id="agricultrualEquipmentSelect" multiple>
+                </select>
+                <span class="bar"></span>
+                <label asp-for="FieldWorkAgriculturalEquipmentIds">Użyte maszyny</label>
+                <span asp-validation-for="FieldWorkAgriculturalEquipmentIds" class="text-danger"></span>
+            </div>
+
+
+            <div class="group">
+                <input asp-for="StartTime" type="datetime-local" value="@Model.StartTime.ToString("yyyy-MM-ddTHH:mm")" />
+                <span class="bar"></span>
+                <label asp-for="StartTime">Data rozpoczęcia</label>
+                <span asp-validation-for="StartTime" class="text-danger"></span>
+            </div>
+
+
+            <div class="group">
+                <input asp-for="EndTime" type="datetime-local" value="@Model.EndTime?.ToString("yyyy-MM-ddTHH:mm")" />
+                <span class="bar"></span>
+                <label asp-for="EndTime">Data zakończenia*</label>
+                <span asp-validation-for="EndTime" class="text-danger"></span>
+            </div>
+            <div class="single-dropdown">
+                <select asp-for="CropId" asp-items="ViewBag.Crops" id="cropSelect">
+                    <option value="">Zebrana roślina</option>
+                </select>
+                <span class="bar"></span>
+                <label asp-for="CropId">Zebrana roślina</label>
+                <span asp-validation-for="CropId" class="text-danger"></span>
+            </div>
+            <div class="group">
+                <input asp-for="TotalYield" type="number" data-val-number="Plon musi być liczbą." />
+                <span class="bar"></span>
+                <label asp-for="TotalYield">Plon całkowity (t)</label>
+                <span asp-validation-for="TotalYield" class="text-danger"></span>
+            </div>
+            <div class="group">
+                <input asp-for="Moisture" type="number" data-val-number="Wilgotność musi być liczbą." />
+                <span class="bar"></span>
+                <label asp-for="Moisture">Wilgotność (%)*</label>
+                <span asp-validation-for="Moisture" class="text-danger"></span>
+            </div>
+            <div class="group">
+                <textarea asp-for="Description" class="description-field">@Model.Description</textarea>
+                <span class="bar"></span>
+                <label asp-for="Description">Opis*</label>
+                <span asp-validation-for="Description" class="text-danger"></span>
+            </div>
+
+            <div style="margin-bottom:20px;margin-top:-35px">
+                <span>* - pole opcjonalne</span>
+            </div>
+
+            <div class="action-buttons">
+                <a asp-action="Index" class="cancel-btn">Anuluj</a>
+                <button type="submit" class="add-btn">Zapisz</button>
+            </div>
+
+        </form>
+    </div>
+</div>
+
+<script src="~/js/inputLabel.js"></script>
+<script src="~/js/listOperations.js"></script>
+<script src="~/lib/jquery-validation/jquery.validate.min.js"></script>
+<script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/tom-select/dist/js/tom-select.complete.min.js"></script>
+<script>
+
+    document.addEventListener("DOMContentLoaded", function () {
+        new TomSelect("#fieldSelect", { create: false, sortField: "text", placeholder: "Wyszukaj...", plugins: ['remove_button'] });
+        new TomSelect("#workerSelect", { create: false, sortField: "text", placeholder: "Wyszukaj...", plugins: ['remove_button'] });
+        new TomSelect("#agricultrualEquipmentSelect", { create: false, sortField: "text", placeholder: "Wyszukaj...", plugins: ['remove_button'] });
+        new TomSelect("#cropSelect", { create: false, sortField: "text", placeholder: "Wyszukaj...", plugins: ['remove_button'] });
+    })
+</script>

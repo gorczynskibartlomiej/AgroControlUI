@@ -1,0 +1,92 @@
+﻿@model AgroControlUI.DTOs.FarmData.FieldDetailsDto
+
+@await Html.PartialAsync("_DeleteConfirmationModal")
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/leaflet.css" />
+<link rel="stylesheet" href="~/css/Details.css" />
+<link rel="stylesheet" href="~/css/colors.css">
+<div class="details-container blue-details">
+    <h1>Szczegóły pola</h1>
+    <div class="info-section">
+        <p class="info-title">Nazwa pola:</p>
+        <h2 class="info-name">@Model.Name</h2>
+    </div>
+
+    @if (!string.IsNullOrEmpty(Model.FieldBorder))
+    {
+        <div id="fieldMap"></div>
+    }
+
+    <div class="info-section">
+        <p class="info-title">Powierzchnia:</p>
+        <p>@Model.Area ha</p>
+    </div>
+
+    <div class="info-section">
+        <p class="info-title">Klasa gleby:</p>
+        <p>@(Model.SoilTypes.Any() ? string.Join(", ", Model.SoilTypes.Select(s => s.Name)) : "Brak danych")</p>
+    </div>
+    @if(!User.IsInRole("Pracownik"))
+    {
+        <div class="info-section">
+            <p class="info-title">Utworzono:</p>
+            <p class="timestamp">@Model.CreatedOn.ToString("yyyy-MM-dd HH:mm") przez @Model.CreatedBy</p>
+        </div>
+
+        <div class="info-section">
+            <p class="info-title">Ostatnia aktualizacja:</p>
+            <p class="timestamp">@Model.UpdatedOn.ToString("yyyy-MM-dd HH:mm") przez @Model.UpdatedBy</p>
+        </div>
+    }
+
+    <div class="info-section">
+        <p class="info-title">Opis:</p>
+        @if(!string.IsNullOrEmpty(Model.Description))
+        {
+            <p>@Model.Description</p>
+        }
+        else
+        {
+            <p>Brak</p>
+        }
+    </div>
+
+    <div class="action-buttons">
+        @if (!User.IsInRole("Pracownik"))
+        {
+            <a asp-action="Edit" asp-route-id="@Model.Id" class="edit-btn">Edytuj</a>
+            <button type="button" class="delete-btn" data-bs-toggle="modal" data-bs-target="#deleteModal" onclick="setDeleteUrl('@Url.Action("DeleteConfirmed", new { id = Model.Id })')">Usuń
+            </button>
+            <a asp-controller="CropRotationPlanner" asp-action="Index" asp-route-fieldId="@Model.Id" class="add-btn">Historia upraw</a>
+            <a asp-controller="FieldWork" asp-action="Index" class="add-btn">Prace polowe</a>
+            <a href="javascript:history.back()" class="cancel-btn">Powrót</a>
+        }
+        else
+        {
+            <a href="javascript:history.back()" class="cancel-btn" style="width:100%">Powrót</a>
+        }
+    </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/leaflet.js"></script>
+<script src="~/js/deleteModal.js"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        var fieldBorder = @Html.Raw(Model.FieldBorder);
+
+        var map = L.map('fieldMap').setView([52.2297, 21.0122], 13);
+        L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+            attribution: '&copy; OpenStreetMap contributors'
+        }).addTo(map);
+
+        if (fieldBorder) {
+            var geoJsonLayer = L.geoJSON(fieldBorder, {
+                style: {
+                    weight: 2,
+                    opacity: 1,
+                    fillOpacity: 0.4
+                }
+            }).addTo(map);
+            map.fitBounds(geoJsonLayer.getBounds());
+        }
+    });
+</script>

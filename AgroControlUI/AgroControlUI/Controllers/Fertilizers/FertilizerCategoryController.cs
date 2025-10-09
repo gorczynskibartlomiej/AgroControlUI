@@ -1,0 +1,206 @@
+﻿using AgroControlUI.Constants;
+using AgroControlUI.DTOs.Fertilizers;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
+using System.Net.Http.Headers;
+using System.Text;
+
+namespace AgroControlUI.Controllers.Fertilizers
+{
+    public class FertilizerCategoryController : Controller
+    {
+        private readonly HttpClient _client;
+
+        public FertilizerCategoryController(IHttpClientFactory httpClientFactory)
+        {
+            _client = httpClientFactory.CreateClient();
+            _client.BaseAddress = new Uri(Options.ApiUrl);
+        }
+
+        // GetAll
+        [Authorize(Policy = "AdminOnly")]
+        [HttpGet]
+        public async Task<IActionResult> Index()
+        {
+            var token = HttpContext.Request.Cookies["token"];if(token==null){token = Request.Headers["Authorization"];}
+            _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
+            var endpoint = "/api/fertilizercategories";
+            var result = await _client.GetAsync(endpoint);
+            result.EnsureSuccessStatusCode();
+
+            var content = await result.Content.ReadAsStringAsync();
+            var fertilizerCategories = JsonConvert.DeserializeObject<List<FertilizerCategoryDto>>(content);
+            return View(fertilizerCategories);
+        }
+
+        // Create
+        [Authorize(Policy = "AdminOnly")]
+        [HttpGet]
+        public IActionResult Create()
+        {
+            return View();
+        }
+
+        [Authorize(Policy = "AdminOnly")]
+        [HttpPost]
+        public async Task<IActionResult> Create(FertilizerCategoryDto fertilizerCategoryDto)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View(fertilizerCategoryDto);
+            }
+
+            try
+            {
+                var token = HttpContext.Request.Cookies["token"];if(token==null){token = Request.Headers["Authorization"];}
+                _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
+                var endpoint = "/api/fertilizercategories";
+                var content = JsonConvert.SerializeObject(fertilizerCategoryDto);
+                var stringContent = new StringContent(content, Encoding.UTF8, "application/json");
+                var response = await _client.PostAsync(endpoint, stringContent);
+                response.EnsureSuccessStatusCode();
+
+                TempData["successMessage"] = "Nowa kategoria nawozów została pomyślnie dodana!";
+                return RedirectToAction("Index");
+            }
+            catch(HttpRequestException ex)
+            {
+                if (ex.StatusCode == System.Net.HttpStatusCode.Conflict)
+                {
+                    TempData["errorMessage"] = "Kategoria o tej nazwie już istnieje!";
+                }
+                else
+                {
+                    TempData["errorMessage"] = "Błąd serwera, spróbuj ponownie później.";
+                }
+                return View(fertilizerCategoryDto);
+            }
+            catch (Exception ex)
+            {
+                TempData["errorMessage"] = "Wystąpił nieoczekiwany błąd. Spróbuj ponownie później. ";
+                return View(fertilizerCategoryDto);
+            }
+        }
+
+        // Delete
+
+        [Authorize(Policy = "AdminOnly")]
+        [HttpPost]
+        public async Task<IActionResult> DeleteConfirmed(int id)
+        {
+            try
+            {
+                var token = HttpContext.Request.Cookies["token"];if(token==null){token = Request.Headers["Authorization"];}
+                _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
+                var endpoint = $"/api/fertilizercategories/{id}";
+                var response = await _client.DeleteAsync(endpoint);
+                response.EnsureSuccessStatusCode();
+
+                TempData["successMessage"] = "Kategoria nawozów została pomyślnie usunięta.";
+                return RedirectToAction("Index");
+            }
+            catch(HttpRequestException ex)
+            {
+                if (ex.StatusCode == System.Net.HttpStatusCode.Conflict)
+                {
+                    TempData["errorMessage"] = "Nie można usunąć tego obiektu, ponieważ jest powiązany z innymi danymi.";
+                }
+                else
+                {
+                    TempData["errorMessage"] = "Błąd serwera, spróbuj ponownie później.";
+                }
+                return RedirectToAction("Index");
+            }
+            catch (Exception ex)
+            {
+                TempData["errorMessage"] = "Wystąpił nieoczekiwany błąd. Spróbuj ponownie później. ";
+                return RedirectToAction("Index");
+            }
+        }
+
+        // Edit
+        [Authorize(Policy = "AdminOnly")]
+        [HttpGet]
+        public async Task<IActionResult> Edit(int id)
+        {
+            try
+            {
+                var token = HttpContext.Request.Cookies["token"];if(token==null){token = Request.Headers["Authorization"];}
+                _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
+                var endpoint = $"/api/fertilizercategories/{id}";
+                var response = await _client.GetAsync(endpoint);
+                response.EnsureSuccessStatusCode();
+
+                string content = await response.Content.ReadAsStringAsync();
+                var fertilizerCategory = JsonConvert.DeserializeObject<FertilizerCategoryDto>(content);
+                return View(fertilizerCategory);
+            }
+            catch (HttpRequestException ex)
+            {
+                TempData["errorMessage"] = "Błąd serwera, spróbuj ponownie później.";
+                return View();
+            }
+            catch (Exception ex)
+            {
+                TempData["errorMessage"] = "Wystąpił nieoczekiwany błąd. Spróbuj ponownie później. ";
+                return View();
+            }
+        }
+
+        [Authorize(Policy = "AdminOnly")]
+        [HttpPost]
+        public async Task<IActionResult> Edit(FertilizerCategoryDto fertilizerCategoryDto)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View(fertilizerCategoryDto);
+            }
+
+            try
+            {
+                var token = HttpContext.Request.Cookies["token"];if(token==null){token = Request.Headers["Authorization"];}
+                _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
+                var endpoint = $"/api/fertilizercategories/{fertilizerCategoryDto.Id}";
+                var content = JsonConvert.SerializeObject(fertilizerCategoryDto);
+                var stringContent = new StringContent(content, Encoding.UTF8, "application/json");
+                var response = await _client.PutAsync(endpoint, stringContent);
+                response.EnsureSuccessStatusCode();
+
+                TempData["successMessage"] = "Kategoria nawozów została pomyślnie zaaktualizowana!";
+                return RedirectToAction("Index");
+            }
+            catch (HttpRequestException ex)
+            {
+                if (ex.StatusCode == System.Net.HttpStatusCode.Conflict)
+                {
+                    TempData["errorMessage"] = "Kategoria o tej nazwie już istnieje!";
+                }
+                else
+                {
+                    TempData["errorMessage"] = "Błąd serwera, spróbuj ponownie później.";
+                }
+                return View(fertilizerCategoryDto);
+            }
+            catch (Exception ex)
+            {
+                TempData["errorMessage"] = "Wystąpił nieoczekiwany błąd. Spróbuj ponownie później. ";
+                return View(fertilizerCategoryDto);
+            }
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                _client.Dispose();
+            }
+            base.Dispose(disposing);
+        }
+    }
+}

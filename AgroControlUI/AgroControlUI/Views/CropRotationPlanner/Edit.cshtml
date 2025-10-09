@@ -1,0 +1,65 @@
+﻿@model AgroControlUI.DTOs.FarmData.CreateCropRotationPlannerDto
+<link href="https://cdn.jsdelivr.net/npm/tom-select/dist/css/tom-select.css" rel="stylesheet">
+<link rel="stylesheet" href="~/css/addWithSelects.css">
+<link rel="stylesheet" href="~/css/add.css">
+<link rel="stylesheet" href="~/css/colors.css" />
+
+<div class="form-container">
+    <div class="green-form">
+        <form asp-action="Edit" method="post">
+            <h1>Edytuj plan zmianowania upraw</h1>
+
+            <!-- Pole wybrane w indexie – nieedytowalne -->
+            <div class="group" style="display:none">
+                <!-- Ukryty input, który przesyła FieldId -->
+                <input asp-for="FieldId" type="hidden" />
+                <!-- Wyświetlenie nazwy pola (przekazanej w ViewBag.SelectedFieldName) -->
+                <input type="text" value="@ViewBag.SelectedFieldName" disabled />
+                <span class="bar"></span>
+                <label>Pole</label>
+            </div>
+
+            <!-- Wybór nowej uprawy (lista upraw przekazana w ViewBag.Crops) -->
+            <div class="single-dropdown">
+                <select asp-for="CropId" asp-items="ViewBag.Crops" id="cropSelect" required>
+                    <option value=""></option>
+                </select>
+                <span class="bar"></span>
+                <label asp-for="CropId">Uprawa</label>
+                <span asp-validation-for="CropId" class="text-danger"></span>
+            </div>
+
+            <!-- Rok -->
+            <div class="group">
+                <input asp-for="Year" type="number"  />
+                <span class="bar"></span>
+                <label asp-for="Year">Rok zbioru</label>
+                <span asp-validation-for="Year" class="text-danger"></span>
+            </div>
+
+            @*   <!-- Opis -->
+            <div class="group">
+                <textarea asp-for="Description" class="description-field"></textarea>
+                <span class="bar"></span>
+                <label asp-for="Description">Opis</label>
+                <span asp-validation-for="Description" class="text-danger"></span>
+            </div> *@
+
+            <div class="action-buttons">
+                <a asp-action="Index" class="cancel-btn btn">Anuluj</a>
+                <button type="submit" class="add-btn btn">Dodaj</button>
+            </div>
+        </form>
+    </div>
+</div>
+<script src="~/js/inputLabel.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/tom-select/dist/js/tom-select.complete.min.js"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        new TomSelect("#cropSelect", {
+            create: false,
+            sortField: { field: "text", direction: "asc" },
+            placeholder: "Wybierz uprawę"
+        });
+    });
+</script>

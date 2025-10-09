@@ -1,0 +1,18 @@
+﻿:root {
+    --add-btn-color: #28A745;
+    --cancel-btn-color: #6576E0;
+    --edit-btn-color: #E0C465;
+    --delete-btn-color: #E06570;
+    --category1-light-color: #EEFAF6;
+    --category2-light-color: #F4EEFE;
+    --category3-light-color: #FEF4E8;
+    --category4-light-color: #FDEEEF;
+    --category1s-color: #28A745;
+    --category1-color: #148064;
+    --category2s-color: #6576E0;
+    --category2-color: #4900B8;
+    --category3s-color: #E0C465;
+    --category3-color: #BD681E;
+    --category4-color: #E06570;
+    --main-app-color: #28A745;
+}

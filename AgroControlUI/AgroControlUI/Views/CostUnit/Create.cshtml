@@ -1,0 +1,24 @@
+﻿@model AgroControlUI.DTOs.ReferenceData.CostUnitDto
+
+<link rel="stylesheet" href="~/css/add.css">
+
+<div class="form-container">
+    <div class="green-form">
+        <form asp-action="Create" method="post">
+            <h1>Dodaj jedostkę kosztów</h1>
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+            <div class="group">
+                <input asp-for="Name" required />
+                
+                <span class="bar"></span>
+                <label asp-for="Name">Nazwa jednostki kosztów</label>
+                <span asp-validation-for="Name" class="text-danger"></span>
+            </div>
+            <div class="action-buttons">
+                <a asp-action="Index" class="cancel-btn btn">Anuluj</a>
+                <button type="submit" class="add-btn btn">Dodaj</button>
+            </div>
+        </form>
+    </div>
+</div>

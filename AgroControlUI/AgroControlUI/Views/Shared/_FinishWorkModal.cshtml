@@ -1,0 +1,78 @@
+﻿<!-- Modal -->
+<style>
+    .cancel-btn, .add-btn
+    {
+        border:none;
+    }
+</style>
+<div class="modal fade" id="finishWorkModal" tabindex="-1" aria-labelledby="finishWorkModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="finishWorkModalLabel">Zakończenie pracy</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form id="finishWorkForm" action="@Url.Action("FinishWork", "FieldWork")" method="post">
+                <div class="modal-body">
+                    <input type="hidden" id="fieldWorkId" name="fieldWorkId" />
+
+                    <div class="mb-3">
+                        <label for="startDate" class="form-label">Data rozpoczęcia</label>
+                        <input type="datetime-local" id="startDate" name="startDate" class="form-control" required />
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="endDate" class="form-label">Data zakończenia</label>
+                        <input type="datetime-local" id="endDate" name="endDate" class="form-control" required />
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="cancel-btn" data-bs-dismiss="modal">Anuluj</button>
+                    <button type="submit" class="add-btn">Zakończ pracę</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<script>
+    document.getElementById("finishWorkForm").addEventListener("submit", function (event) {
+        const startDateInput = document.getElementById("startDate");
+        const endDateInput = document.getElementById("endDate");
+
+        const now = new Date();
+        now.setSeconds(0, 0); // Usuwamy sekundy i milisekundy dla lepszej precyzji
+
+        const startDate = new Date(startDateInput.value);
+        const endDate = new Date(endDateInput.value);
+
+        if (!startDateInput.value || !endDateInput.value) {
+            event.preventDefault();
+            alert("Obie daty muszą być wypełnione!");
+            return;
+        }
+
+        if (isNaN(startDate.getTime()) || isNaN(endDate.getTime())) {
+            event.preventDefault();
+            alert("Nieprawidłowy format daty!");
+            return;
+        }
+
+        if (startDate > now) {
+            event.preventDefault();
+            alert("Data rozpoczęcia nie może być w przyszłości!");
+            return;
+        }
+
+        if (endDate > now) {
+            event.preventDefault();
+            alert("Data zakończenia nie może być w przyszłości!");
+            return;
+        }
+
+        if (endDate <= startDate) {
+            event.preventDefault();
+            alert("Data zakończenia musi być późniejsza niż data rozpoczęcia!");
+            return;
+        }
+    });
+</script>

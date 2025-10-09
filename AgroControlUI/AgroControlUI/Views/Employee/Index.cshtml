@@ -1,0 +1,184 @@
+﻿@model List<AgroControlUI.DTOs.FarmData.EmployeeDto>
+
+@await Html.PartialAsync("_DeleteConfirmationModal")
+<link rel="stylesheet" href="~/css/indexList.css">
+<link rel="stylesheet" href="~/css/listOperations.css">
+
+<style>
+    .switch {
+        font-size: 17px;
+        position: relative;
+        display: inline-block;
+        width: 2.5em;
+        height: 1.5em;
+        z-index: 2;
+        pointer-events: auto;
+    }
+        /* Hide default HTML checkbox */
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+    /* The slider */
+    .slider {
+        position: absolute;
+        cursor: pointer;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: #fff;
+        border: 1px solid #adb5bd;
+        transition: .4s;
+        border-radius: 30px;
+    }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 1.4em;
+            width: 1.4em;
+            border-radius: 20px;
+            left: 0.27em;
+            bottom: 0.25em;
+            background-color: #adb5bd;
+            transition: .4s;
+        }
+
+    input:checked + .slider {
+        background-color: var(--main-app-color);
+        border: 1px solid var(--main-app-color);
+    }
+
+    input:focus + .slider {
+        box-shadow: 0 0 1px var(--main-app-color);
+    }
+
+    input:checked + .slider:before {
+        transform: translateX(1.4em);
+        background-color: #fff;
+    }
+
+    .switch input {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        z-index: 2;
+        cursor: pointer;
+    }
+
+    .switch-label {
+        font-size: 18px;
+        padding: 10px 10px 10px 15px;
+    }
+
+    .cell.isActive {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    /* Dostosowanie slidera */
+    .slider {
+        border-radius: 1em;
+    }
+
+        .slider:before {
+            height: 1em; /* mniejsza kulka */
+            width: 1em;
+            left: 0.15em; /* zmniejszony margines */
+            bottom: 0.15em;
+            border-radius: 50%;
+        }
+
+    input:checked + .slider:before {
+        transform: translateX(1em);
+    }
+
+    .custom-dropdown label {
+        color: var(--category2-color);
+    }
+</style>
+
+<h1 class="blue">Pracownicy lokalni</h1>
+
+<div id="categories" class="wrapper">
+    <p>
+        <a asp-action="Create" class="add-btn btn"><img src="~/images/plus-solid.svg" />Dodaj nowego pracownika</a>
+    </p>
+
+    <!-- Tabela Pracowników -->
+    <div class="table">
+        <div class="row header blue" id="headerRow">
+            <div class="cell" data-sort="isActive" onclick="sortByColumn(this)">
+                <div class="sort-wrapper">
+                    <span class="sort-text">Aktywność</span>
+                    <span class="sort-arrow">▼</span>
+                </div>
+            </div>
+            <div class="cell" data-sort="name" onclick="sortByColumn(this)">
+                <div class="sort-wrapper">
+                    <span class="sort-text">Imię i nazwisko</span>
+                    <span class="sort-arrow">▼</span>
+                </div>
+            </div>
+            <div class="cell">
+                Numer telefonu
+            </div>
+            <div class="cell">
+                Akcje
+            </div>
+        </div>
+        <div class="row">
+            <div class="cell"></div>
+            <div class="cell">
+                <input type="text" class="search-input" data-search="name" placeholder="Szukaj..." oninput="searchByColumn()" />
+            </div>
+            <div class="cell"></div>
+            <div class="cell"></div>
+        </div>
+        <div class="list">
+            @foreach (var employee in Model)
+            {
+                <div class="row">
+                    <form action="@Url.Action("UpdateIsActive", "Employee", new { id = employee.Id })" method="post" class="equipment-form">
+                        <div class="cell isActive" data-title="Aktywność">
+                            <label class="switch">
+                                <input type="checkbox" name="isActive" value="true" @(employee.IsActive ? "checked" : "") onclick="submitForm(this)" />
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                    </form>
+                    <div class="cell name" data-title="Imię i nazwisko">
+                        @employee.FirstName @employee.LastName
+                    </div>
+                    <div class="cell" data-title="Numer telefonu">
+                        @employee.PhoneNumber
+                    </div>
+                    <div class="cell" data-title="Akcje">
+                        <div class="action-buttons">
+                            <a asp-action="Edit" asp-route-id="@employee.Id" class="btn edit-btn">
+                                <img src="~/images/edit.svg" />Edytuj
+                            </a>
+                            <button type="button" class="delete-btn" data-bs-toggle="modal" data-bs-target="#deleteModal" onclick="setDeleteUrl('@Url.Action("DeleteConfirmed", new { id = employee.Id })')">
+                                <img src="~/images/delete.svg" />Usuń
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+    <ul class="pagination"></ul>
+</div>
+<script>
+    function submitForm(checkbox) {
+        let form = checkbox.closest("form");
+        form.submit();
+    }
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/list.js/2.3.1/list.min.js"></script>
+<script src="~/js/listOperations.js"></script>
+<script src="~/js/deleteModal.js"></script>

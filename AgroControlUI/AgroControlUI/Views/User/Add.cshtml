@@ -1,0 +1,46 @@
+﻿@model AgroControlUI.DTOs.UserManagement.InviteUserDto
+<link href="https://cdn.jsdelivr.net/npm/tom-select/dist/css/tom-select.css" rel="stylesheet">
+<link rel="stylesheet" href="~/css/addWithSelects.css">
+<link rel="stylesheet" href="~/css/add.css">
+<link rel="stylesheet" href="~/css/colors.css">
+
+<div class="form-container">
+    <div class="blue-form">
+        <form asp-action="Add" method="post">
+            <h1>Zaproś użytkownika</h1>
+
+            <div class="group">
+                <input asp-for="Email" type="email"  />
+                <span class="bar"></span>
+                <label asp-for="Email">Adres e-mail</label>
+                <span asp-validation-for="Email" class="text-danger"></span>
+            </div>
+
+            <div class="single-dropdown">
+                <select asp-for="RoleId" asp-items="ViewBag.Roles" id="roleSelect" >
+                    <option value=""></option>
+                </select>
+                <span class="bar"></span>
+                <label asp-for="RoleId">Wybierz rolę</label>
+                <span asp-validation-for="RoleId" class="text-danger"></span>
+            </div>
+
+            <div class="action-buttons">
+                <a asp-action="Index" class="cancel-btn">Anuluj</a>
+                <button type="submit" class="add-btn">Wyślij zaproszenie</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script src="~/js/inputLabel.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/tom-select/dist/js/tom-select.complete.min.js"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        new TomSelect("#roleSelect", {
+            create: false,
+            sortField: { field: "text", direction: "asc" },
+            placeholder: "Wybierz rolę"
+        });
+    });
+</script>

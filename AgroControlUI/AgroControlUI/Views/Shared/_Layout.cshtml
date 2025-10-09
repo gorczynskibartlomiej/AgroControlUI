@@ -1,0 +1,262 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"]AgroControl</title>
+    <link rel="stylesheet" href="~/css/colors.css">
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/AgroControlUI.styles.css" asp-append-version="true" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Turf.js/6.5.0/turf.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+    <header>
+        @if (TempData["successMessage"] != null)
+        {
+            <div class="toast-container position-fixed top-5 end-0 p-3">
+                <div class="toast toast-success align-items-center text-bg-success border-0 successToast" role="alert" aria-live="assertive" aria-atomic="true" id="successToast">
+                    <div class="toast-body d-flex">
+                        <div class="toast-content">
+                            @TempData["successMessage"]
+                        </div>
+                        <button type="button" class="btn-close me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+                    </div>
+                </div>
+            </div>
+        }
+        @if (TempData["errorMessage"] != null)
+        {
+            <div class="toast-container position-fixed top-5 end-0 p-3">
+                <div class="toast toast-error align-items-center text-bg-success border-0 successToast alert-danger" role="alert" aria-live="assertive" aria-atomic="true" id="successToast">
+                    <div class="toast-body d-flex">
+                        <div class="toast-content">
+                            @TempData["errorMessage"]
+                        </div>
+                        <button type="button" class="btn-close me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+                    </div>
+                </div>
+            </div>
+        }
+        <nav class="navbar navbar-expand-lg navbar-toggleable-lg navbar-dark bg-white border-bottom box-shadow mb-3">
+            <div class="container-fluid">        
+                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index"><img src="~/images/logo.png" alt="logo" width="50" height="50"></a>
+                <strong><a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">AgroControl</a></strong>
+                
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
+                aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+                <div class="navbar-collapse collapse d-lg-inline-flex justify-content-between">
+                    <ul class="navbar-nav flex-grow-1">
+                        <li class="nav-item">
+                            <a class="nav-link d-sm-none d-lg-inline-block" asp-area="" asp-controller="Home" asp-action="Index"> Strona główna</a>
+                        </li>
+                        @if (User.IsInRole("Admin"))
+                        {
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button">Środki ochrony roślin</a>
+                                <div class="dropdown-menu">
+                                    <a class="dropdown-item" asp-area="" asp-controller="CropProtectionProduct" asp-action="Index">Środki ochrony roślin</a>
+                                    <a class="dropdown-item" asp-area="" asp-controller="CropProtectionProductCategory" asp-action="Index">Kategorie</a>
+                                    <a class="dropdown-item" asp-area="" asp-controller="ActiveIngredient" asp-action="Index">Substacje aktywne</a>
+                                </div>
+                            </li>
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button">Nawozy</a>
+                                <div class="dropdown-menu">
+                                    <a class="dropdown-item" asp-area="" asp-controller="Fertilizer" asp-action="Index">Nawozy</a>
+                                    <a class="dropdown-item" asp-area="" asp-controller="FertilizerCategory" asp-action="Index">Kategorie</a>
+                                    <a class="dropdown-item" asp-area="" asp-controller="ChemicalElement" asp-action="Index">Składniki chemiczne</a>
+                                </div>
+                            </li>
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button">Inne</a>
+                                <div class="dropdown-menu">
+                                    <a class="dropdown-item" asp-area="" asp-controller="Crop" asp-action="Index">Rodzaje upraw</a>
+                                    <a class="dropdown-item" asp-area="" asp-controller="AgriculturalEquipmentType" asp-action="Index">Rodzaje maszyn</a>
+                                    <a class="dropdown-item" asp-area="" asp-controller="Unit" asp-action="Index">Jednostki miar</a>                                   
+                                    <a class="dropdown-item" asp-area="" asp-controller="Producer" asp-action="Index">Producenci</a>
+                                    <a class="dropdown-item" asp-area="" asp-controller="Fuel" asp-action="Index">Rodzaje paliw</a>
+                                   
+                                    @* <a class="dropdown-item" asp-area="" asp-controller="CostUnit" asp-action="Index">Jednostki kosztów</a> *@
+                                    @* <a class="dropdown-item" asp-area="" asp-controller="Unit" asp-action="Index">Jednostki miar</a> *@
+                                </div>
+                            </li>
+                                
+                        }
+                        else if (User.IsInRole("Właściciel") || User.IsInRole("Współwłaściciel"))
+                        {
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button">Gospodarstwo</a>
+                                <div class="dropdown-menu">
+                                    <a class="dropdown-item" asp-area="" asp-controller="Farm" asp-action="Index">Gospodarstwo</a>
+                                    <a class="dropdown-item" asp-area="" asp-controller="User" asp-action="Select">Członkowie</a>
+                                    <a class="dropdown-item" asp-area="" asp-controller="AgriculturalEquipment" asp-action="Index">Maszyny</a>
+                                    <a class="dropdown-item" asp-area="" asp-controller="Field" asp-action="Index">Pola</a>
+                 @*                    <a class="dropdown-item" asp-area="" asp-controller="GrainSilo" asp-action="Index">Silosy</a> *@
+                                </div>
+                            </li>
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button">Uprawa roślin</a>
+                                <div class="dropdown-menu">
+                                    <a class="dropdown-item" asp-area="" asp-controller="CropRotationPlanner" asp-action="Index">Planowanie płodozmianu</a>
+                                    <a class="dropdown-item" asp-area="" asp-controller="FieldWork" asp-action="Index">Prace polowe</a>
+                                    @* <a class="dropdown-item" asp-area="" asp-controller="Fertilizer" asp-action="Index">Planowanie nawożenia</a>
+                                    <a class="dropdown-item" asp-area="" asp-controller="CropProtectionProduct" asp-action="Index">Planowanie ochrony roślin</a> *@
+                                    <a class="dropdown-item" asp-area="" asp-controller="Fertilizer" asp-action="Index">Nawozy</a>
+                                    <a class="dropdown-item" asp-area="" asp-controller="CropProtectionProduct" asp-action="Index">Środki ochrony roślin</a>
+                                    @* <a class="dropdown-item" asp-area="" asp-controller="Seed" asp-action="Index">Nasiona?</a> *@
+                                </div>
+                            </li>
+                            @* <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button">Magazyn i finanse</a>
+                                <div class="dropdown-menu">
+                                    <a class="dropdown-item" asp-area="" asp-controller="FarmInventory" asp-action="Index">Magazyn</a>
+                                    <a class="dropdown-item" asp-area="" asp-controller="Purchase" asp-action="Index">Zakupy</a>
+                                    <a class="dropdown-item" asp-area="" asp-controller="Sell" asp-action="Index">Sprzedaż plonów</a>
+                                </div>
+                            </li> *@
+                          @*   <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button">Analizy</a>
+                                <div class="dropdown-menu">
+                                    <a class="dropdown-item" asp-area="" asp-controller="Home" asp-action="Index">Kartoteka pola</a>
+                                    <a class="dropdown-item" asp-area="" asp-controller="AgriculturalEquipmentType" asp-action="Index">Zestawienie upraw</a>
+                                    <a class="dropdown-item" asp-area="" asp-controller="Fuel" asp-action="Index">Analiza zużycia maszyn</a>
+                                    <a class="dropdown-item" asp-area="" asp-controller="Producer" asp-action="Index">Raporty magazynowe</a>
+                                </div>
+                            </li> *@
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button">Kalkulatory</a>
+                                <div class="dropdown-menu">
+                                    <a class="dropdown-item" asp-area="" asp-controller="Calculator" asp-action="SeedRate">Kalkulator normy wysiewu</a>
+                                    <a class="dropdown-item" asp-area="" asp-controller="Calculator" asp-action="PlantPopulation">Kalkulator obsady roślin</a>
+                                    <a class="dropdown-item" asp-area="" asp-controller="Calculator" asp-action="Spraying">Kalkulator oprsków</a>
+                                    <a class="dropdown-item" asp-area="" asp-controller="Calculator" asp-action="CornDrying">Kalkulator suszenia kukurydzy</a>
+                                </div>
+                            </li>
+                        }
+                        else if(User.IsInRole("Pracownik"))
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link d-sm-none d-lg-inline-block" asp-area="" asp-controller="Farm" asp-action="Index">Gospodarstwo</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link d-sm-none d-lg-inline-block" asp-area="" asp-controller="FieldWork" asp-action="Index"> Prace polowe</a>
+                            </li>
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button">Kalkulatory</a>
+                                <div class="dropdown-menu">
+                                    <a class="dropdown-item" asp-area="" asp-controller="Calculator" asp-action="SeedRate">Kalkulator normy wysiewu</a>
+                                    <a class="dropdown-item" asp-area="" asp-controller="Calculator" asp-action="PlantPopulation">Kalkulator obsady roślin</a>
+                                    <a class="dropdown-item" asp-area="" asp-controller="Calculator" asp-action="Spraying">Kalkulator oprsków</a>
+                                    <a class="dropdown-item" asp-area="" asp-controller="Calculator" asp-action="CornDrying">Kalkulator suszenia kukurydzy</a>
+                                </div>
+                            </li>
+                        }
+                        </ul>
+                    <ul class="navbar-nav justify-content-end">
+                        @if (User.Identity.IsAuthenticated)
+                        {
+                            @if(!User.IsInRole("Admin"))
+                            {
+                                @if (User.FindFirst("FarmName") != null)
+                                {
+                                    <li class="nav-item">
+                                        <a class="nav-link" asp-area="" asp-controller="Farm" asp-action="Select">@User.FindFirst("FarmName")?.Value (zmień)</a>
+                                    </li>
+                                }
+                                else
+                                {
+                                    <li class="nav-item">
+                                        <a class="nav-link" asp-area="" asp-controller="Farm" asp-action="Select">Wybierz gopsodarstwo</a>
+                                    </li>
+                                }
+                            }   
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button">Konto</a>
+                                <div class="dropdown-menu">
+                                    <a class="dropdown-item" asp-area="" asp-controller="Account" asp-action="ChangePassword">Zmień hasło</a>
+                                    <a class="dropdown-item" asp-area="" asp-controller="Account" asp-action="Delete">Usuń konto</a>
+                                </div>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" asp-area="" asp-controller="Account" asp-action="Logout">Wyloguj</a>
+                            </li>
+                        }
+                        else
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link" asp-area="" asp-controller="Account" asp-action="Login">Zaloguj</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" asp-area="" asp-controller="Account" asp-action="Register">Zarejestruj</a>
+                            </li>
+                        }
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    @* @if (ViewData["IsHome"] == null || (bool)ViewData["IsHome"] == false)
+    { *@
+        <div class="container">
+            <main role="main" class="pb-3 mb-5 pb-5">
+                @RenderBody()
+            </main>
+        </div>
+    <footer class="mt-5 border-top footer text-muted">
+        <div class="container">
+            &copy; 2024 - AgroControl - <a asp-area="" asp-controller="Home" asp-action="Privacy">Polityka prywatności</a>
+        </div>
+    </footer>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.5/jquery.validate.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validation-unobtrusive/3.2.12/jquery.validate.unobtrusive.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const closeButtons = document.querySelectorAll('[data-bs-dismiss="alert"]');
+            closeButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    const alert = button.closest('.alert');
+                    if (alert) {
+                        alert.classList.remove('show');
+                        alert.addEventListener('transitionend', () => {
+                            alert.remove();
+                        });
+                    }
+                });
+            });
+        });
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const successToasts = document.querySelectorAll('.successToast');
+
+            if (successToasts.length > 0) {
+                const toastDuration = 5000;
+
+                successToasts.forEach(successToast => {
+
+                    const toast = new bootstrap.Toast(successToast, { delay: toastDuration });
+
+                    toast.show();
+
+                    setTimeout(() => {
+                        successToast.remove();
+                    }, toastDuration + 1000);
+                });
+            }
+        });
+
+    </script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

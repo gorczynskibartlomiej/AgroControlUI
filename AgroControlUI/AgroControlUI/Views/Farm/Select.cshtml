@@ -1,0 +1,191 @@
+﻿@model List<AgroControlUI.DTOs.UserManagement.AgroControlUserFarmDto>
+
+<style>
+    /* Nagłówek */
+    .header-title {
+        font-size: 2.5rem;
+        font-weight: 700;
+        color: var(--category2-color);
+        text-align: center;
+        margin-bottom: 2rem;
+    }
+
+    .row {
+        display: flex; /* Ustawienie flexboxa */
+        flex-wrap: wrap; /* Obsługuje zawijanie elementów */
+        justify-content: center; /* Wyrównanie elementów do środka */
+    }
+
+    .col-lg-4, .col-md-6 {
+        display: flex; /* Ustawiamy na flex, aby kontrolować wysokość */
+        flex-direction: column; /* Wykorzystujemy flexbox, by wszystkie elementy wewnątrz były w kolumnie */
+    }
+
+    /* Styl kafelków */
+    .card {
+        border-radius: 20px; /* Zaokrąglenie całego kafelka */
+        transition: transform 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease;
+        text-decoration: none;
+        overflow: hidden;
+        box-shadow: 0px 4px 6px rgba(0, 0, 0.1, 0.2);
+        height: 100%; /* Zapewnia, że wszystkie kafelki rozciągną się na równą wysokość */
+        display: flex;
+        flex-direction: column; /* Użycie flexboxa w kafelku */
+    }
+
+        .card:hover {
+            box-shadow: 0 0 30px var(--category2-color);
+            transform: translateY(-10px);
+            background-color: #f4f6fa;
+        }
+
+    /* Górna część kafelka */
+    .card-header {
+        background-color: var(--category2-color);
+        color: white;
+        text-align: center;
+        font-size: 1.5rem;
+        font-weight: 700;
+        padding: 0.75rem;
+        border-radius: 20px 20px 0 0;
+        height:100%;
+        flex-grow:0;
+        display: flex; /* Używamy flexboxa */
+        justify-content: center; /* Wyśrodkowanie poziome */
+        align-items: center; /* Wyśrodkowanie pionowe */
+    }
+
+    .card-header h3 {
+        ;}
+    /* Ikona farmy */
+    .farm-icon {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 50px;
+    }
+
+        .farm-icon i {
+            font-size: 2.5rem;
+            color: var(--category2-color);
+            transition: color 0.3s ease;
+        }
+
+
+    /* Treści w dolnej części kafelka */
+    .card-body {
+        text-align: center;
+        display: flex;
+        flex-wrap: wrap;
+        flex-direction: column;
+        justify-content: center;
+        min-height:220px;
+    }
+
+        .card-body p {
+            margin: 0.5rem 0;
+            font-size: 1rem;
+            color: #6c757d;
+        }
+
+    .info-text {
+        font-size: 0.9rem;
+        color: #6c757d;
+    }
+
+    /* Kafelek "Dodaj nową farmę" */
+    .add-farm-card {
+        border: 2px dashed var(--category2-color);
+        text-align: center;
+        cursor: pointer;
+    }
+
+        .add-farm-card h1 {
+            font-size: 3rem;
+            color: var(--category2-color);
+            margin-bottom: 1rem;
+        }
+
+        .add-farm-card h4 {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: var(--category2-color);
+
+        }
+
+        .add-farm-card:hover {
+            background-color: #f4f6fa;
+        }
+
+    @@media (max-width: 768px) {
+        .card {
+            height: auto;
+        }
+
+        .card-header {
+            font-size: 1.3rem;
+        }
+
+        .card-body p {
+            font-size: 0.9rem;
+        }
+
+        .add-farm-card h1 {
+            font-size: 2.5rem;
+
+        }
+
+        .add-farm-card h4 {
+            font-size: 1.1rem;
+        }
+    }
+
+    .row {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+
+    .col-lg-4, .col-md-6 {
+        display: flex; /* Ustawiamy na flex, aby kontrolować wysokość */
+        flex-direction: column; /* Ustawiamy kierunek na kolumnowy, by wszystko było w pionie */
+    }
+</style>
+
+<div class="container mt-5">
+    <h1 class="header-title">Twoje Gospodarstwa</h1>
+    <div class="row justify-content-center">
+        @if (Model != null)
+        {
+            @foreach (var farm in Model)
+            {
+                <div class="col-lg-4 col-md-6 mb-4">
+                    <form method="post" action="@Url.Action("SetCurrentFarm", "Farm")" class="card text-decoration-none" style="cursor: pointer;" onsubmit="return true;">
+                        <input type="hidden" name="farmId" value="@farm.FarmId" />
+                        <div class="card-header">
+                            <h3>@farm.FarmName</h3>
+                        </div>
+                        <div class="card-body" onclick="this.closest('form').submit();">
+                            <div class="farm-icon">
+                                <i class="fas fa-tractor"></i>
+                            </div>
+                            <p><strong>Rola na tej farmie:</strong> @farm.RoleName</p>
+                            <p class="info-text">Kliknij, aby wybrać to gospodarstwo</p>
+                        </div>
+                    </form>
+                </div>
+            }
+        }
+
+        <!-- Kafelek do dodania nowej farmy -->
+        <div class="col-lg-4 col-md-6 mb-4">
+            <a href="@Url.Action("Create", "Farm")" class="card add-farm-card text-decoration-none">
+                <div class="card-body">
+                    <h1>+</h1>
+                    <h4>Dodaj nową farmę</h4>
+                    <p class="info-text">Kliknij, aby utworzyć nowe gospodarstwo</p>
+                </div>
+            </a>
+        </div>
+    </div>
+</div>

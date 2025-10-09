@@ -1,0 +1,52 @@
+﻿@model AgroControlUI.DTOs.Account.RegisterModelDto
+<link rel="stylesheet" href="~/css/loginAndRegister.css">
+
+<div class="login-container">
+    <div class="login-form">
+        <form asp-action="Register" method="post">
+            <h1>Rejestracja</h1>
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+            <div class="group">
+                <input asp-for="FirstName" required/>
+                
+                <span class="bar"></span>
+                <label asp-for="FirstName">Imię</label>
+                <span asp-validation-for="FirstName" class="text-danger"></span>
+            </div>
+            <div class="group">
+                <input asp-for="LastName" required />
+                
+                <span class="bar"></span>
+                <label asp-for="LastName">Nazwisko</label>
+                <span asp-validation-for="LastName" class="text-danger"></span>
+            </div>
+            <div class="group">
+                <input asp-for="Email" required />
+                
+                <span class="bar"></span>
+                <label asp-for="Email">Email</label>
+                <span asp-validation-for="Email" class="text-danger"></span>
+            </div>
+
+            <div class="group">
+                <input asp-for="Password" required type="password" />
+                
+                <span class="bar"></span>
+                <label asp-for="Password">Hasło</label>
+                <span asp-validation-for="Password" class="text-danger"></span>
+            </div>
+            <div class="group">
+                <input asp-for="ReapeatedPassword" required type="password" />
+                
+                <span class="bar"></span>
+                <label asp-for="ReapeatedPassword">Powtórz hasło</label>
+                <span asp-validation-for="ReapeatedPassword" class="text-danger"></span>
+            </div>
+            <button type="submit" class="btn-log">Zarejestruj</button>
+        </form>
+    </div>
+</div>
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

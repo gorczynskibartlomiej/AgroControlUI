@@ -1,0 +1,180 @@
+﻿@model List<AgroControlUI.DTOs.FarmData.CropRotationPlannerDto>
+
+@await Html.PartialAsync("_DeleteConfirmationModal")
+
+<link rel="stylesheet" href="~/css/indexList.css">
+<link href="~/css/addWithSelects.css" rel="stylesheet" />
+<link rel="stylesheet" href="~/css/listOperations.css">
+
+<h1 class="green">Planowanie zmianowania upraw</h1>
+
+<style>
+    .single-dropdown select {
+        opacity: 0;
+        position: absolute;
+        z-index: -1;
+    }
+
+    .ts-dropdown {
+        position: absolute !important;
+        z-index: 1000;
+        width: 100%;
+    }
+
+    .bar {
+        position: relative;
+        display: block;
+        width: 100%;
+    }
+
+        .bar:before, .bar:after {
+            content: '';
+            height: 2px;
+            width: 0;
+            bottom: 1px;
+            position: absolute;
+            background: #4caf50;
+            transition: 0.2s ease all;
+        }
+
+        .bar:before {
+            left: 50%;
+        }
+
+        .bar:after {
+            right: 50%;
+        }
+
+    input:focus ~ .bar:before,
+    input:focus ~ .bar:after {
+        width: 50%;
+    }
+
+    .ts-dropdown.single {
+        margin-top: 5px;
+    }
+
+    .ts-wrapper.has-items input::placeholder {
+        opacity: 0;
+    }
+</style>
+
+<div id="categories" class="wrapper">
+    <!-- Dropdown do wyboru pola -->
+    <div class="single-dropdown" style="margin-top:40px;">
+        <select id="fieldDropdown" asp-items="ViewBag.Fields" onchange="fieldChanged()">
+            <option value="">Wybierz pole</option>
+        </select>
+        <label>Pole</label>
+        <span class="bar"></span>
+    </div>
+
+    <!-- Tylko wyświetlaj przycisk, jeśli istnieje fieldId w URL -->
+    @if (Context.Request.Query["fieldId"].Any())
+    {
+        <p style="padding-bottom:20px;">
+            <a asp-action="Create" asp-route-fieldId="@Context.Request.Query["fieldId"]" id="btnAddCrop" class="add-btn">
+                <img src="~/images/plus-solid.svg" />Dodaj nową uprawę dla tego pola
+            </a>
+        </p>
+    }
+
+    <div class="table">
+        <div class="row header green" id="headerRow">
+            <div class="cell name" data-sort="cropName" onclick="sortByColumn(this)">
+                <div class="sort-wrapper">
+                    <span class="sort-text">Uprawa</span>
+                    <span class="sort-arrow">▼</span>
+                </div>
+            </div>
+            <div class="cell" data-sort="year" onclick="sortByColumn(this)">
+                <div class="sort-wrapper">
+                    <span class="sort-text">Rok zbioru</span>
+                    <span class="sort-arrow">▼</span>
+                </div>
+            </div>
+            <div class="cell">
+                Akcje
+            </div>
+        </div>
+
+        <div class="row">
+
+            <div class="cell">
+                <input type="text" class="search-input" data-search="cropName" placeholder="Szukaj..." oninput="searchByColumn()" />
+            </div>
+            <div class="cell">
+                <input type="text" class="search-input" data-search="year" placeholder="Szukaj..." oninput="searchByColumn()" />
+            </div>
+            <div class="cell"></div>
+        </div>
+
+        <div class="list" id="cropRotationList">
+            @foreach (var item in Model)
+            {
+                <div class="row" data-field-id="@item.FieldId">
+                    <div class="cell cropName" data-title="Uprawa">
+                        @item.CropName
+                    </div>
+                    <div class="cell year" data-title="Rok">
+                        @item.Year
+                    </div>
+                    <div class="cell" data-title="Akcje">
+                        <div class="action-buttons">
+                            <a asp-action="Edit" asp-route-id="@item.Id" class="edit-btn">
+                                <img src="~/images/edit.svg" />Edytuj
+                            </a>
+                            <button type="button" class="delete-btn" data-bs-toggle="modal" data-bs-target="#deleteModal"
+                                    onclick="setDeleteUrl('@Url.Action("DeleteConfirmed", new { id = item.Id, fieldId = item.FieldId })')">
+                                <img src="~/images/delete.svg" />Usuń
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+
+    <ul class="pagination"></ul>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/tom-select/dist/js/tom-select.complete.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/list.js/2.3.1/list.min.js"></script>
+<script src="~/js/listOperations.js"></script>
+<script src="~/js/deleteModal.js"></script>
+<script src="~/js/inputLabel.js"></script>
+
+<script>
+
+    document.addEventListener("DOMContentLoaded", function () {
+        var urlParams = new URLSearchParams(window.location.search);
+        var fieldId = urlParams.get("fieldId");
+
+        var fieldDropdown = new TomSelect("#fieldDropdown", {
+            create: false,
+            sortField: { field: "text", direction: "asc" },
+            placeholder: "Wybierz pole",
+            hideSelected: true
+        });
+
+        // Wyłączamy eventy na czas ustawiania wartości
+        fieldDropdown.on("change", fieldChanged);
+        fieldDropdown.disable();
+
+        if (fieldId) {
+            fieldDropdown.setValue(fieldId, true); // Ustawiamy wartość, ale BEZ triggerowania eventu change
+        }
+
+        fieldDropdown.enable(); // Ponownie włączamy eventy
+    });
+
+    function fieldChanged(value) {
+        var currentUrl = new URL(window.location.href);
+        if (value) {
+            currentUrl.searchParams.set("fieldId", value);
+        } else {
+            currentUrl.searchParams.delete("fieldId");
+        }
+        window.location.href = currentUrl.toString();
+    }
+</script>

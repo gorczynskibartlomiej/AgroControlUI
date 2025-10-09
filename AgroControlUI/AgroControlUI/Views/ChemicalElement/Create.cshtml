@@ -1,0 +1,32 @@
+﻿@model AgroControlUI.DTOs.Fertilizers.ChemicalElementDto
+
+<link rel="stylesheet" href="~/css/add.css">
+
+<div class="form-container">
+    <div class="green-form">
+        <form asp-action="Create" method="post">
+            <h1>Dodaj składnik chemiczny</h1>
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+            <div class="group">
+                <input asp-for="Name" required />
+                
+                <span class="bar"></span>
+                <label asp-for="Name">Nazwa składnika chemicznego</label>
+                <span asp-validation-for="Name" class="text-danger"></span>
+            </div>
+            <div class="group">
+                <input asp-for="ChemicalSymbol" required />
+                
+                <span class="bar"></span>
+                <label asp-for="ChemicalSymbol">Symbol chemiczny</label>
+                <span asp-validation-for="ChemicalSymbol" class="text-danger"></span>
+            </div>
+            <div class="action-buttons">
+                <a asp-action="Index" class="cancel-btn">Anuluj</a>
+                <button type="submit" class="add-btn">Dodaj</button>
+            </div>
+        </form>
+    </div>
+</div>
+<script src="~/js/inputLabel.js"></script>

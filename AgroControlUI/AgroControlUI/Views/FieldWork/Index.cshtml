@@ -1,0 +1,347 @@
+﻿@model List<AgroControlUI.DTOs.FieldWorks.FieldWorkDto>
+
+@await Html.PartialAsync("_DeleteConfirmationModal")
+@await Html.PartialAsync("_FinishWorkModal")
+<!-- Podłączenie zewnętrznych plików CSS -->
+<link rel="stylesheet" href="~/css/indexList.css">
+<link rel="stylesheet" href="~/css/listOperations.css">
+<link rel="stylesheet" href="~/css/fieldWorks.css"> 
+<link rel="stylesheet" href="~/css/filters.css">
+<style>
+    .custom-dropdown label {
+    color: var(--category1-color);}
+
+    .change-status-btn {
+    background-color: var(--main-app-color);
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    cursor: pointer;
+    border-radius: 5px;
+    font-size: 14px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease;
+    }
+
+    .change-status-btn:hover {
+    color: white;
+    box-shadow: 0px 0px 10px 3px var(--add-btn-color);
+    transform: translateY(-3px);
+    transition: transform 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease;
+    }
+
+</style>
+<h1 class="green">Prace Polowe</h1>
+
+<div id="categories" class="wrapper">
+    <p>
+        <a asp-action="Create" class="add-btn"><img src="~/images/plus-solid.svg" />Dodaj nową pracę polową</a>
+    </p>
+    <div class="custom-dropdown">
+        <select id="filterWorkType" name="WorkType">
+            <option value="" selected>Wszystkie rodzaje pracy</option>
+            @foreach (var workType in Model.Select(w => w.WorkType).Distinct())
+            {
+                <option value="@workType">@workType</option>
+            }
+        </select>
+        <label for="filterWorkType">Rodzaj pracy</label>
+    </div>
+
+    @* <div class="custom-dropdown">
+        <select id="filterField" name="Field">
+            <option value="" selected>Wszystkie pola</option>
+            @foreach (var field in Model.Select(w => w.Field).GroupBy(f => f.Name).Select(g => g.First()))
+            {
+                <option value="@field.Name">@field.Name (@field.Area ha)</option>
+            }
+        </select>
+        <label for="filterField">Pole</label>
+    </div> *@
+
+    @{
+        var selectedFieldName = ViewBag.SelectedFieldName as string;
+        var fields = Model.Select(w => w.Field).GroupBy(f => f.Name).Select(g => g.First()).ToList();
+    }
+
+    <div class="custom-dropdown">
+        <select id="filterField" name="Field">
+            @if (string.IsNullOrEmpty(selectedFieldName))
+            {
+                <option value="" selected>Wszystkie pola</option>
+            }
+            else
+            {
+                <option value="">Wszystkie pola</option>
+            }
+
+            @foreach (var field in fields)
+            {
+                if (field.Name == selectedFieldName)
+                {
+                    <option value="@field.Name" selected>@field.Name (@field.Area ha)</option>
+                }
+                else
+                {
+                    <option value="@field.Name">@field.Name (@field.Area ha)</option>
+                }
+            }
+        </select>
+        <label for="filterField">Pole</label>
+    </div>
+    <div class="table">
+        <div class="row header green" id="headerRow">
+            <div class="cell" data-sort="isPlanned" onclick="sortByColumn(this)">
+                <div class="sort-wrapper">
+                    <span class="sort-text">Status</span>
+                    <span class="sort-arrow">▼</span>
+                </div>
+            </div>
+            @* <div class="cell" data-sort="workType" onclick="sortByColumn(this)">
+                Rodzaj pracy
+            </div> *@
+            <div class="cell" data-sort="workType" onclick="sortByColumn(this)">
+                <div class="sort-wrapper">
+                    <span class="sort-text">Rodzaj pracy</span>
+                    <span class="sort-arrow">▼</span>
+                </div>
+            </div>
+            <div class="cell" data-sort="startTime" onclick="sortByColumn(this)">
+                <div class="sort-wrapper">
+                    <span class="sort-text">Data rozpoczęcia</span>
+                    <span class="sort-arrow">▼</span>
+                </div>
+            </div>
+            <div class="cell" data-sort="endTime" onclick="sortByColumn(this)">
+                <div class="sort-wrapper">
+                    <span class="sort-text">Data zakończenia</span>
+                    <span class="sort-arrow">▼</span>
+                </div>
+            </div>
+            @* <div class="cell" data-sort="field">
+                   pole
+            </div> *@
+            <div class="cell" data-sort="field" onclick="sortByColumn(this)">
+                <div class="sort-wrapper">
+                    <span class="sort-text">Pole</span>
+                    <span class="sort-arrow">▼</span>
+                </div>
+            </div>
+            <div class="cell" data-sort="employeeName" onclick="sortByColumn(this)">
+                <div class="sort-wrapper">
+                    <span class="sort-text">Wykonawca</span>
+                    <span class="sort-arrow">▼</span>
+                </div>
+            </div>
+            <div class="cell">
+                Akcje
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="cell">
+            </div>
+            <div class="cell">
+                <input type="hidden" class="search-input" data-search="workType" placeholder="Szukaj..." oninput="searchByColumn()" />
+            </div>
+            <div class="cell">
+                <input type="text" class="search-input" data-search="startTime" placeholder="Szukaj..." oninput="searchByColumn()" />
+            </div>
+            <div class="cell">
+                <input type="text" class="search-input" data-search="endTime" placeholder="Szukaj..." oninput="searchByColumn()" />
+            </div>
+            <div class="cell">
+                <input type="hidden" class="search-input" data-search="field" placeholder="Szukaj..." oninput="searchByColumn()" />
+            </div>
+            <div class="cell">
+                <input type="text" class="search-input" data-search="employeeName" placeholder="Szukaj..." oninput="searchByColumn()" />
+            </div>
+            <div class="cell">
+
+            </div>
+
+        </div>
+
+        <div class="list">
+            @foreach (var fieldWork in Model)
+            {
+                <div class="row">
+                    <div class="cell isPlanned" data-title="Status">
+                        @if (fieldWork.IsPlanned)
+                        {
+                            <span>Zaplanowane</span>
+                            <button type="button" class="change-status-btn" data-bs-toggle="modal" data-bs-target="#finishWorkModal"
+                            onclick="setFieldWorkDetails(@fieldWork.Id, '@fieldWork.StartTime.ToString("yyyy-MM-ddTHH:mm")')">
+                                Zakończ
+                            </button>
+                        }
+                        else
+                        {
+                            <span>Wykonane</span> 
+                        }
+                    </div>
+                    <div class="cell workType" data-title="Typ pracy">
+                         @fieldWork.WorkType 
+                    </div>
+                    <div class="cell startTime" data-title="Data rozpoczęcia">
+                        @if (fieldWork.IsPlanned == true && fieldWork.StartTime<DateTime.Now)
+                        {
+                            <span class="text-danger">
+                                @fieldWork.StartTime.ToString("dd-MM-yyyy HH:mm")
+                            </span>
+                        }
+                        else
+                        {
+                            @fieldWork.StartTime.ToString("dd-MM-yyyy HH:mm")
+                        }
+                    </div>
+                    <div class="cell endTime" data-title="Data zakończenia">
+                        @(fieldWork.EndTime?.ToString("dd-MM-yyyy HH:mm") ?? "Brak")
+                    </div>
+                    <div class="cell field" data-title="Pole">
+                        @fieldWork.Field.Name (@(fieldWork.Field.Area)ha)
+                    </div>
+                    <div class="cell employeeName" data-title="Wykonawca">
+                        @(string.IsNullOrEmpty(fieldWork.EmployeeName) ? fieldWork.AgroControlUserName : fieldWork.EmployeeName)
+                    </div>
+
+                    <div class="cell" data-title="Akcje">
+                        <div class="action-buttons">
+                            @if (fieldWork.WorkType == "Nawożenie")
+                            {
+                                @if(!User.IsInRole("Pracownik"))
+                                {
+                                    <a asp-action="EditFertilizingWork" asp-route-id="@fieldWork.Id" class="edit-btn">
+                                        <img src="~/images/edit.svg" />Edytuj
+                                    </a>
+                                }
+                                <a asp-action="FertilizingWorkDetails" asp-route-id="@fieldWork.Id" class="cancel-btn">
+                                    <img src="~/images/details.svg" />Szczegóły
+                                </a>
+                            }
+                            else if (fieldWork.WorkType == "Opryski")
+                            {
+                                @if (!User.IsInRole("Pracownik"))
+                                {
+                                    <a asp-action="EditSprayingWork" asp-route-id="@fieldWork.Id" class="edit-btn">
+                                        <img src="~/images/edit.svg" />Edytuj
+                                    </a>}
+                                    <a asp-action="SprayingWorkDetails" asp-route-id="@fieldWork.Id" class="cancel-btn">
+                                        <img src="~/images/details.svg" />Szczegóły
+                                    </a>
+                                }
+                                else if (fieldWork.WorkType == "Zbiory")
+                                {
+                                    @if (!User.IsInRole("Pracownik"))
+                                    {
+                                        <a asp-action="EditHarvestingWork" asp-route-id="@fieldWork.Id" class="edit-btn">
+                                            <img src="~/images/edit.svg" />Edytuj
+                                        </a>}
+                                        <a asp-action="HarvestingWorkDetails" asp-route-id="@fieldWork.Id" class="cancel-btn">
+                                            <img src="~/images/details.svg" />Szczegóły
+                                        </a>
+                                    }
+                                    else
+                                    {
+                                        @if (!User.IsInRole("Pracownik"))
+                                        {
+                                            <a asp-action="EditOtherWork" asp-route-id="@fieldWork.Id" class="edit-btn">
+                                                <img src="~/images/edit.svg" />Edytuj
+                                </a>}
+                                <a asp-action="OtherWorkDetails" asp-route-id="@fieldWork.Id" class="cancel-btn">
+                                    <img src="~/images/details.svg" />Szczegóły
+                                </a>
+                                     }
+                                        @if (!User.IsInRole("Pracownik"))
+                                        {
+                            <button type="button" class="delete-btn" data-bs-toggle="modal" data-bs-target="#deleteModal" onclick="setDeleteUrl('@Url.Action("DeleteConfirmed", new { id = fieldWork.Id })')">
+                                <img src="~/images/delete.svg" />Usuń
+                            </button>
+                                        }
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+    <ul class="pagination"></ul>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/list.js/2.3.1/list.min.js"></script>
+<script src="~/js/listOperations.js"></script>
+<script src="~/js/deleteModal.js"></script>
+<script>
+
+                function setFieldWorkDetails(id, startDateText) {
+
+        document.getElementById("fieldWorkId").value = id;
+
+
+        const startDate = new Date(startDateText + ":00");
+        console.log("Przekazana data:", startDate);
+
+        if (!isNaN(startDate.getTime())) {
+            const localDateTime = startDate.getFullYear() + "-" +
+                String(startDate.getMonth() + 1).padStart(2, '0') + "-" +
+                String(startDate.getDate()).padStart(2, '0') + "T" +
+                String(startDate.getHours()).padStart(2, '0') + ":" +
+                String(startDate.getMinutes()).padStart(2, '0');
+
+            document.getElementById("startDate").value = localDateTime;
+        } else {
+            alert("Błąd w przetwarzaniu daty!");
+        }
+
+    }
+    function submitForm(checkbox) {
+        let form = checkbox.closest("form");
+        form.submit();
+    }
+    //  document.addEventListener("DOMContentLoaded", function () {
+    //     const filterWorkType = document.getElementById("filterWorkType");
+    //  const filterField = document.getElementById("filterField");
+
+    //  function filterTable() {
+    //      const selectedWorkType = filterWorkType.value.toLowerCase();
+    //      const selectedField = filterField.value.toLowerCase();
+
+    //      document.querySelectorAll(".list .row").forEach(row => {
+    //          const workTypeText = row.querySelector(".cell[data-title='Typ pracy']")?.textContent.toLowerCase() || "";
+    //          const fieldText = row.querySelector(".cell[data-title='Pole']")?.textContent.toLowerCase() || "";
+
+    //          const workTypeMatch = !selectedWorkType || workTypeText.includes(selectedWorkType);
+    //          const fieldMatch = !selectedField || fieldText.includes(selectedField);
+
+    //          row.style.display = workTypeMatch && fieldMatch ? "" : "none";
+    //      });
+    //  }
+    //  setTimeout(filterTable, 100);
+    //  filterWorkType.addEventListener("change", filterTable);
+    //  filterField.addEventListener("change", filterTable);
+    //     filterTable();
+    // });
+            document.addEventListener('DOMContentLoaded', function () {
+
+        const filterWorkType = document.getElementById("filterWorkType");
+        const filterField = document.getElementById("filterField");
+
+        filterWorkType.addEventListener("change", function() {
+           
+            let value = filterWorkType.value.toLowerCase();
+
+            document.querySelectorAll('.search-input[data-search="workType"]').forEach(input => {
+                input.value = value;
+            });
+            searchByColumn();  
+        });
+
+        filterField.addEventListener("change", function() {
+          
+            let value = filterField.value.toLowerCase();
+
+            document.querySelectorAll('.search-input[data-search="field"]').forEach(input => {
+                input.value = value;
+            });
+            searchByColumn(); 
+        });
+    });
+</script>
