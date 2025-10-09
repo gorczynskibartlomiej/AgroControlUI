@@ -11,7 +11,7 @@
         public int? AgroControlUserId { get; set; }
         public string? Description { get; set; }
 
-        public ICollection<int> FieldWorkAgriculturalEquipmentIds { get; set; } = new List<int>();
-        public ICollection<CreateSprayingWorkCropProtectionProductDto> FertilizingWorkFertilizers { get; set; } = new List<CreateSprayingWorkCropProtectionProductDto>();
+        public ICollection<int>? FieldWorkAgriculturalEquipmentIds { get; set; } = new List<int>();
+        public ICollection<CreateSprayingWorkCropProtectionProductDto>? SprayingWorkCropProtectionProducts { get; set; } = new List<CreateSprayingWorkCropProtectionProductDto>();
     }
 }

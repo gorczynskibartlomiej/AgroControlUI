@@ -10,7 +10,81 @@
 <body>
     @if(User.IsInRole("Pracownik"))
     {
-
+   <div class="container">
+            <div class="row g-5 justify-content-center">
+                <div class="category-wrapper"></div>
+                <div class="col-md-12 col-lg-6 category-wraper">
+                    <div class="category">
+                        <h3>Panel pracownika</h3>
+                        <div class="tiles row g-4 justify-content-center">
+                            <div class="col-6 col-md-4 col-lg-6 col-xxl-4">
+                                <div class="tile">
+                                    <a asp-area="" asp-controller="Farm" asp-action="Index">
+                                        <img src="~/images/farmHouse.png" alt="Gospodarstwo">
+                                        <h4>Gospodarstwo</h4>
+                                    </a>
+                                </div>
+                            </div>
+                            <div class="col-6 col-md-4 col-lg-6 col-xxl-4">
+                                <div class="tile">
+                                    <a asp-area="" asp-controller="FieldWork" asp-action="Index">
+                                        <img src="~/images/fieldWork.png" alt="Prace polowe">
+                                        <h4>Prace polowe</h4>
+                                    </a>
+                                </div>
+                            </div>
+                            <div class="col-6 col-md-4 col-lg-6 col-xxl-4">
+                                <div class="tile">
+                                    <a asp-area="" asp-controller="FieldWork" asp-action="Create">
+                                        <img src="~/images/fieldWorkAdd.png" alt="Prace polowe">
+                                        <h4>Dodaj pracę polową</h4>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-12 col-lg-6 category-wraper">
+                    <div class="category">
+                        <h3>Kalkulatory</h3>
+                        <div class="tiles row g-4 justify-content-center">
+                            <div class="col-6 col-md-4 col-lg-6 col-xxl-4">
+                                <div class="tile">
+                                    <a asp-area="" asp-controller="Calculator" asp-action="seedRate">
+                                        <img src="~/images/seedRateCalculator.png" alt="Kalkulator wysiewu nasion">
+                                        <h4>Kalkulator wysiewu nasion</h4>
+                                    </a>
+                                </div>
+                            </div>
+                            <div class="col-6 col-md-4 col-lg-6 col-xxl-4">
+                                <div class="tile">
+                                    <a asp-area="" asp-controller="Calculator" asp-action="plantPopulation">
+                                        <img src="~/images/plantPopulationCalculator.png" alt="Kalkulator obsady roślin">
+                                        <h4>Kalkulator obsady roślin</h4>
+                                    </a>
+                                </div>
+                            </div>
+                            <div class="col-6 col-md-4 col-lg-6 col-xxl-4">
+                                <div class="tile">
+                                    <a asp-area="" asp-controller="Calculator" asp-action="Spraying">
+                                        <img src="~/images/sprayingCalculator.png" alt="Kalkulator oprysków">
+                                        <h4>Kalkulator oprysków</h4>
+                                    </a>
+                                </div>
+                            </div>
+                            <div class="col-6 col-md-4 col-lg-6 col-xxl-4">
+                                <div class="tile">
+                                    <a asp-area="" asp-controller="Calculator" asp-action="CornDrying">
+                                        <img src="~/images/cornCalculator.png" alt="Kalkulator suszenia kukurydzy">
+                                        <h4>Kalkulator suszenia kukurydzy</h4>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+     </div>
     }
     else if(User.IsInRole("Admin"))
     {
@@ -31,16 +105,16 @@
                             <div class="col-6 col-md-4 col-lg-6 col-xxl-4">
                                 <div class="tile">
                                     <a asp-area="" asp-controller="CropProtectionProductCategory" asp-action="Index">
-                                        <img src="~/images/category.png" alt="Kategorie produktów">
-                                        <h4>Kategorie produktów</h4>
+                                        <img src="~/images/category.png" alt="Kategorie środków">
+                                        <h4>Kategorie środków</h4>
                                     </a>
                                 </div>
                             </div>
                             <div class="col-6 col-md-4 col-lg-6 col-xxl-4">
                                 <div class="tile">
                                     <a asp-area="" asp-controller="CropProtectionProduct" asp-action="Index">
-                                        <img src="~/images/cropProtectionProduct.png" alt="Produkty ochrony roślin">
-                                        <h4>Produkty ochrony roślin</h4>
+                                        <img src="~/images/cropProtectionProduct.png" alt="Środki ochrony roślin">
+                                        <h4>Środki ochrony roślin</h4>
                                     </a>
                                 </div>
                             </div>

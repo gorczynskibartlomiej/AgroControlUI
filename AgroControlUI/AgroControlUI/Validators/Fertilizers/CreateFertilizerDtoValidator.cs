@@ -21,7 +21,7 @@ namespace AgroControlUI.Validators.Fertilizers
                 .NotEmpty().WithMessage("Kategoria nawozu jest wymagana.");
 
             RuleFor(fertilizer => fertilizer.Description)
-                .MaximumLength(500).WithMessage("Opis może mieć maksymalnie 500 znaków.")
+                .MaximumLength(20000).WithMessage("Opis może mieć maksymalnie 20000 znaków.")
                 .When(fertilizer => !string.IsNullOrEmpty(fertilizer.Description));
 
             RuleFor(fertilizer => fertilizer.FertilizerComponents)

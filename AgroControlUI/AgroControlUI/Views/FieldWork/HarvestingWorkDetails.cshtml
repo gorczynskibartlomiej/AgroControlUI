@@ -14,9 +14,9 @@
         text-decoration: none;
         cursor: pointer;
         transition: background-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
-        margin-bottom: 7px; /* Zwiększony margines */
-        margin-top: 7px; /* Zwiększony margines */
-        white-space: nowrap; /* Zapobiega zawijaniu tekstu w małych elementach */
+        margin-bottom: 7px; 
+        margin-top: 7px; 
+        white-space: nowrap; 
         align-items: center;
         display: flex;
     }
@@ -32,13 +32,13 @@
         align-items: center;
         justify-content: space-between;
         width: 100%;
-        flex-wrap: wrap; /* Zapobiega nachodzeniu na siebie elementów */
-        gap: 10px; /* Dodaje odstęp między nazwą a przyciskiem */
+        flex-wrap: wrap;
+        gap: 10px;
     }
 
 </style>
 
-<div class="details-container">
+<div class="details-container green-details">
     <h1>Szczegóły pracy</h1>
 
     <div class="info-section">
@@ -87,16 +87,6 @@
     </div>
 
     <div class="info-section">
-        <p class="info-title">Utworzono:</p>
-        <p class="timestamp">@Model.CreatedOn.ToString("yyyy-MM-dd HH:mm") przez @Model.CreatedBy</p>
-    </div>
-
-    <div class="info-section">
-        <p class="info-title">Ostatnia aktualizacja:</p>
-        <p class="timestamp">@Model.UpdatedOn.ToString("yyyy-MM-dd HH:mm") przez @Model.UpdatedBy</p>
-    </div>
-
-    <div class="info-section">
         <p class="info-title">Wykorzystane maszyny:</p>
         @if (Model.FieldWorkAgriculturalEquipment.Any())
         {
@@ -125,22 +115,34 @@
     
     <div class="info-section">
         <p class="info-title">Wydajnośc z hektara:</p>
-        <p>(@Model.TotalYield/@Model.Field.Area) t/ha</p>
+        <p>@(Model.TotalYield/Model.Field.Area) t/ha</p>
     </div>
 
     <div class="info-section">
-        <p class="info-title">Wilgotnośc:</p>
+        <p class="info-title">Wilgotność:</p>
         @if (!string.IsNullOrEmpty(Model.Moisture.ToString()))
         {
-            <p>@Model.Moisture</p>
+            <p>@Model.Moisture (%)</p>
         }
         else
         {
             <p>Brak danych</p>
         }
     </div>
+    @if (!User.IsInRole("Pracownik"))
+    {
+        <div class="info-section">
+            <p class="info-title">Utworzono:</p>
+            <p class="timestamp">@Model.CreatedOn.ToString("yyyy-MM-dd HH:mm") przez @Model.CreatedBy</p>
+        </div>
+
+        <div class="info-section">
+            <p class="info-title">Ostatnia aktualizacja:</p>
+            <p class="timestamp">@Model.UpdatedOn.ToString("yyyy-MM-dd HH:mm") przez @Model.UpdatedBy</p>
+        </div>
+    }
     <div class="action-buttons">
-        <a asp-action="EditFertilizingWork" asp-route-id="@Model.Id" class="edit-btn">Edytuj</a>
+        <a asp-action="EditHarvestingWork" asp-route-id="@Model.Id" class="edit-btn">Edytuj</a>
         <button type="button" class="delete-btn" data-bs-toggle="modal" data-bs-target="#deleteModal"
                 onclick="setDeleteUrl('@Url.Action("DeleteConfirmed", new { id = Model.Id })')">
             Usuń

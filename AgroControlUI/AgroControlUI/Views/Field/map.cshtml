@@ -1,0 +1,46 @@
+﻿@model List<AgroControlUI.DTOs.FarmData.FieldDetailsDto>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/leaflet.css" />
+<link rel="stylesheet" href="~/css/FieldsMap.css" />
+
+<div class="map-container">
+    <h1>Mapa wszystkich pól gospodarstwa</h1>
+
+    <!-- Przycisk powrotu -->
+    <a href="javascript:history.back()" class="cancel-btn">Powrót</a>
+
+    <div id="fieldsMap" style="height: 500px;"></div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/leaflet.js"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        var map = L.map('fieldsMap').setView([52.2297, 21.0122], 6); 
+
+        L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+            attribution: '&copy; OpenStreetMap contributors'
+        }).addTo(map);
+
+        var fields = @Html.Raw(Json.Serialize(Model));
+
+        fields.forEach(function(field) {
+            if (field.Latitude && field.Longitude) {
+                var marker = L.marker([field.Latitude, field.Longitude]).addTo(map);
+                marker.bindPopup("<b>" + field.Name + "</b><br/>" +
+                    "Powierzchnia: " + field.Area + " ha<br/>" +
+                    "Opis: " + (field.Description ? field.Description : "Brak opisu"));
+            }
+
+     
+                L.geoJSON(field.FieldBorder, {
+                    style: {
+                        weight: 2,
+                        color: 'blue',
+                        opacity: 1,
+                        fillOpacity: 0.4
+                    }
+                }).addTo(map);
+            }
+        });
+    });
+</script>

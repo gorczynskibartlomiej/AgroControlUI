@@ -30,7 +30,7 @@
         }
         @if (TempData["errorMessage"] != null)
         {
-            <div class="toast-container position-fixed top-5 end-0">
+            <div class="toast-container position-fixed top-5 end-0 p-3">
                 <div class="toast toast-error align-items-center text-bg-success border-0 successToast alert-danger" role="alert" aria-live="assertive" aria-atomic="true" id="successToast">
                     <div class="toast-body d-flex">
                         <div class="toast-content">
@@ -104,8 +104,8 @@
                             <li class="nav-item dropdown">
                                 <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button">Uprawa roślin</a>
                                 <div class="dropdown-menu">
-                                    <a class="dropdown-item" asp-area="" asp-controller="FieldWork" asp-action="Index">Prace polowe</a>
                                     <a class="dropdown-item" asp-area="" asp-controller="CropRotationPlanner" asp-action="Index">Planowanie płodozmianu</a>
+                                    <a class="dropdown-item" asp-area="" asp-controller="FieldWork" asp-action="Index">Prace polowe</a>
                                     @* <a class="dropdown-item" asp-area="" asp-controller="Fertilizer" asp-action="Index">Planowanie nawożenia</a>
                                     <a class="dropdown-item" asp-area="" asp-controller="CropProtectionProduct" asp-action="Index">Planowanie ochrony roślin</a> *@
                                     <a class="dropdown-item" asp-area="" asp-controller="Fertilizer" asp-action="Index">Nawozy</a>
@@ -148,25 +148,41 @@
                             <li class="nav-item">
                                 <a class="nav-link d-sm-none d-lg-inline-block" asp-area="" asp-controller="FieldWork" asp-action="Index"> Prace polowe</a>
                             </li>
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button">Kalkulatory</a>
+                                <div class="dropdown-menu">
+                                    <a class="dropdown-item" asp-area="" asp-controller="Calculator" asp-action="SeedRate">Kalkulator normy wysiewu</a>
+                                    <a class="dropdown-item" asp-area="" asp-controller="Calculator" asp-action="PlantPopulation">Kalkulator obsady roślin</a>
+                                    <a class="dropdown-item" asp-area="" asp-controller="Calculator" asp-action="Spraying">Kalkulator oprsków</a>
+                                    <a class="dropdown-item" asp-area="" asp-controller="Calculator" asp-action="CornDrying">Kalkulator suszenia kukurydzy</a>
+                                </div>
+                            </li>
                         }
                         </ul>
                     <ul class="navbar-nav justify-content-end">
                         @if (User.Identity.IsAuthenticated)
                         {
-                            @if (User.FindFirst("FarmName")!=null)
+                            @if(!User.IsInRole("Admin"))
                             {
-                                <li class="nav-item">
-                                    <a class="nav-link" asp-area="" asp-controller="Farm" asp-action="Select">@User.FindFirst("FarmName")?.Value (zmień)</a>
-                                </li>
-                            }
-                            else
-                            {
-                                <li class="nav-item">
-                                    <a class="nav-link" asp-area="" asp-controller="Farm" asp-action="Select">Wybierz gopsodarstwo</a>
-                                </li>
-                            }
-                            <li class="nav-item">
-                                <a class="nav-link" asp-area="" asp-controller="Account" asp-action="Details">Konto</a>
+                                @if (User.FindFirst("FarmName") != null)
+                                {
+                                    <li class="nav-item">
+                                        <a class="nav-link" asp-area="" asp-controller="Farm" asp-action="Select">@User.FindFirst("FarmName")?.Value (zmień)</a>
+                                    </li>
+                                }
+                                else
+                                {
+                                    <li class="nav-item">
+                                        <a class="nav-link" asp-area="" asp-controller="Farm" asp-action="Select">Wybierz gopsodarstwo</a>
+                                    </li>
+                                }
+                            }   
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button">Konto</a>
+                                <div class="dropdown-menu">
+                                    <a class="dropdown-item" asp-area="" asp-controller="Account" asp-action="ChangePassword">Zmień hasło</a>
+                                    <a class="dropdown-item" asp-area="" asp-controller="Account" asp-action="Delete">Usuń konto</a>
+                                </div>
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link" asp-area="" asp-controller="Account" asp-action="Logout">Wyloguj</a>

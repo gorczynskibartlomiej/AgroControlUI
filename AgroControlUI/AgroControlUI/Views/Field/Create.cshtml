@@ -6,11 +6,10 @@
 
 
 <div class="form-container">
-    <div class="green-form">
+    <div class="blue-form">
         <form asp-action="Create" method="post">
             <h1>Dodaj pole</h1>
 
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
             <div class="group">
                 <input asp-for="Name" required />
@@ -31,11 +30,10 @@
                 <span asp-validation-for="Description" class="text-danger"></span>
             </div>
  
-            <!-- Podgląd mapy -->
             <div class="group map">
                 <div class="map-preview" id="mapPreview" style="height: 200px;"></div>
             </div>
-            <!-- Ukryte pole, w którym zapiszemy współrzędne -->
+
             <input type="hidden" id="FieldBorder" name="FieldBorder" />
 
             <div class="action-buttons" style="margin-bottom:30px;padding-top:15px;">

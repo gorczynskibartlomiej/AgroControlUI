@@ -42,6 +42,6 @@ namespace AgroControlUI.DTOs.FieldWorks
     }
     public class OtherWorkDto : FieldWorkDto
     {
-
+        public string? Name { get; set; }
     }
 }

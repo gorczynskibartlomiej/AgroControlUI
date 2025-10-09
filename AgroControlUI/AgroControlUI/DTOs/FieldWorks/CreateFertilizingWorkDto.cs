@@ -14,7 +14,7 @@ namespace AgroControlUI.DTOs.FieldWorks
         public int? AgroControlUserId { get; set; }
         public string? Description { get; set; }
 
-        public ICollection<int> FieldWorkAgriculturalEquipmentIds { get; set; } = new List<int>();
-        public ICollection<CreateFertilizingWorkFertilizerDto> FertilizingWorkFertilizers { get; set; } = new List<CreateFertilizingWorkFertilizerDto>();                          
+        public ICollection<int>? FieldWorkAgriculturalEquipmentIds { get; set; } = new List<int>();
+        public ICollection<CreateFertilizingWorkFertilizerDto>? FertilizingWorkFertilizers { get; set; } = new List<CreateFertilizingWorkFertilizerDto>();                          
     }
 }

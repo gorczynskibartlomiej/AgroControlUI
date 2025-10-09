@@ -310,6 +310,7 @@ namespace AgroControlUI.Controllers.FarmData
                 return View(equipmentDto);
             }
         }
+        [Authorize(Policy = "OwnerOrWorker")]
         public async Task<IActionResult> Details(int id)
         {
             var token = HttpContext.Request.Cookies["token"];if(token==null){token = Request.Headers["Authorization"];}

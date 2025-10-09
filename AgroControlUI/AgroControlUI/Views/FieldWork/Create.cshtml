@@ -1,14 +1,14 @@
 ﻿<style>
-    /* Nagłówek */
+
     .header-title {
         font-size: 2.5rem;
         font-weight: 700;
-        color: #6576E0;
+        color: var(--category1-color);
         text-align: center;
         margin-bottom: 2rem;
     }
 
-    /* Styl kafelków */
+
     .card {
         border-radius: 20px;
         height: 250px;
@@ -20,14 +20,14 @@
     }
 
         .card:hover {
-            box-shadow: 0 0 30px #6576E0;
+            box-shadow: 0 5px 40px var(--category1-color);
             transform: translateY(-10px);
             background-color: #f4f6fa;
         }
 
-    /* Górna część kafelka */
+
     .card-header {
-        background-color: #6576E0;
+        background-color: var(--category1-color);
         color: white;
         text-align: center;
         font-size: 1.5rem;
@@ -36,23 +36,21 @@
         border-radius: 20px 20px 0 0;
     }
 
-    /* Kontener na ikony */
+
     .icon-container {
         display: flex;
         justify-content: center;
         align-items: center;
-        height: 100px; /* Możesz dostosować */
+        height: 100px; 
     }
 
-        /* Stylowanie obrazków */
         .icon-container img {
-            max-width: 80px; /* Maksymalna szerokość ikony */
-            max-height: 80px; /* Maksymalna wysokość ikony */
+            max-width: 80px;
+            max-height: 80px;
             width: auto;
             height: auto;
         }
 
-    /* Treść w dolnej części kafelka */
     .card-body {
         text-align: center;
         display: flex;
@@ -61,14 +59,14 @@
         justify-content: center;
     }
 
-        /* Tekst informacyjny */
+
         .card-body p {
             margin: 0.5rem 0;
             font-size: 1rem;
             color: #6c757d;
         }
 
-    /* Responsywność */
+
     @@media (max-width: 768px) {
         .card
 
@@ -85,7 +83,7 @@
     }
 
     .icon-container img {
-        max-width: 60px; /* Zmniejszenie ikon na mniejszych ekranach */
+        max-width: 60px;
         max-height: 60px;
     }
 
@@ -94,7 +92,6 @@
 <div class="container mt-5">
     <h1 class="header-title">Stwórz lub zaplanuj pracę polową</h1>
     <div class="row justify-content-center">
-        <!-- Kafelek dla nawożenia -->
         <div class="col-lg-3 col-md-4 mb-4">
             <a href="@Url.Action("CreateFertilizingWork", "FieldWork")" class="card text-decoration-none">
                 <div class="card-header">
@@ -109,7 +106,6 @@
             </a>
         </div>
 
-        <!-- Kafelek dla oprysków -->
         <div class="col-lg-3 col-md-4 mb-4">
             <a href="@Url.Action("CreateSprayingWork", "FieldWork")" class="card text-decoration-none">
                 <div class="card-header">
@@ -124,7 +120,6 @@
             </a>
         </div>
 
-        <!-- Kafelek dla zbiorów -->
         <div class="col-lg-3 col-md-4 mb-4">
             <a href="@Url.Action("CreateHarvestingWork", "FieldWork")" class="card text-decoration-none">
                 <div class="card-header">
@@ -139,7 +134,6 @@
             </a>
         </div>
 
-        <!-- Kafelek dla innych prac -->
         <div class="col-lg-3 col-md-4 mb-4">
             <a href="@Url.Action("CreateOtherWork", "FieldWork")" class="card text-decoration-none">
                 <div class="card-header">

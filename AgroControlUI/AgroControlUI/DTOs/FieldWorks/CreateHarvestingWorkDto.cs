@@ -13,9 +13,9 @@ namespace AgroControlUI.DTOs.FieldWorks
         public int? AgroControlUserId { get; set; }
         public string? Description { get; set; }
 
-        public ICollection<int> FieldWorkAgriculturalEquipmentIds { get; set; } = new List<int>();
-        public decimal TotalYield { get; set; }
+        public ICollection<int>? FieldWorkAgriculturalEquipmentIds { get; set; } = new List<int>();
+        public decimal? TotalYield { get; set; }
         public decimal? Moisture { get; set; }
-        public int CropId { get; set; }
+        public int? CropId { get; set; }
     }
 }

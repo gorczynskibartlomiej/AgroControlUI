@@ -12,7 +12,15 @@
     }
      
 </style>
-<h1 class="blue">Środki ochrony roślin</h1>
+ @if (User.IsInRole("Admin"))
+ {
+    <h1 class="blue">Środki ochrony roślin</h1>
+ }
+ else
+ {
+    <h1 class="green">Środki ochrony roślin</h1>
+ }
+
 
 <div id="categories" class="wrapper">
     @if (User.IsInRole("Admin"))
@@ -21,67 +29,159 @@
             <a asp-action="Create" class="add-btn"><img src="~/images/plus-solid.svg" />Dodaj środek ochrony roślin</a>
         </p>
     }
-    <div class="custom-dropdown">
-        <select id="filterCategory" name="Category">
-            <option value="" selected>Wszystkie kategorie</option>
-            @foreach (var category in Model.SelectMany(p => p.cropProtectionProductCategories).Select(c => c.Name).Distinct())
-            {
-                <option value="@category">@category</option>
-            }
-        </select>
-        <label for="filterCategory">Wybierz kategorię</label>
-    </div>
 
-    <div class="custom-dropdown">
-        <select id="filterCrop" name="Crop">
-            <option value="" selected>Wszystkie uprawy</option>
-            @foreach (var crop in Model.SelectMany(p => p.cropProtectionProductCrops).Select(c => c.Name).Distinct())
-            {
-                <option value="@crop">@crop</option>
-            }
-        </select>
-        <label for="filterCrop">Wybierz uprawy</label>
-    </div>
+    @if (User.IsInRole("Admin"))
+    {
+        <div class="custom-dropdown blue-filter">
+            <select id="filterCategory" name="Category">
+                <option value="" selected>Wszystkie kategorie</option>
+                @foreach (var category in Model.SelectMany(p => p.cropProtectionProductCategories).Select(c => c.Name).Distinct())
+                {
+                    <option value="@category">@category</option>
+                }
+            </select>
+            <label for="filterCategory">Wybierz kategorię</label>
+        </div>
+    }
+    else
+    {
+        <div class="custom-dropdown green-filter">
+            <select id="filterCategory" name="Category">
+                <option value="" selected>Wszystkie kategorie</option>
+                @foreach (var category in Model.SelectMany(p => p.cropProtectionProductCategories).Select(c => c.Name).Distinct())
+                {
+                    <option value="@category">@category</option>
+                }
+            </select>
+            <label for="filterCategory">Wybierz kategorię</label>
+        </div>
+    }
+
+
+    @if (User.IsInRole("Admin"))
+    {
+        <div class="custom-dropdown blue-filter">
+            <select id="filterCrop" name="Crop">
+                <option value="" selected>Wszystkie uprawy</option>
+                @foreach (var crop in Model.SelectMany(p => p.cropProtectionProductCrops).Select(c => c.Name).Distinct())
+                {
+                    <option value="@crop">@crop</option>
+                }
+            </select>
+            <label for="filterCrop">Wybierz uprawę</label>
+        </div>
+        <div class="custom-dropdown blue-filter">
+            <select id="filterProducer" name="Producer" class="tomselected ts-hidden-accessible">
+                <option value="">Wszyscy producenci</option>
+                @foreach (var producer in Model.Select(p => p.Producer.Name).Distinct())
+                {
+                    <option value="@producer">@producer</option>
+                }
+            </select>
+            <label for="filterProducer">Wybierz producenta</label>
+            <span class="bar"></span>
+        </div>
+    }
+    else
+    {
+            <div class="custom-dropdown green-filter">
+
+                        <select id="filterCrop" name="Crop">
+                            <option value="" selected>Wszystkie uprawy</option>
+                            @foreach (var crop in Model.SelectMany(p => p.cropProtectionProductCrops).Select(c => c.Name).Distinct())
+                            {
+                                <option value="@crop">@crop</option>
+                            }
+                        </select>
+                        <label for="filterCrop">Wybierz uprawę</label>
+                    </div>
+        <div class="custom-dropdown green-filter">
+            <select id="filterProducer" name="Producer" class="tomselected ts-hidden-accessible">
+                <option value="">Wszyscy producenci</option>
+                @foreach (var producer in Model.Select(p => p.Producer.Name).Distinct())
+                {
+                    <option value="@producer">@producer</option>
+                }
+            </select>
+            <label for="filterProducer">Wybierz producenta</label>
+            <span class="bar"></span>
+        </div>
+    }
 
     <div class="table">
-        <div class="row header blue" id="headerRow">
-            <div class="cell" data-sort="name" onclick="sortByColumn(this)">
-                <div class="sort-wrapper">
-                    <span class="sort-text">Nazwa środka ochrony roślin</span>
-                    <span class="sort-arrow">▼</span>
-                </div>
-            </div>
-            <div class="cell" data-sort="producer" onclick="sortByColumn(this)">
-                <div class="sort-wrapper">
-                    <span class="sort-text">Producent</span>
-                    <span class="sort-arrow">▼</span>
-                </div>
-            </div>
-            <div class="cell" data-sort="cppcategory">
-                Kategorie
-            </div>
-            <div class="cell" data-sort="activeIngredients">
-                Skład
-            </div>
-            <div class="cell" data-sort="crops">
-                Rośliny
-            </div>
-            <div class="cell">
-                Akcje
-            </div>
-        </div>
+        @if(User.IsInRole("Admin"))
+        {
+                    <div class="row header blue" id="headerRow">
+                        <div class="cell" data-sort="name" onclick="sortByColumn(this)">
+                            <div class="sort-wrapper">
+                                <span class="sort-text">Nazwa środka ochrony roślin</span>
+                                <span class="sort-arrow">▼</span>
+                            </div>
+                        </div>
+                        <div class="cell" data-sort="producer" onclick="sortByColumn(this)">
+                            <div class="sort-wrapper">
+                                <span class="sort-text">Producent</span>
+                                <span class="sort-arrow">▼</span>
+                            </div>
+                        </div>
+                        <div class="cell" data-sort="cppcategory">
+                            Kategorie
+                        </div>
+                        <div class="cell" data-sort="activeIngredients">
+                            Skład
+                        </div>
+                        <div class="cell" data-sort="crops">
+                            Rośliny
+                        </div>
+                        <div class="cell">
+                            Akcje
+                        </div>
+                    </div>
+        }
+        else
+        {
+                    <div class="row header green" id="headerRow">
+                        <div class="cell" data-sort="name" onclick="sortByColumn(this)">
+                            <div class="sort-wrapper">
+                                <span class="sort-text">Nazwa środka ochrony roślin</span>
+                                <span class="sort-arrow">▼</span>
+                            </div>
+                        </div>
+                        <div class="cell" data-sort="producer" onclick="sortByColumn(this)">
+                            <div class="sort-wrapper">
+                                <span class="sort-text">Producent</span>
+                                <span class="sort-arrow">▼</span>
+                            </div>
+                        </div>
+                        <div class="cell" data-sort="cppcategory">
+                            Kategorie
+                        </div>
+                        <div class="cell" data-sort="activeIngredients">
+                            Skład
+                        </div>
+                        <div class="cell" data-sort="crops">
+                            Rośliny
+                        </div>
+                        <div class="cell">
+                            Akcje
+                        </div>
+                    </div>
+        }
+        
         <div class="row">
             <div class="cell">
                 <input type="text" class="search-input" data-search="name" placeholder="Szukaj..." oninput="searchByColumn()" />
             </div>
             <div class="cell">
-                <input type="text" class="search-input" data-search="producer" placeholder="Szukaj..." oninput="searchByColumn()" />
+                <input type="hidden" class="search-input" data-search="producer" placeholder="Szukaj..." oninput="searchByColumn()" />
+            </div>
+            <div class="cell">
+                <input type="hidden" class="search-input" data-search="cppcategory" placeholder="Szukaj..." oninput="searchByColumn()" />
             </div>
             <div class="cell">
             </div>
             <div class="cell">
-            </div>
-            <div class="cell">
+                <input type="hidden" class="search-input" data-search="crops" placeholder="Szukaj..." oninput="searchByColumn()" />
             </div>
             <div class="cell">
             </div>
@@ -154,23 +254,31 @@
         const filterCategory = document.getElementById("filterCategory");
         const filterCrop = document.getElementById("filterCrop");
 
-        function filterTable() {
-            const selectedCategory = filterCategory.value.toLowerCase();
-            const selectedCrop = filterCrop.value.toLowerCase();
+        filterCategory.addEventListener("change", function () {
+            let value = filterCategory.value.toLowerCase();
 
-            document.querySelectorAll(".list .row").forEach(row => {
-                const categoryText = row.querySelector(".cppcategory")?.textContent.toLowerCase() || "";
-                const cropText = row.querySelector(".crops")?.textContent.toLowerCase() || "";
-
-                const categoryMatch = !selectedCategory || categoryText.includes(selectedCategory);
-                const cropMatch = !selectedCrop || cropText.includes(selectedCrop);
-
-                row.style.display = categoryMatch && cropMatch ? "" : "none";
+            document.querySelectorAll('.search-input[data-search="cppcategory"]').forEach(input => {
+                input.value = value;
             });
-        }
+            searchByColumn();  
+        });
 
-        filterCategory.addEventListener("change", filterTable);
-        filterCrop.addEventListener("change", filterTable);
+        filterCrop.addEventListener("change", function () {
+            let value = filterCrop.value.toLowerCase();
+
+            document.querySelectorAll('.search-input[data-search="crops"]').forEach(input => {
+                input.value = value;
+            });
+            searchByColumn();
+        });
+        filterProducer.addEventListener("change", function () {
+            let value = filterProducer.value.toLowerCase();
+
+            document.querySelectorAll('.search-input[data-search="producer"]').forEach(input => {
+                input.value = value;
+            });
+            searchByColumn();
+        });
     });
 
 </script>

@@ -125,6 +125,9 @@
                 </div>
             </div>
             <div class="cell">
+                Numer telefonu
+            </div>
+            <div class="cell">
                 Akcje
             </div>
         </div>
@@ -133,6 +136,7 @@
             <div class="cell">
                 <input type="text" class="search-input" data-search="name" placeholder="Szukaj..." oninput="searchByColumn()" />
             </div>
+            <div class="cell"></div>
             <div class="cell"></div>
         </div>
         <div class="list">
@@ -149,6 +153,9 @@
                     </form>
                     <div class="cell name" data-title="Imię i nazwisko">
                         @employee.FirstName @employee.LastName
+                    </div>
+                    <div class="cell" data-title="Numer telefonu">
+                        @employee.PhoneNumber
                     </div>
                     <div class="cell" data-title="Akcje">
                         <div class="action-buttons">

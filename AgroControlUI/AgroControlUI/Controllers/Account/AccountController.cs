@@ -11,6 +11,7 @@ using System.Text;
 using AgroControlUI.Constants;
 using System.Net.Http.Headers;
 using System.Net.Http;
+using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.BlazorIdentity.Pages;
 
 public class AccountController : Controller
 {
@@ -25,7 +26,7 @@ public class AccountController : Controller
     {
         if (!string.IsNullOrEmpty(returnUrl))
         {
-            // Jeśli ReturnUrl wskazuje na zaproszenie do farmy, przekieruj użytkownika do akcji dołączenia do farmy
+
             if (returnUrl.Contains("Invitation"))
             {
                 var decodedReturnUrl = Uri.UnescapeDataString(returnUrl);
@@ -33,13 +34,16 @@ public class AccountController : Controller
                 return RedirectToAction("Accept", "Invitation", new { invitationId });
             }
         }
-        return RedirectToAction("Select", "Farm"); // Domyślnie przekierowuje na stronę główną
+        return RedirectToAction("Select", "Farm"); 
     }
     [HttpGet]
     public IActionResult Login(string returnUrl = null)
     {
-        // Sprawdzamy, czy mamy ReturnUrl, jeśli nie, ustawiamy domyślną stronę
-        ViewData["ReturnUrl"] = returnUrl ?? Url.Content("~/"); // Default to home page if ReturnUrl is null
+        if (HttpContext.Items.ContainsKey("LogoutMessage"))
+        {
+            TempData["errorMessage"] = HttpContext.Items["LogoutMessage"];
+        }
+        ViewData["ReturnUrl"] = returnUrl ?? Url.Content("~/");
         return View();
     }
     [HttpPost]
@@ -129,20 +133,62 @@ public class AccountController : Controller
 
         try
         {
-            var endpoint = "/api/Account/register";
-            var content = JsonConvert.SerializeObject(register);
-            var stringContent = new StringContent(content, Encoding.UTF8, "application/json");
+            var endpointreg = "/api/Account/register";
+            var contentreg = JsonConvert.SerializeObject(register);
+            var stringContentreg = new StringContent(contentreg, Encoding.UTF8, "application/json");
 
-            var response = await _client.PostAsync(endpoint, stringContent);
+            var responsereg = await _client.PostAsync(endpointreg, stringContentreg);
 
-            if (response.IsSuccessStatusCode)
+            if (responsereg.IsSuccessStatusCode)
             {
-                var loginModel = new LoginModelDto { Email = register.Email, Password = register.Password};
-                LoginAsync(loginModel,null);
-                TempData["successMessage"] = "Konto zostało utworzone.";
+                var login = new LoginModelDto { Email = register.Email, Password = register.Password};
+                TempData["successMessage"] = "Twoje konto zostało pomyślnie utworzone.";
+                    var endpoint = "/login";
+                    var content = JsonConvert.SerializeObject(login);
+                    var stringContent = new StringContent(content, Encoding.UTF8, "application/json");
+                    var response = _client.PostAsync(endpoint, stringContent).Result;
+                    response.EnsureSuccessStatusCode();
+
+                    var json = JsonConvert.DeserializeObject<dynamic>(response.Content.ReadAsStringAsync().Result);
+                    var token = (string)json.accessToken;
+                    var refreshToken = (string)json.refreshToken;
+                    var expiresIn = (int)json.expiresIn;
+
+                    _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+                    var isAdminResponse = await _client.GetAsync("/api/Account/isAdmin");
+                    var isAdminJson = JsonConvert.DeserializeObject<dynamic>(await isAdminResponse.Content.ReadAsStringAsync());
+                    bool isAdmin = (bool)isAdminJson.isAdmin;
+
+                    var claims = new List<Claim>();
+
+                    claims.Add(new Claim(ClaimTypes.Name, login.Email));
+
+
+                    if (isAdmin)
+                    {
+                        claims.Add(new Claim(ClaimTypes.Role, "Admin"));
+                    }
+
+                    var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+                    HttpContext.SignInAsync(
+                    CookieAuthenticationDefaults.AuthenticationScheme,
+                    new ClaimsPrincipal(claimsIdentity)
+                    );
+                    var cookieOptions = new CookieOptions
+                    {
+                        HttpOnly = true,
+                        Secure = true,
+                        SameSite = SameSiteMode.None,
+                        Expires = DateTimeOffset.Now.AddSeconds(expiresIn)
+                    };
+
+                    HttpContext.Response.Cookies.Append("token", token, cookieOptions);
+                    cookieOptions.Expires = DateTimeOffset.Now.AddSeconds(expiresIn * 20);
+                    HttpContext.Response.Cookies.Append("refreshToken", refreshToken, cookieOptions);
+                
                 return RedirectToAction("Select", "Farm");
             }
-            else if (response.StatusCode == HttpStatusCode.Conflict)
+            else if (responsereg.StatusCode == HttpStatusCode.Conflict)
             {
                 TempData["errorMessage"] = "Użytkownik z tym adresem e-mail już istnieje.";
                 return View(register);
@@ -156,29 +202,84 @@ public class AccountController : Controller
             return View(register);
         }
     }
+
+    [HttpGet]
+    public IActionResult ChangePassword()
+    {
+        return View();
+    }
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> ChangePassword(ChangePasswordDto model)
+    {
+        if (!ModelState.IsValid)
+        {
+            return View(model);
+        }
+        try
+        {
+            var token = HttpContext.Request.Cookies["token"]; if (token == null) { token = Request.Headers["Authorization"]; }
+            _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+            var endpoint = "/api/account/changePassword";
+            var content = JsonConvert.SerializeObject(model);
+            var stringContent = new StringContent(content, Encoding.UTF8, "application/json");
+
+            var response = await _client.PostAsync(endpoint, stringContent);
+            response.EnsureSuccessStatusCode();
+
+            HttpContext.Response.Cookies.Delete("token");
+            HttpContext.Response.Cookies.Delete("refreshToken");
+            await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+            TempData["successMessage"] = "Hasło zostało zmienione. Zaloguj się ponownie.";
+            return RedirectToAction("Login", "Account");
+            
+        }
+        catch (HttpRequestException ex)
+        {
+            TempData["errorMessage"] = "Podaj poprawne hasło!";
+            return View(model);
+        }
+    }
     [HttpGet]
     public IActionResult Details()
     {
         return View();
     }
-    [HttpPost]
+    [HttpGet]
     public IActionResult Delete()
     {
-
         return View();
     }
-    //[HttpGet]
-    //public IActionResult ChangePassword()
-    //{
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> DeleteConfirmed()
+    {
+        try
+        {
+            var token = HttpContext.Request.Cookies["token"]; if (token == null) { token = Request.Headers["Authorization"]; }
+            _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
-    //    return View();
-    //}
-    //[HttpPost]
-    //public IActionResult ChangePassword()
-    //{
+            var response = await _client.DeleteAsync("/api/account/delete");
+            response.EnsureSuccessStatusCode();
 
-    //    return View();
-    //}
+            response.EnsureSuccessStatusCode();
+            HttpContext.Response.Cookies.Delete("token");
+            HttpContext.Response.Cookies.Delete("refreshToken");
+            await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+            TempData["successMessage"] = "Konto zostało usunięte!";
+            return RedirectToAction("Index", "Home");
+        }
+        catch (HttpRequestException ex)
+        {
+            TempData["errorMessage"] = "Błąd serwera, spróbuj ponownie później.";
+            return View();
+        }
+        catch (Exception ex)
+        {
+            TempData["errorMessage"] = "Wystąpił nieoczekiwany błąd.";
+            return View();
+        }
+    }
     public IActionResult AccessDenied()
     {
         TempData["errorMessage"] = "Nie masz uprawnień do tej strony. Zaloguj się na odpowiednie konto.";
@@ -188,6 +289,7 @@ public class AccountController : Controller
     public async Task<IActionResult> Logout()
     {
         HttpContext.Response.Cookies.Delete("token");
+        HttpContext.Response.Cookies.Delete("refreshToken");
         await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
         return RedirectToAction("Index", "Home");
     }

@@ -7,55 +7,60 @@
 <link rel="stylesheet" href="~/css/selectWithInput.css" />
 <style>
     .adding-input {
-        width: 18%;
-        height: 46px;
+    width: 18%;
+    height: 46px;
     }
     .adding-select {
-        width: 49%;
+    width: 49%;
     }
     .adding-unit{
-        width:18%;
+    width:18%;
     }
 </style>
 <div class="form-container">
     <div class="green-form">
         <form asp-action="CreateFertilizingWork" method="post">
+            @Html.AntiForgeryToken()
             <h1>Dodaj pracę nawożenia</h1>
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
             <div class="single-dropdown">
-                <select asp-for="FieldId" asp-items="ViewBag.Fields" id="fieldSelect">
-                    <option value="">Wybierz pole</option>
+                <select asp-for="FieldId" asp-items="ViewBag.Fields" id="fieldSelect" required>
+                    <option value=""></option>
                 </select>
                 <span class="bar"></span>
                 <label asp-for="FieldId">Pole</label>
                 <span asp-validation-for="FieldId" class="text-danger"></span>
             </div>
+            @if(!User.IsInRole("Pracownik"))
+            {
+                <div class="single-dropdown">
+                    <select id="workerSelect" name="workerSelect">
+                        <option value="">Wybierz pracownika</option>
+                        <optgroup label="Pracownicy">
+                            @foreach (var employee in ViewBag.Employees)
+                            {
+                                <option value="@employee.Value" data-type="employee">@employee.Text</option>
+                            }
+                        </optgroup>
+                        <optgroup label="Użytkownicy systemowi">
+                            @foreach (var user in ViewBag.Users)
+                            {
+                                <option value="@user.Value" data-type="user">@user.Text</option>
+                            }
+                        </optgroup>
+                    </select>
+                    <span class="bar"></span>
+                    <label>Pracownik</label>
+                    <span asp-validation-for="EmployeeId" class="text-danger"></span>
+                </div>
+                <input asp-for="EmployeeId" type="hidden" id="EmployeeId" name="EmployeeId" />
+                <input asp-for="AgroControlUserId" type="hidden" id="AgroControlUserId" name="AgroControlUserId" />
 
-            <div class="single-dropdown">
-                <select id="workerSelect" name="workerSelect">
-                    <option value="">Wybierz pracownika</option>
-                    <optgroup label="Pracownicy">
-                        @foreach (var employee in ViewBag.Employees)
-                        {
-                            <option value="@employee.Value" data-type="employee">@employee.Text</option>
-                        }
-                    </optgroup>
-                    <optgroup label="Użytkownicy systemowi">
-                        @foreach (var user in ViewBag.Users)
-                        {
-                            <option value="@user.Value" data-type="user">@user.Text</option>
-                        }
-                    </optgroup>
-                </select>
-                <span class="bar"></span>
-                <label>Pracownik</label>
-            </div>
+            }
             <input type="hidden" id="EmployeeId" name="EmployeeId" />
             <input type="hidden" id="AgroControlUserId" name="AgroControlUserId" />
-
             <div class="multi-dropdown">
-                <select asp-for="FieldWorkAgriculturalEquipmentIds" required asp-items="ViewBag.AgriculturalEquipment" id="agricultrualEquipmentSelect" multiple></select>
+                <select asp-for="FieldWorkAgriculturalEquipmentIds"  asp-items="ViewBag.AgriculturalEquipment" id="agricultrualEquipmentSelect" multiple></select>
                 <span class="bar"></span>
                 <label asp-for="FieldWorkAgriculturalEquipmentIds">Użyte maszyny</label>
                 <span asp-validation-for="FieldWorkAgriculturalEquipmentIds" class="text-danger"></span>
@@ -77,6 +82,12 @@
 
             <div class="single-dropdown">
                 <div id="adding-container" class="adding-container"></div>
+                @if (TempData["ActiveIngredientErrors"] != null)
+                {
+                    <span class="text-danger">
+                        @TempData["ActiveIngredientErrors"]
+                    </span>
+                }
                 <button type="button" id="add-ingredient">Dodaj nawóz</button>
             </div>
 
@@ -185,22 +196,26 @@
     updateAvailableOptions();
 
     document.addEventListener("DOMContentLoaded", function () {
-        // Inicjalizacja TomSelect dla pozostałych dropdownów
+
         new TomSelect("#fieldSelect", { create: false, sortField: "text", placeholder: "Wyszukaj...", plugins: ['remove_button'] });
-        new TomSelect("#workerSelect", { create: false, sortField: "text", placeholder: "Wyszukaj...", plugins: ['remove_button'] });
         new TomSelect("#agricultrualEquipmentSelect", { create: false, sortField: "text", placeholder: "Wyszukaj...", plugins: ['remove_button'] });
+        if (document.getElementById("workerSelect")) {
+        new TomSelect("#workerSelect", {
+            create: false,
+            sortField: "text",
+            placeholder: "Wyszukaj...",
+            plugins: ['remove_button']
+        });
+        }
 
         const addIngredientButton = document.getElementById("add-ingredient");
         const container = document.getElementById("adding-container");
-        // Pobieranie oryginalnych opcji z ukrytego selecta (jako string, do wstawienia początkowo)
         const fertilizerOptions = document.getElementById("fertilizerOptions").innerHTML;
 
-        // Funkcja tworzenia wiersza składnika
         function createIngredientRow() {
             const wrapper = document.createElement("div");
             wrapper.classList.add("adding-wrapper");
 
-            // Tworzenie selecta dla składnika nawozu
             const selectWrapper = document.createElement("div");
             selectWrapper.classList.add("group", "adding-select");
 
@@ -215,15 +230,13 @@
 
             const selectLabel = document.createElement("label");
             selectLabel.textContent = "Nawóz";
-
-            // Wstawiamy oryginalne opcje wraz z domyślną pustą opcją
+     
             select.innerHTML = `<option value="" selected disabled>Wybierz składnik nawozu</option>` + fertilizerOptions;
 
             selectWrapper.appendChild(select);
             selectWrapper.appendChild(selectBar);
             selectWrapper.appendChild(selectLabel);
 
-            // Tworzenie inputa dla ilości
             const inputWrapper = document.createElement("div");
             inputWrapper.classList.add("group", "adding-input");
 
@@ -301,10 +314,8 @@
     input.addEventListener("blur", function () {
         const validationError = input.closest('.group').querySelector('.input-validation-error');
         if (validationError) {
-            // Jeśli pole ma błąd walidacji, nie usuwamy klasy 'filled'
             input.classList.add("filled");
         } else {
-            // Używamy tej samej logiki jak w "input", żeby dodać lub usunąć klasę 'filled'
             if (input.value.trim() !== "") {
                 input.classList.add("filled");
             } else {
@@ -349,24 +360,22 @@
     }
 
         addIngredientButton.addEventListener("click", createIngredientRow);
-        createIngredientRow(); // Początkowy wiersz składnika
+        createIngredientRow(); 
     });
                 document.getElementById('workerSelect').addEventListener('change', function() {
         var selectedOption = this.options[this.selectedIndex];
         var selectedValue = selectedOption.value;
-        var selectedType = selectedOption.getAttribute('data-type'); // Pobierz typ: 'employee' lub 'user'
+        var selectedType = selectedOption.getAttribute('data-type');
 
         if (selectedValue) {
-            // Jeżeli wybrano opcję, przypisujemy odpowiednie wartości do ukrytych pól
             if (selectedType === 'employee') {
-                document.getElementById('EmployeeId').value = selectedValue; // Ustawiamy ID pracownika
-                document.getElementById('AgroControlUserId').value = ''; // Wyczyść ID użytkownika
+                document.getElementById('EmployeeId').value = selectedValue;
+                document.getElementById('AgroControlUserId').value = ''; 
             } else if (selectedType === 'user') {
-                document.getElementById('AgroControlUserId').value = selectedValue; // Ustawiamy ID użytkownika
-                document.getElementById('EmployeeId').value = ''; // Wyczyść ID pracownika
+                document.getElementById('AgroControlUserId').value = selectedValue; 
+                document.getElementById('EmployeeId').value = ''; 
             }
         } else {
-            // Jeśli nic nie wybrano, wyczyść ID
             document.getElementById('EmployeeId').value = '';
             document.getElementById('AgroControlUserId').value = '';
         }

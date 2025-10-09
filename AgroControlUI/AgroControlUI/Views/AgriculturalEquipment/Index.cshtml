@@ -107,7 +107,7 @@
     <p>
         <a asp-action="Create" class="add-btn"><img src="~/images/plus-solid.svg" />Dodaj nową maszynę</a>
     </p>
-    <div class="custom-dropdown">
+    <div class="custom-dropdown blue-filter">
         <select id="filterMachineType" name="MachineType">
             <option value="" selected>Wszystkie typy maszyn</option>
             @foreach (var type in Model.Select(m => m.AgriculturalEquipmentTypeName).Distinct())
@@ -157,6 +157,7 @@
                 <input type="text" class="search-input" data-search="brand" placeholder="Szukaj..." oninput="searchByColumn()" />
             </div>
             <div class="cell">
+                <input type="hidden" class="search-input" data-search="type" placeholder="Szukaj..." oninput="searchByColumn()" />
             </div>
             
             <div class="cell">
@@ -210,25 +211,47 @@
     }
 </script>
 <script>
-            document.addEventListener("DOMContentLoaded", function () {
-        const filterMachineType = document.getElementById("filterMachineType");  // Nowy filtr
+    //         document.addEventListener("DOMContentLoaded", function () {
+    //     const filterMachineType = document.getElementById("filterMachineType");  // Nowy filtr
 
-        function filterTable() {
-            const selectedMachineType = filterMachineType.value.toLowerCase();  // Wartość z filtru maszyn
+    //     function filterTable() {
+    //         const selectedMachineType = filterMachineType.value.toLowerCase();  // Wartość z filtru maszyn
 
-            document.querySelectorAll(".list .row").forEach(row => {
-                // Wartości z poszczególnych kolumn
-                const typeText = row.querySelector(".type")?.textContent.toLowerCase() || "";  // Zmienna dla typu maszyny
+    //         document.querySelectorAll(".list .row").forEach(row => {
+    //             // Wartości z poszczególnych kolumn
+    //             const typeText = row.querySelector(".type")?.textContent.toLowerCase() || "";  // Zmienna dla typu maszyny
 
-                // Sprawdzenie dopasowania
-                const typeMatch = !selectedMachineType || typeText.includes(selectedMachineType);  // Filtracja po typie maszyny
+    //             // Sprawdzenie dopasowania
+    //             const typeMatch = !selectedMachineType || typeText.includes(selectedMachineType);  // Filtracja po typie maszyny
 
-                // Ukrywanie lub pokazywanie wierszy w zależności od filtrów
-                row.style.display = typeMatch ? "" : "none";
+    //             // Ukrywanie lub pokazywanie wierszy w zależności od filtrów
+    //             row.style.display = typeMatch ? "" : "none";
+    //         });
+    //     }
+
+    //     // Ustawienie nasłuchiwania na zmiany w filtrze maszyny
+    //     filterMachineType.addEventListener("change", filterTable);
+    // });
+        document.addEventListener('DOMContentLoaded', function () {
+        const filterMachineType = document.getElementById("filterMachineType");
+        const filterMachineBrand = document.getElementById("filterMachineBrand");
+
+        filterMachineType.addEventListener("change", function() {
+            let value = filterMachineType.value.toLowerCase();
+
+            document.querySelectorAll('.search-input[data-search="type"]').forEach(input => {
+                input.value = value;
             });
-        }
+            searchByColumn();
+        });
 
-        // Ustawienie nasłuchiwania na zmiany w filtrze maszyny
-        filterMachineType.addEventListener("change", filterTable);
+        filterMachineBrand.addEventListener("change", function() {
+            let value = filterMachineBrand.value.toLowerCase();
+
+            document.querySelectorAll('.search-input[data-search="brand"]').forEach(input => {
+                input.value = value;
+            });
+            searchByColumn();
+        });
     });
 </script>

@@ -47,12 +47,43 @@
         <label for="filterWorkType">Rodzaj pracy</label>
     </div>
 
-    <div class="custom-dropdown">
+    @* <div class="custom-dropdown">
         <select id="filterField" name="Field">
             <option value="" selected>Wszystkie pola</option>
             @foreach (var field in Model.Select(w => w.Field).GroupBy(f => f.Name).Select(g => g.First()))
             {
                 <option value="@field.Name">@field.Name (@field.Area ha)</option>
+            }
+        </select>
+        <label for="filterField">Pole</label>
+    </div> *@
+
+    @{
+        var selectedFieldName = ViewBag.SelectedFieldName as string;
+        var fields = Model.Select(w => w.Field).GroupBy(f => f.Name).Select(g => g.First()).ToList();
+    }
+
+    <div class="custom-dropdown">
+        <select id="filterField" name="Field">
+            @if (string.IsNullOrEmpty(selectedFieldName))
+            {
+                <option value="" selected>Wszystkie pola</option>
+            }
+            else
+            {
+                <option value="">Wszystkie pola</option>
+            }
+
+            @foreach (var field in fields)
+            {
+                if (field.Name == selectedFieldName)
+                {
+                    <option value="@field.Name" selected>@field.Name (@field.Area ha)</option>
+                }
+                else
+                {
+                    <option value="@field.Name">@field.Name (@field.Area ha)</option>
+                }
             }
         </select>
         <label for="filterField">Pole</label>
@@ -65,8 +96,14 @@
                     <span class="sort-arrow">▼</span>
                 </div>
             </div>
-            <div class="cell">
+            @* <div class="cell" data-sort="workType" onclick="sortByColumn(this)">
                 Rodzaj pracy
+            </div> *@
+            <div class="cell" data-sort="workType" onclick="sortByColumn(this)">
+                <div class="sort-wrapper">
+                    <span class="sort-text">Rodzaj pracy</span>
+                    <span class="sort-arrow">▼</span>
+                </div>
             </div>
             <div class="cell" data-sort="startTime" onclick="sortByColumn(this)">
                 <div class="sort-wrapper">
@@ -80,6 +117,9 @@
                     <span class="sort-arrow">▼</span>
                 </div>
             </div>
+            @* <div class="cell" data-sort="field">
+                   pole
+            </div> *@
             <div class="cell" data-sort="field" onclick="sortByColumn(this)">
                 <div class="sort-wrapper">
                     <span class="sort-text">Pole</span>
@@ -101,6 +141,7 @@
             <div class="cell">
             </div>
             <div class="cell">
+                <input type="hidden" class="search-input" data-search="workType" placeholder="Szukaj..." oninput="searchByColumn()" />
             </div>
             <div class="cell">
                 <input type="text" class="search-input" data-search="startTime" placeholder="Szukaj..." oninput="searchByColumn()" />
@@ -109,6 +150,7 @@
                 <input type="text" class="search-input" data-search="endTime" placeholder="Szukaj..." oninput="searchByColumn()" />
             </div>
             <div class="cell">
+                <input type="hidden" class="search-input" data-search="field" placeholder="Szukaj..." oninput="searchByColumn()" />
             </div>
             <div class="cell">
                 <input type="text" class="search-input" data-search="employeeName" placeholder="Szukaj..." oninput="searchByColumn()" />
@@ -123,7 +165,7 @@
             @foreach (var fieldWork in Model)
             {
                 <div class="row">
-                    <div class="cell isActive" data-title="Status">
+                    <div class="cell isPlanned" data-title="Status">
                         @if (fieldWork.IsPlanned)
                         {
                             <span>Zaplanowane</span>
@@ -137,8 +179,8 @@
                             <span>Wykonane</span> 
                         }
                     </div>
-                    <div class="cell" data-title="Typ pracy">
-                        @fieldWork.WorkType
+                    <div class="cell workType" data-title="Typ pracy">
+                         @fieldWork.WorkType 
                     </div>
                     <div class="cell startTime" data-title="Data rozpoczęcia">
                         @if (fieldWork.IsPlanned == true && fieldWork.StartTime<DateTime.Now)
@@ -155,7 +197,7 @@
                     <div class="cell endTime" data-title="Data zakończenia">
                         @(fieldWork.EndTime?.ToString("dd-MM-yyyy HH:mm") ?? "Brak")
                     </div>
-                    <div class="cell" data-title="Pole">
+                    <div class="cell field" data-title="Pole">
                         @fieldWork.Field.Name (@(fieldWork.Field.Area)ha)
                     </div>
                     <div class="cell employeeName" data-title="Wykonawca">
@@ -198,7 +240,7 @@
                                             <img src="~/images/details.svg" />Szczegóły
                                         </a>
                                     }
-                                    else if (fieldWork.WorkType == "Inne")
+                                    else
                                     {
                                         @if (!User.IsInRole("Pracownik"))
                                         {
@@ -208,7 +250,7 @@
                                 <a asp-action="OtherWorkDetails" asp-route-id="@fieldWork.Id" class="cancel-btn">
                                     <img src="~/images/details.svg" />Szczegóły
                                 </a>
-                            }
+                                     }
                                         @if (!User.IsInRole("Pracownik"))
                                         {
                             <button type="button" class="delete-btn" data-bs-toggle="modal" data-bs-target="#deleteModal" onclick="setDeleteUrl('@Url.Action("DeleteConfirmed", new { id = fieldWork.Id })')">
@@ -224,18 +266,17 @@
     <ul class="pagination"></ul>
 </div>
 
-<!-- Skrypty JS -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/list.js/2.3.1/list.min.js"></script>
 <script src="~/js/listOperations.js"></script>
 <script src="~/js/deleteModal.js"></script>
 <script>
 
                 function setFieldWorkDetails(id, startDateText) {
-        // Ustawienie wartości ID
+
         document.getElementById("fieldWorkId").value = id;
 
-        // Przekazanie daty w formacie lokalnym
-        const startDate = new Date(startDateText + ":00"); // Dodajemy sekundy, aby uniknąć problemów z UTC
+
+        const startDate = new Date(startDateText + ":00");
         console.log("Przekazana data:", startDate);
 
         if (!isNaN(startDate.getTime())) {
@@ -255,31 +296,52 @@
         let form = checkbox.closest("form");
         form.submit();
     }
-     document.addEventListener("DOMContentLoaded", function () {
+    //  document.addEventListener("DOMContentLoaded", function () {
+    //     const filterWorkType = document.getElementById("filterWorkType");
+    //  const filterField = document.getElementById("filterField");
+
+    //  function filterTable() {
+    //      const selectedWorkType = filterWorkType.value.toLowerCase();
+    //      const selectedField = filterField.value.toLowerCase();
+
+    //      document.querySelectorAll(".list .row").forEach(row => {
+    //          const workTypeText = row.querySelector(".cell[data-title='Typ pracy']")?.textContent.toLowerCase() || "";
+    //          const fieldText = row.querySelector(".cell[data-title='Pole']")?.textContent.toLowerCase() || "";
+
+    //          const workTypeMatch = !selectedWorkType || workTypeText.includes(selectedWorkType);
+    //          const fieldMatch = !selectedField || fieldText.includes(selectedField);
+
+    //          row.style.display = workTypeMatch && fieldMatch ? "" : "none";
+    //      });
+    //  }
+    //  setTimeout(filterTable, 100);
+    //  filterWorkType.addEventListener("change", filterTable);
+    //  filterField.addEventListener("change", filterTable);
+    //     filterTable();
+    // });
+            document.addEventListener('DOMContentLoaded', function () {
+
         const filterWorkType = document.getElementById("filterWorkType");
-     const filterField = document.getElementById("filterField");
+        const filterField = document.getElementById("filterField");
 
-     function filterTable() {
-         const selectedWorkType = filterWorkType.value.toLowerCase();
-         const selectedField = filterField.value.toLowerCase();
+        filterWorkType.addEventListener("change", function() {
+           
+            let value = filterWorkType.value.toLowerCase();
 
-         document.querySelectorAll(".list .row").forEach(row => {
-             // Popraw te selektory - tutaj szukamy w kolumnach odpowiednich danych
-             const workTypeText = row.querySelector(".cell[data-title='Typ pracy']")?.textContent.toLowerCase() || "";
-             const fieldText = row.querySelector(".cell[data-title='Pole']")?.textContent.toLowerCase() || "";
+            document.querySelectorAll('.search-input[data-search="workType"]').forEach(input => {
+                input.value = value;
+            });
+            searchByColumn();  
+        });
 
-             // Zmieniamy na porównanie, które działa w zależności od filtrów
-             const workTypeMatch = !selectedWorkType || workTypeText.includes(selectedWorkType);
-             const fieldMatch = !selectedField || fieldText.includes(selectedField);
+        filterField.addEventListener("change", function() {
+          
+            let value = filterField.value.toLowerCase();
 
-             // Wyświetl lub ukryj wiersz w zależności od dopasowania
-             row.style.display = workTypeMatch && fieldMatch ? "" : "none";
-         });
-     }
-
-     // Upewnij się, że zdarzenie jest przypisane
-     filterWorkType.addEventListener("change", filterTable);
-     filterField.addEventListener("change", filterTable);
+            document.querySelectorAll('.search-input[data-search="field"]').forEach(input => {
+                input.value = value;
+            });
+            searchByColumn(); 
+        });
     });
-
 </script>

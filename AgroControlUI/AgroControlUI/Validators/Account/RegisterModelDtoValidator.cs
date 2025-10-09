@@ -27,7 +27,7 @@ namespace AgroControlUI.Validators.Account
                 .NotEmpty().WithMessage("Hasło jest wymagane.")
                 .MinimumLength(8).WithMessage("Hasło musi zawierać co najmniej 8 znaków.")
                 .Matches(@"^(?=.*[A-Z])(?=.*[a-z])(?=.*\d).*$")
-                .WithMessage("Hasło musi zawierać co najmniej jedną wielką literę, jedną małą literę oraz jedną cyfrę.");
+                .WithMessage("Hasło musi zawierać co najmniej 8 znaków, jedną wielką literę, jedną małą literę oraz jedną cyfrę.");
 
             RuleFor(register => register.ReapeatedPassword)
              .NotEmpty().WithMessage("Powtórz hasło.")

@@ -10,9 +10,7 @@
     <div class="green-form">
         <form asp-action="Edit" method="post">
             <h1>Edytuj środek ochrony roślin</h1>
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
-            <!-- Nazwa środka -->
             <div class="group">
                 <input asp-for="Name" />
                 <span class="bar"></span>
@@ -20,7 +18,6 @@
                 <span asp-validation-for="Name" class="text-danger"></span>
             </div>
 
-            <!-- Producent -->
             <div class="single-dropdown">
                 <select asp-for="ProducerId" asp-items="ViewBag.Producers" id="producerSelect">
                     <option value="">Wybierz producenta</option>
@@ -30,7 +27,6 @@
                 <span asp-validation-for="ProducerId" class="text-danger"></span>
             </div>
 
-            <!-- Kategorie -->
             <div class="multi-dropdown">
                 <select asp-for="CategoryIds" asp-items="ViewBag.Categories" id="categorySelect" multiple></select>
                 <span class="bar"></span>
@@ -38,7 +34,6 @@
                 <span asp-validation-for="CategoryIds" class="text-danger"></span>
             </div>
 
-            <!-- Rośliny -->
             <div class="multi-dropdown">
                 <select asp-for="CropIds" asp-items="ViewBag.Crops" id="cropSelect" multiple></select>
                 <span class="bar"></span>
@@ -46,7 +41,6 @@
                 <span asp-validation-for="CropIds" class="text-danger"></span>
             </div>
 
-            <!-- Składniki aktywne -->
             <div class="single-dropdown">
                 <div id="adding-container" class="adding-container"></div>
                 @if (TempData["ActiveIngredientErrors"] != null)
@@ -57,7 +51,6 @@
                 }
                 <button type="button" id="add-ingredient">Dodaj kolejny</button>
             </div>
-            <!-- Opis -->
             <div class="group">
                 <textarea asp-for="Description" class="description-field"></textarea>
                 <span class="bar"></span>
@@ -76,7 +69,6 @@
     </div>
 </div>
 
-<!-- Ukryta lista składników aktywnych -->
 <select id="componentOptions" style="display:none">
     @foreach (var option in ViewBag.Components)
     {
@@ -99,7 +91,6 @@
     }
 
     function updateAvailableOptions() {
-        // Jeśli już trwa aktualizacja, kończymy
         if (isUpdatingOptions) return;
         isUpdatingOptions = true;
 
@@ -120,7 +111,6 @@
                 }
             });
 
-            // Budujemy nową listę opcji:
             let newOptions = [];
             newOptions.push({ value: "", text: "Wybierz składnik aktywny" });
             originalOptions.forEach(opt => {
@@ -129,7 +119,6 @@
                 }
             });
 
-            // Aktualizujemy instancję TomSelect
             instance.clearOptions();
             instance.addOption(newOptions);
             instance.refreshOptions(false);
@@ -143,7 +132,6 @@
         isUpdatingOptions = false;
     }
 
-    // Nasłuchiwanie zmian w selectach ingredient-select
     document.addEventListener("change", (event) => {
         if (event.target.matches("select.ingredient-select")) {
             updateAvailableOptions();
@@ -154,7 +142,6 @@
     updateAvailableOptions();
 
     document.addEventListener("DOMContentLoaded", function () {
-        // Inicjalizacja TomSelect dla pozostałych dropdownów
         new TomSelect("#producerSelect", { create: false, sortField: "text", placeholder: "Wybierz producenta" });
         new TomSelect("#categorySelect", { create: false, sortField: "text", placeholder: "Wyszukaj...", plugins: ['remove_button'] });
         new TomSelect("#cropSelect", { create: false, sortField: "text", placeholder: "Wyszukaj...", plugins: ['remove_button'] });

@@ -23,10 +23,9 @@
     <div class="green-form">
         <form asp-action="CreateHarvestingWork" method="post">
             <h1>Dodaj prace zbioru plonów</h1>
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
             <div class="single-dropdown">
-                <select asp-for="FieldId" asp-items="ViewBag.Fields" id="fieldSelect">
+                <select asp-for="FieldId" asp-items="ViewBag.Fields" id="fieldSelect" required>
                     <option value="">Wybierz pole</option>
                 </select>
                 <span class="bar"></span>
@@ -34,25 +33,30 @@
                 <span asp-validation-for="FieldId" class="text-danger"></span>
             </div>
 
-            <div class="single-dropdown">
-                <select id="workerSelect" name="workerSelect">
-                    <option value="">Wybierz pracownika</option>
-                    <optgroup label="Pracownicy">
-                        @foreach (var employee in ViewBag.Employees)
-                        {
-                            <option value="@employee.Value" data-type="employee">@employee.Text</option>
-                        }
-                    </optgroup>
-                    <optgroup label="Użytkownicy systemowi">
-                        @foreach (var user in ViewBag.Users)
-                        {
-                            <option value="@user.Value" data-type="user">@user.Text</option>
-                        }
-                    </optgroup>
-                </select>
-                <span class="bar"></span>
-                <label>Pracownik</label>
-            </div>
+            @if (!User.IsInRole("Pracownik"))
+            {
+                <div class="single-dropdown">
+                    <select id="workerSelect" name="workerSelect">
+                        <option value="">Wybierz pracownika</option>
+                        <optgroup label="Pracownicy">
+                            @foreach (var employee in ViewBag.Employees)
+                            {
+                                <option value="@employee.Value" data-type="employee">@employee.Text</option>
+                            }
+                        </optgroup>
+                        <optgroup label="Użytkownicy systemowi">
+                            @foreach (var user in ViewBag.Users)
+                            {
+                                <option value="@user.Value" data-type="user">@user.Text</option>
+                            }
+                        </optgroup>
+                    </select>
+                    <span class="bar"></span>
+                    <label>Pracownik</label>
+                    <span asp-validation-for="EmployeeId" class="text-danger"></span>
+                </div>
+
+            }
             <input type="hidden" id="EmployeeId" name="EmployeeId" />
             <input type="hidden" id="AgroControlUserId" name="AgroControlUserId" />
 
@@ -89,7 +93,7 @@
             <div class="group">
                 <input asp-for="TotalYield" type="number" />
                 <span class="bar"></span>
-                <label asp-for="TotalYield">Plon (t)</label>
+                <label asp-for="TotalYield">Plon całkowity (t)</label>
                 <span asp-validation-for="TotalYield" class="text-danger"></span>
             </div>
 
@@ -127,7 +131,13 @@
 <script>
     document.addEventListener("DOMContentLoaded", function () {
         new TomSelect("#fieldSelect", { create: false, sortField: "text", placeholder: "Wyszukaj...", plugins: ['remove_button'] });
-        new TomSelect("#workerSelect", { create: false, sortField: "text", placeholder: "Wyszukaj...", plugins: ['remove_button'] });
+        if (document.getElementById("workerSelect")) {
+        new TomSelect("#workerSelect", {
+            create: false,
+            sortField: "text",
+            placeholder: "Wyszukaj...",
+            plugins: ['remove_button']
+        });}
         new TomSelect("#agricultrualEquipmentSelect", { create: false, sortField: "text", placeholder: "Wyszukaj...", plugins: ['remove_button'] });
          new TomSelect("#cropSelect", { create: false, sortField: "text", placeholder: "Wyszukaj...", plugins: ['remove_button'] });
 

@@ -69,7 +69,7 @@ namespace AgroControlUI.Controllers.UserManagement
         {
             if (!ModelState.IsValid)
             {
-                var apitoken = HttpContext.Request.Cookies["token"];
+                var apitoken = HttpContext.Request.Cookies["token"]; if (apitoken == null) { apitoken = Request.Headers["Authorization"]; }
                 _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", apitoken);
 
                 var endpoint = "/api/role/toAssign";
@@ -163,71 +163,91 @@ namespace AgroControlUI.Controllers.UserManagement
                 return View();
             }
         }
+        //Edit
+        [Authorize(Policy = "OwnerOrCoOwner")]
+        [HttpGet]
+        public async Task<IActionResult> Edit(int id)
+        {
+            var token = HttpContext.Request.Cookies["token"]; if (token == null) { token = Request.Headers["Authorization"]; }
+            _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
-        // Edit
-        //[Authorize(Policy = "OwnerOrCoOwner")]
-        //[HttpGet]
-        //public async Task<IActionResult> Edit(int id)
-        //{
-        //    try
-        //    {
-        //        var token = HttpContext.Request.Cookies["token"];if(token==null){token = Request.Headers["Authorization"];}
-        //        _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+            var endpoint = "/api/role/toAssign";
+            var result = await _client.GetAsync(endpoint);
+            result.EnsureSuccessStatusCode();
+            var content = await result.Content.ReadAsStringAsync();
+            var roles = JsonConvert.DeserializeObject<List<AgroControlRoleDto>>(content)
+                .Select(r => new SelectListItem
+                {
+                    Text = r.Name,
+                    Value = r.Id.ToString()
+                }).ToList();
 
-        //        var endpoint = $"/api/employees/{id}";
-        //        var response = await _client.GetAsync(endpoint);
-        //        response.EnsureSuccessStatusCode();
+            ViewBag.Roles = roles;
 
-        //        string content = await response.Content.ReadAsStringAsync();
-        //        var employee = JsonConvert.DeserializeObject<EmployeeDto>(content);
-        //        return View(employee);
-        //    }
-        //    catch (HttpRequestException ex)
-        //    {
-        //        TempData["errorMessage"] = "Błąd serwera, spróbuj ponownie później.";
-        //        return View();
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        TempData["errorMessage"] = "Wystąpił nieoczekiwany błąd. Spróbuj ponownie później. ";
-        //        return View();
-        //    }
-        //}
+            AgroControlUserRoleDto agroControlUserRoleDto = new AgroControlUserRoleDto();
+            agroControlUserRoleDto.UserId = id;
+            return View(agroControlUserRoleDto);
+        }
+        [Authorize(Policy = "OwnerOrCoOwner")]
+        [HttpPost]
+        public async Task<IActionResult> Edit(AgroControlUserRoleDto model)
+        {
+            if (!ModelState.IsValid)
+            {
+                var apitoken = HttpContext.Request.Cookies["token"];
+                _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", apitoken);
 
-        //[Authorize(Policy = "OwnerOrCoOwner")]
-        //[HttpPost]
-        //public async Task<IActionResult> Edit(EmployeeDto employeeDto)
-        //{
-        //    if (!ModelState.IsValid)
-        //    {
-        //        return View(employeeDto);
-        //    }
+                var endpoint = "/api/role/toAssign";
+                var result = await _client.GetAsync(endpoint);
+                result.EnsureSuccessStatusCode();
+                var contentRoles = await result.Content.ReadAsStringAsync();
+                var roles = JsonConvert.DeserializeObject<List<AgroControlRoleDto>>(contentRoles)
+                .Select(r => new SelectListItem
+                {
+                    Text = r.Name,
+                    Value = r.Id.ToString()
+                }).ToList();
 
-        //    try
-        //    {
-        //        var token = HttpContext.Request.Cookies["token"];if(token==null){token = Request.Headers["Authorization"];}
-        //        _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+                ViewBag.Roles = roles;
+                return View(model);
 
-        //        var endpoint = $"/api/employees/{employeeDto.Id}";
-        //        var content = JsonConvert.SerializeObject(employeeDto);
-        //        var stringContent = new StringContent(content, Encoding.UTF8, "application/json");
-        //        var response = await _client.PutAsync(endpoint, stringContent);
-        //        response.EnsureSuccessStatusCode();
+            }
+            var token = HttpContext.Request.Cookies["token"]; if (token == null) { token = Request.Headers["Authorization"]; }
+            _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
-        //        TempData["successMessage"] = "Zmodyfikowano pomyślnie";
-        //        return RedirectToAction("Index");
-        //    }
-        //    catch (HttpRequestException ex)
-        //    {
-        //        TempData["errorMessage"] = "Błąd serwera, spróbuj ponownie później.";
-        //        return View(employeeDto);
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        TempData["errorMessage"] = "Wystąpił nieoczekiwany błąd. Spróbuj ponownie później. ";
-        //        return View(employeeDto);
-        //    }
-        //}
+            var jsonContent = JsonConvert.SerializeObject(model);
+            var content = new StringContent(jsonContent, Encoding.UTF8, "application/json");
+
+            var response = await _client.PostAsync("/api/AgroControlUserRole/change", content);
+
+            if (response.IsSuccessStatusCode)
+            {
+                TempData["SuccessMessage"] = "Rola użytkownika została pomyślnie zaktualizowana!";
+                return RedirectToAction("Index");
+            }
+            else
+            {
+                TempData["ErrorMessage"] = "Wystąpił problem przy zmianie roli. Spróbój ponownie później.";
+                var apitoken = HttpContext.Request.Cookies["token"];
+                _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", apitoken);
+
+                var endpoint = "/api/role/toAssign";
+                var result = await _client.GetAsync(endpoint);
+                result.EnsureSuccessStatusCode();
+                var contentRoles = await result.Content.ReadAsStringAsync();
+                var roles = JsonConvert.DeserializeObject<List<AgroControlRoleDto>>(contentRoles)
+                .Select(r => new SelectListItem
+                {
+                    Text = r.Name,
+                    Value = r.Id.ToString()
+                }).ToList();
+
+                ViewBag.Roles = roles;
+            }
+
+            return View();
+        }
+
 
         protected override void Dispose(bool disposing)
         {

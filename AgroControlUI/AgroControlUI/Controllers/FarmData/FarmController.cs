@@ -166,6 +166,19 @@
                 var endpoint = $"/api/farms/{id}";
                 var response = await _client.DeleteAsync(endpoint);
                 response.EnsureSuccessStatusCode();
+                var currentUser = HttpContext.User;
+                if (currentUser.Identity.IsAuthenticated)
+                {
+                    var existingClaims = currentUser.Claims.ToList();
+                    existingClaims.RemoveAll(c => c.Type == "FarmId" || c.Type == "FarmName");
+
+                    var claimsIdentity = new ClaimsIdentity(existingClaims, CookieAuthenticationDefaults.AuthenticationScheme);
+
+                    await HttpContext.SignInAsync(
+                        CookieAuthenticationDefaults.AuthenticationScheme,
+                        new ClaimsPrincipal(claimsIdentity)
+                    );
+                }
                 TempData["successMessage"] = "Gospodarstwo zostało pomyślnie usunięte!";
 
                 return RedirectToAction("select", "Farm");
@@ -200,6 +213,19 @@
                 var endpoint = $"/api/farms/leaveFarm";
                 var response = await _client.DeleteAsync(endpoint);
                 response.EnsureSuccessStatusCode();
+                var currentUser = HttpContext.User;
+                if (currentUser.Identity.IsAuthenticated)
+                {
+                    var existingClaims = currentUser.Claims.ToList();
+                    existingClaims.RemoveAll(c => c.Type == "FarmId" || c.Type == "FarmName");
+
+                    var claimsIdentity = new ClaimsIdentity(existingClaims, CookieAuthenticationDefaults.AuthenticationScheme);
+
+                    await HttpContext.SignInAsync(
+                        CookieAuthenticationDefaults.AuthenticationScheme,
+                        new ClaimsPrincipal(claimsIdentity)
+                    );
+                }
                 TempData["successMessage"] = "Pomyślnie opuszczono gospodarstwo!";
 
                 return RedirectToAction("select", "Farm");

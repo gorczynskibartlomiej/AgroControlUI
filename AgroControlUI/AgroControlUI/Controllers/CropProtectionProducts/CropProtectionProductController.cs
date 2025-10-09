@@ -58,7 +58,6 @@ namespace AgroControlUI.Controllers.CropProtectionProducts
             .Select(e => e.ErrorMessage)
             .ToList();
 
-                // Jeżeli są błędy, przekazujemy je do TempData
                 if (activeIngredientErrors.Any())
                 {
                     TempData["ActiveIngredientErrors"] = "Musisz wybrać składnik aktywny. Ilość składnika musi być liczbą całkowitą większą od zera.";

@@ -43,7 +43,7 @@
 <body>
 
     <div class="form-container">
-        <div class="green-form">
+        <div class="yellow-form">
             <h1>Kalkulator oprysku</h1>
 
             <form id="calculatorForm">
@@ -100,7 +100,7 @@
             </div>
 
             <div class="action-buttons">
-                <a href="javascript:history.back()" class="cancel-btn">Wróć</a>
+                <a asp-action="Index" asp-controller="Home" class="cancel-btn">Strona główna</a>
                 <button type="reset" class="add-btn" onclick="resetCalculator()">Reset</button>
             </div>
         </div>

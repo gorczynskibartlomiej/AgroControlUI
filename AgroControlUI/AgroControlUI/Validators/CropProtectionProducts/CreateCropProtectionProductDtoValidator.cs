@@ -16,7 +16,7 @@ namespace AgroControlUI.Validators.CropProtectionProducts
                  .NotEmpty().WithMessage("Producent jest wymagany.");
 
             RuleFor(product => product.Description)
-                .MaximumLength(500).WithMessage("Opis może mieć maksymalnie 500 znaków.")
+                .MaximumLength(20000).WithMessage("Opis może mieć maksymalnie 20000 znaków.")
                 .When(product => !string.IsNullOrEmpty(product.Description));
 
             RuleFor(product => product.CropIds)
@@ -29,7 +29,6 @@ namespace AgroControlUI.Validators.CropProtectionProducts
                 .NotEmpty().WithMessage("Musisz dodać co najmniej jeden składnik aktywny.")
                 .ForEach(ingredient =>
                 {
-                    // Zastosowanie walidatora dla każdego składnika aktywnego
                     ingredient.SetValidator(new CreateCropProtectionProductComponentValidator());
                 });
         }

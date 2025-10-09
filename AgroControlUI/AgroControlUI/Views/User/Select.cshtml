@@ -3,7 +3,7 @@
     .header-title {
         font-size: 2.5rem;
         font-weight: 700;
-        color: #6576E0;
+        color: var(--category2-color);
         text-align: center;
         margin-bottom: 2rem;
     }
@@ -17,23 +17,28 @@
         overflow: hidden;
         box-shadow: 0px 4px 6px rgba(0, 0, 0.1, 0.2);
         cursor: pointer;
+        display: flex; /* Flexbox, aby kontrolować zawartość w pionie */
+        flex-direction: column; /* Wykorzystujemy flexbox w kolumnie */
     }
 
         .card:hover {
-            box-shadow: 0 0 30px #6576E0;
+            box-shadow: 0 0 30px var(--category2-color);
             transform: translateY(-10px);
             background-color: #f4f6fa;
         }
 
     /* Górna część kafelka */
     .card-header {
-        background-color: #6576E0;
+        background-color: var(--category2-color);
         color: white;
         text-align: center;
         font-size: 1.5rem;
         font-weight: 700;
         padding: 1rem;
         border-radius: 20px 20px 0 0;
+        display: flex; /* Flexbox dla wyśrodkowania */
+        justify-content: center; /* Wyśrodkowanie poziome */
+        align-items: center; /* Wyśrodkowanie pionowe */
     }
 
     /* Ikona */
@@ -46,13 +51,9 @@
 
         .icon-container i {
             font-size: 3rem;
-            color: #6576E0;
+            color: var(--category2-color);
             transition: color 0.3s ease;
         }
-
-    .card:hover .icon-container i {
-        color: #6675c3;
-    }
 
     /* Treści w dolnej części kafelka */
     .card-body {
@@ -61,6 +62,7 @@
         flex-wrap: wrap;
         flex-direction: column;
         justify-content: center;
+        flex-grow: 1; /* Umożliwia rozciągnięcie na całą dostępną przestrzeń */
     }
 
         .card-body p {
@@ -75,18 +77,21 @@
     }
 
     @@media (max-width: 768px) {
-        .card {
-            height: auto;
-        }
+        .card
 
-        .card-header {
-            font-size: 1.3rem;
-        }
-
-        .card-body p {
-            font-size: 0.9rem;
-        }
+    {
+        height: auto;
     }
+
+    .card-header {
+        font-size: 1.3rem;
+    }
+
+    .card-body p {
+        font-size: 0.9rem;
+    }
+
+   
 </style>
 
 <div class="container mt-5">

@@ -39,12 +39,12 @@ namespace AgroControlUI.Controllers
             if (response.IsSuccessStatusCode)
             {
                 TempData["SuccessMessage"] = "Zaproszenie zaakceptowane!";
-                return RedirectToAction("Index", "Home");
+                return RedirectToAction("Select", "Farm");
             }
             else
             {
                 TempData["ErrorMessage"] = "Błąd akceptacji. Sprawdź ważność zaproszenia lub zaloguj się na odpowiednie konto.";
-                return RedirectToAction("Index", "Home");
+                return RedirectToAction("Select", "Farm");
             }
         }
 

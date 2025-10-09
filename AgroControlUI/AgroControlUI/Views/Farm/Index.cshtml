@@ -3,12 +3,10 @@
 @await Html.PartialAsync("_DeleteConfirmationModal")
 @await Html.PartialAsync("_LeaveConfirmationModal")
 <link rel="stylesheet" href="~/css/Details.css" />
-
-<div class="details-container">
+@if (User.IsInRole("Pracownik"))
+{
+<div class="details-container green-details">
     <h1>Szczegóły gospodarstwa</h1>
-
-    @if (User.IsInRole("Pracownik"))
-    {
         <div class="info-section">
             <p class="info-title">Nazwa gospodarstwa:</p>
             <h2 class="info-name">@Model.Name</h2>
@@ -28,7 +26,7 @@
         </div>
 
         <div class="info-section">
-            <p class="info-title">Miasto:</p>
+            <p class="info-title">Miejscowość:</p>
             <p>@Model.City</p>
         </div>
         <div class="action-buttons">
@@ -38,9 +36,12 @@
             </button>
             <a asp-controller="Home" asp-action="Index" class="cancel-btn">Powrót</a>
         </div>
+    </div>
     }
     else
     {
+        <div class="details-container blue-details">
+    <h1>Szczegóły gospodarstwa</h1>
         <div class="info-section">
             <p class="info-title">Nazwa gospodarstwa:</p>
             <h2 class="info-name">@Model.Name</h2>
@@ -108,8 +109,9 @@
             }
             <a asp-controller="Home" asp-action="Index" class="cancel-btn">Powrót</a>
         </div>
+    </div>
     }
-</div>
+
 
 <script src="~/js/deleteModal.js"></script>
 <script src="~/js/leaveModal.js"></script>

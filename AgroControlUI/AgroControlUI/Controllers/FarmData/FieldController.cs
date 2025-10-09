@@ -280,6 +280,7 @@ namespace AgroControlUI.Controllers.FarmData
                 return View(fieldDto);
             }
         }
+        [Authorize(Policy = "OwnerOrWorker")]
         public async Task<IActionResult> Details(int id)
         {
             var token = HttpContext.Request.Cookies["token"];if(token==null){token = Request.Headers["Authorization"];}
@@ -291,8 +292,41 @@ namespace AgroControlUI.Controllers.FarmData
 
             var content = await result.Content.ReadAsStringAsync();
             var field = JsonConvert.DeserializeObject<FieldDetailsDto>(content);
+
+            TempData["FieldName"] = field.Name;
+
             return View(field);
         }
+
+        [Authorize(Policy = "OwnerOrCoOwner")]
+        [HttpGet]
+        public async Task<IActionResult> Map()
+        {
+            try
+            {
+                var token = HttpContext.Request.Cookies["token"]; if (token == null) { token = Request.Headers["Authorization"]; }
+                _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
+                var endpoint = "/api/fields";
+
+                var response = await _client.GetAsync(endpoint);
+                response.EnsureSuccessStatusCode();
+                var fields = JsonConvert.DeserializeObject<List<FieldDetailsDto>>(await response.Content.ReadAsStringAsync());
+                return View(fields);
+            }
+            catch (HttpRequestException ex)
+            {
+
+             TempData["errorMessage"] = "Błąd serwera, spróbuj ponownie później.";
+                return View();
+            }
+            catch (Exception ex)
+            {
+                TempData["errorMessage"] = "Wystąpił nieoczekiwany błąd. Spróbuj ponownie później. ";
+                return View();
+            }
+        }
+
         protected override void Dispose(bool disposing)
         {
             if (disposing)

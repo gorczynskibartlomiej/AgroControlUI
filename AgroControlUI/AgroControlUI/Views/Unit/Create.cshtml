@@ -3,7 +3,7 @@
 <link rel="stylesheet" href="~/css/add.css">
 
 <div class="form-container">
-    <div class="green-form">
+    <div class="yellow-form">
         <form asp-action="Create" method="post">
             <h1>Dodaj jednostkę</h1>
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
@@ -12,7 +12,7 @@
                 <input asp-for="Name" />
                 
                 <span class="bar"></span>
-                <label asp-for="Name">Nazwa jednostki</label>
+                <label asp-for="Name">Skrót jednostki</label>
                 <span asp-validation-for="Name" class="text-danger"></span>
             </div>
             <div class="action-buttons">

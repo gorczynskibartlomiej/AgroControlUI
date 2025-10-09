@@ -11,9 +11,7 @@
     <div class="green-form">
         <form asp-action="Create" method="post">
             <h1>Dodaj środek ochrony roślin</h1>
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
-            <!-- Nazwa środka -->
             <div class="group">
                 <input asp-for="Name" />
                 <span class="bar"></span>
@@ -21,7 +19,6 @@
                 <span asp-validation-for="Name" class="text-danger"></span>
             </div>
 
-            <!-- Producent -->
             <div class="single-dropdown">
                 <select asp-for="ProducerId" asp-items="ViewBag.Producers" id="producerSelect">
                     <option value="">Wybierz producenta</option>
@@ -31,7 +28,6 @@
                 <span asp-validation-for="ProducerId" class="text-danger"></span>
             </div>
 
-            <!-- Kategorie -->
             <div class="multi-dropdown">
                 <select asp-for="CategoryIds" asp-items="ViewBag.Categories" id="categorySelect" multiple></select>
                 <span class="bar"></span>
@@ -39,7 +35,6 @@
                 <span asp-validation-for="CategoryIds" class="text-danger"></span>
             </div>
 
-            <!-- Rośliny -->
             <div class="multi-dropdown">
                 <select asp-for="CropIds" asp-items="ViewBag.Crops" id="cropSelect" multiple></select>
                 <span class="bar"></span>
@@ -47,7 +42,6 @@
                 <span asp-validation-for="CropIds" class="text-danger"></span>
             </div>
 
-            <!-- Składniki aktywne -->
             <div class="single-dropdown">
                 <div id="adding-container" class="adding-container"></div>
                 @if (TempData["ActiveIngredientErrors"] != null)
@@ -58,7 +52,6 @@
                 }
                 <button type="button" id="add-ingredient">Dodaj kolejny</button>
             </div>
-            <!-- Opis -->
             <div class="group">
                 <textarea asp-for="Description" class="description-field"></textarea>
                 <span class="bar"></span>
